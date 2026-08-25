@@ -1,4 +1,4 @@
-const CACHE_NAME = 'apv22-pwa-v12';
+const CACHE_NAME = 'apv22-pwa-v13';
 const ASSETS = [
   './',
   './index.html',

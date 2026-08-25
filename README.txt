@@ -46,3 +46,10 @@ Version 12:
 - Glömt lösenord?-knapp
 - Supabase password recovery mail
 - Nytt lösenord kan väljas direkt i portalen efter recovery-länken
+
+Version 13:
+- Ren inloggning utan toppmeny före login
+- Kompaktare mobilnavigation
+- Förbättrad adminpanel med status och KPI-kort
+- Mitt konto med egen statistik och lösenordsbyte
+- Bekräftelse när slutprov sparas centralt

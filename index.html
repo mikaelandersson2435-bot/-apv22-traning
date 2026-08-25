@@ -52,9 +52,49 @@ table{width:100%;border-collapse:collapse} th,td{border-bottom:1px solid var(--l
 <link rel="apple-touch-icon" href="icon-192.png">
 
 <script src="https://cdn.jsdelivr.net/npm/@supabase/supabase-js@2"></script>
+
+<style>
+@media (max-width: 640px){
+  nav{gap:8px!important}
+  nav button{padding:10px 12px!important;font-size:.92rem!important}
+  #accountBar{margin-top:6px!important}
+}
+.admin-user-card{
+  border:1px solid var(--line);
+  border-radius:16px;
+  padding:14px;
+  margin:12px 0;
+  background:rgba(255,255,255,.025);
+}
+.admin-kpis{
+  display:grid;
+  grid-template-columns:repeat(4,minmax(0,1fr));
+  gap:8px;
+  margin-top:10px;
+}
+.admin-kpi{
+  border:1px solid var(--line);
+  border-radius:12px;
+  padding:10px;
+  text-align:center;
+}
+.admin-kpi b{font-size:1.15rem;display:block}
+.status-good{border-left:4px solid #22c55e}
+.status-warn{border-left:4px solid #f59e0b}
+.status-bad{border-left:4px solid #ef4444}
+@media(max-width:640px){
+  .admin-kpis{grid-template-columns:repeat(2,minmax(0,1fr))}
+}
+.version-tag{
+  font-size:.78rem;
+  opacity:.7;
+  margin-top:10px;
+}
+</style>
+
 </head>
 <body>
-<header>
+<header id="appHeader" class="hidden">
 <div class="wrap">
 <h1>APV 2.2 – Träningsportal</h1>
 <div class="subtitle">Teori • övningsfrågor • slutprov • personlig träning</div>
@@ -70,6 +110,7 @@ table{width:100%;border-collapse:collapse} th,td{border-bottom:1px solid var(--l
 <button data-page="exam">Slutprov</button>
 <button data-page="history">Prohistorik</button>
 <button data-page="results">Resultat</button>
+<button data-page="account" id="accountNav">Mitt konto</button>
 <button data-page="admin" id="adminNav" class="hidden">Admin</button>
 </nav>
 </div>
@@ -146,7 +187,7 @@ table{width:100%;border-collapse:collapse} th,td{border-bottom:1px solid var(--l
     <button class="primary" onclick="goToPage('weak')">Träna svagheter</button>
   </div>
 </div>
-<div class="tip" style="margin-top:14px"><b>Tips:</b> På mobil kan sidan även läggas till på hemskärmen för snabb åtkomst.</div>
+<div class="tip" style="margin-top:14px"><b>Tips:</b> På mobil kan sidan även läggas till på hemskärmen för snabb åtkomst.</div><div class="version-tag">Portalversion 13</div>
 </div>
 
 <div class="card">
@@ -837,6 +878,23 @@ table{width:100%;border-collapse:collapse} th,td{border-bottom:1px solid var(--l
 <thead><tr><th>Område</th><th>Rätt</th><th>Totalt</th><th>Nivå</th></tr></thead>
 <tbody id="resultTable"></tbody>
 </table>
+</div>
+</section>
+
+
+<section id="account" class="page hidden">
+<div class="card">
+  <span class="badge">Mitt konto</span>
+  <h2>Min träningsöversikt</h2>
+  <div id="accountSummary"></div>
+</div>
+<div class="card">
+  <h3>Byt lösenord</h3>
+  <p class="small">Du kan när som helst välja ett nytt lösenord här.</p>
+  <input id="accountNewPassword" type="password" placeholder="Nytt lösenord" style="width:100%;padding:12px;border-radius:10px;border:1px solid var(--line);background:#0b1220;color:#fff;margin:6px 0 12px">
+  <input id="accountNewPassword2" type="password" placeholder="Upprepa nytt lösenord" style="width:100%;padding:12px;border-radius:10px;border:1px solid var(--line);background:#0b1220;color:#fff;margin:6px 0 12px">
+  <button class="primary" onclick="changePasswordFromAccount()">Spara nytt lösenord</button>
+  <div id="accountPasswordMsg" class="feedback hidden"></div>
 </div>
 </section>
 
@@ -1608,6 +1666,7 @@ async function signupUser(){
 async function logoutUser(){
   await sb.auth.signOut();
   currentUser=null; currentProfile=null;
+  document.getElementById("appHeader").classList.add("hidden");
   document.getElementById("appMain").classList.add("hidden");
   document.getElementById("authGate").style.display="flex";
   document.getElementById("accountBar").classList.add("hidden");
@@ -1621,11 +1680,13 @@ async function activateSession(user){
   if(error) return authMsg("Profilen kunde inte läsas: "+error.message);
   currentProfile=data;
   document.getElementById("authGate").style.display="none";
+  document.getElementById("appHeader").classList.remove("hidden");
   document.getElementById("appMain").classList.remove("hidden");
   document.getElementById("accountBar").classList.remove("hidden");
   document.getElementById("accountName").textContent=(data.full_name||user.email)+(data.role==="admin"?" • Admin":"");
   if(data.role==="admin") document.getElementById("adminNav").classList.remove("hidden");
   await loadRemoteProgress();
+  await loadAccountSummary();
 }
 async function initAuth(){
   const hash=window.location.hash||"";
@@ -1668,7 +1729,7 @@ async function loadRemoteProgress(){
 }
 async function saveExamRemote(result){
   if(!currentUser || !result) return;
-  await sb.from("exam_results").insert({
+  const {error}=await sb.from("exam_results").insert({
     user_id:currentUser.id,
     exam_type:"slutprov",
     difficulty:result.difficulty||"normal",
@@ -1678,6 +1739,11 @@ async function saveExamRemote(result){
     elapsed_seconds:result.elapsed,
     category_results:result.byCat||{}
   });
+  if(!error){
+    const status=document.getElementById("examStatus");
+    if(status) status.innerHTML += '<br><span class="small">Resultatet är sparat på ditt konto ✓</span>';
+    loadAccountSummary();
+  }
 }
 async function loadAdminData(){
   if(currentProfile?.role!=="admin") return;
@@ -1726,6 +1792,99 @@ finishExam=function(){
 
 document.querySelectorAll("nav button").forEach(b=>{
   b.addEventListener("click",()=>{if(b.dataset.page==="admin") loadAdminData();});
+});
+
+
+async function loadAccountSummary(){
+  if(!currentUser) return;
+  const [er,cp]=await Promise.all([
+    sb.from("exam_results").select("percentage,score,total_questions,created_at").eq("user_id",currentUser.id).order("created_at",{ascending:false}),
+    sb.from("chapter_progress").select("chapter,completed").eq("user_id",currentUser.id)
+  ]);
+  const results=er.data||[];
+  const chapters=(cp.data||[]).filter(x=>x.completed).length;
+  const avg=results.length?Math.round(results.reduce((s,r)=>s+r.percentage,0)/results.length):0;
+  const best=results.length?Math.max(...results.map(r=>r.percentage)):0;
+  const latest=results.length?results[0].percentage:null;
+  document.getElementById("accountSummary").innerHTML=`
+    <div class="admin-kpis">
+      <div class="admin-kpi"><b>${chapters}/8</b><span class="small">Kapitel</span></div>
+      <div class="admin-kpi"><b>${results.length}</b><span class="small">Slutprov</span></div>
+      <div class="admin-kpi"><b>${results.length?avg+" %":"–"}</b><span class="small">Snitt</span></div>
+      <div class="admin-kpi"><b>${results.length?best+" %":"–"}</b><span class="small">Bästa</span></div>
+    </div>
+    <p class="small" style="margin-top:12px">Senaste resultat: ${latest===null?"Inget prov ännu":latest+" %"}</p>`;
+}
+
+async function changePasswordFromAccount(){
+  const p1=document.getElementById("accountNewPassword").value;
+  const p2=document.getElementById("accountNewPassword2").value;
+  const msg=document.getElementById("accountPasswordMsg");
+  msg.classList.remove("hidden");
+  if(p1.length<6){msg.textContent="Lösenordet måste vara minst 6 tecken.";return;}
+  if(p1!==p2){msg.textContent="Lösenorden matchar inte.";return;}
+  const {error}=await sb.auth.updateUser({password:p1});
+  msg.textContent=error?("Kunde inte ändra lösenord: "+error.message):"Lösenordet är ändrat.";
+}
+
+function statusForUser(chapters, rr){
+  if(!rr.length) return {cls:"status-bad",txt:"Ej testad"};
+  const avg=Math.round(rr.reduce((s,r)=>s+r.percentage,0)/rr.length);
+  if(chapters===8 && avg>=85) return {cls:"status-good",txt:"Stark"};
+  if(avg>=70 || chapters>=5) return {cls:"status-warn",txt:"På väg"};
+  return {cls:"status-bad",txt:"Behöver träna"};
+}
+
+const _loadAdminData = loadAdminData;
+loadAdminData = async function(){
+  if(currentProfile?.role!=="admin") return;
+  const [pr,er,cp]=await Promise.all([
+    sb.from("profiles").select("id,full_name,role,created_at").order("created_at"),
+    sb.from("exam_results").select("user_id,difficulty,score,total_questions,percentage,elapsed_seconds,created_at").order("created_at",{ascending:false}).limit(200),
+    sb.from("chapter_progress").select("user_id,chapter,completed")
+  ]);
+  if(pr.error||er.error||cp.error){
+    document.getElementById("adminUsers").innerHTML='<div class="warning">Kunde inte läsa admin-data.</div>';
+    return;
+  }
+  const profiles=pr.data||[], results=er.data||[], progress=cp.data||[];
+  const byUserResults={}, byUserProgress={};
+  results.forEach(r=>{(byUserResults[r.user_id] ||= []).push(r);});
+  progress.forEach(r=>{if(r.completed)(byUserProgress[r.user_id] ||= new Set()).add(r.chapter);});
+
+  document.getElementById("adminUsers").innerHTML=profiles.map(p=>{
+    const rr=byUserResults[p.id]||[];
+    const chapters=byUserProgress[p.id]?.size||0;
+    const avg=rr.length?Math.round(rr.reduce((s,r)=>s+r.percentage,0)/rr.length):0;
+    const best=rr.length?Math.max(...rr.map(r=>r.percentage)):0;
+    const latest=rr.length?rr[0].percentage:null;
+    const st=statusForUser(chapters,rr);
+    return `<div class="admin-user-card ${st.cls}">
+      <div class="row" style="justify-content:space-between">
+        <div><b>${p.full_name||"Namnlös användare"}</b><div class="small">${st.txt}</div></div>
+        <span class="badge">${p.role}</span>
+      </div>
+      <div class="admin-kpis">
+        <div class="admin-kpi"><b>${chapters}/8</b><span class="small">Kapitel</span></div>
+        <div class="admin-kpi"><b>${rr.length}</b><span class="small">Slutprov</span></div>
+        <div class="admin-kpi"><b>${rr.length?avg+" %":"–"}</b><span class="small">Snitt</span></div>
+        <div class="admin-kpi"><b>${rr.length?best+" %":"–"}</b><span class="small">Bäst</span></div>
+      </div>
+      <div class="small" style="margin-top:10px">Senaste: ${latest===null?"–":latest+" %"}</div>
+    </div>`;
+  }).join("");
+
+  const names=Object.fromEntries(profiles.map(p=>[p.id,p.full_name||p.id]));
+  document.getElementById("adminResults").innerHTML=results.length?`
+  <table><thead><tr><th>Användare</th><th>Resultat</th><th>Nivå</th><th>Datum</th></tr></thead>
+  <tbody>${results.map(r=>`<tr><td>${names[r.user_id]||"Okänd"}</td><td>${r.score}/${r.total_questions} (${r.percentage}%)</td><td>${r.difficulty||"normal"}</td><td>${new Date(r.created_at).toLocaleDateString("sv-SE")}</td></tr>`).join("")}</tbody></table>`
+  :'<p>Inga slutprov sparade ännu.</p>';
+};
+
+document.querySelectorAll("nav button").forEach(b=>{
+  b.addEventListener("click",()=>{
+    if(b.dataset.page==="account") loadAccountSummary();
+  });
 });
 
 initAuth();
