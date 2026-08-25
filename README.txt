@@ -35,3 +35,9 @@ Version 8: svårighetsgrader (Grund/Normal/Svår), fler scenariobaserade frågor
 Version 9: balanserat 40-frågors slutprov och läget Träna mina svagheter med viktning från sparad provhistorik.
 
 Version 10: kollegavänlig APV 2.2 Träningsportal med neutral startsida och tydliga ingångar till utbildning, övning, slutprov och svaghetsträning.
+
+Version 11:
+- Supabase-inloggning och självregistrering
+- Kapitelprogress sparas centralt
+- Slutprov sparas centralt
+- Adminpanel med användare, kapitel och provresultat

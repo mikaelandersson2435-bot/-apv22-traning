@@ -51,12 +51,17 @@ table{width:100%;border-collapse:collapse} th,td{border-bottom:1px solid var(--l
 <meta name="apple-mobile-web-app-title" content="APV 2.2">
 <link rel="apple-touch-icon" href="icon-192.png">
 
+<script src="https://cdn.jsdelivr.net/npm/@supabase/supabase-js@2"></script>
 </head>
 <body>
 <header>
 <div class="wrap">
 <h1>APV 2.2 – Träningsportal</h1>
 <div class="subtitle">Teori • övningsfrågor • slutprov • personlig träning</div>
+<div id="accountBar" class="row hidden" style="margin-top:8px;justify-content:space-between">
+  <span id="accountName" class="small"></span>
+  <button id="logoutBtn" class="secondary" style="padding:7px 10px">Logga ut</button>
+</div>
 <nav>
 <button data-page="home" class="active">Start</button>
 <button data-page="theory">Utbildning</button>
@@ -65,11 +70,43 @@ table{width:100%;border-collapse:collapse} th,td{border-bottom:1px solid var(--l
 <button data-page="exam">Slutprov</button>
 <button data-page="history">Prohistorik</button>
 <button data-page="results">Resultat</button>
+<button data-page="admin" id="adminNav" class="hidden">Admin</button>
 </nav>
 </div>
 </header>
 
-<main class="wrap">
+
+<div id="authGate" style="min-height:100vh;display:flex;align-items:center;justify-content:center;padding:20px">
+  <div class="card" style="max-width:520px;width:100%">
+    <span class="badge">APV 2.2</span>
+    <h2>Logga in till träningsportalen</h2>
+    <p class="small">Dina kapitel och provresultat sparas på ditt eget konto.</p>
+
+    <div id="loginPanel">
+      <label class="small">E-post</label>
+      <input id="loginEmail" type="email" placeholder="namn@foretag.se" style="width:100%;padding:12px;border-radius:10px;border:1px solid var(--line);background:#0b1220;color:#fff;margin:6px 0 12px">
+      <label class="small">Lösenord</label>
+      <input id="loginPassword" type="password" placeholder="••••••••" style="width:100%;padding:12px;border-radius:10px;border:1px solid var(--line);background:#0b1220;color:#fff;margin:6px 0 12px">
+      <button class="primary" style="width:100%" onclick="loginUser()">Logga in</button>
+      <button class="secondary" style="width:100%;margin-top:8px" onclick="showSignup()">Skapa konto</button>
+    </div>
+
+    <div id="signupPanel" class="hidden">
+      <label class="small">Namn</label>
+      <input id="signupName" type="text" placeholder="Förnamn Efternamn" style="width:100%;padding:12px;border-radius:10px;border:1px solid var(--line);background:#0b1220;color:#fff;margin:6px 0 12px">
+      <label class="small">E-post</label>
+      <input id="signupEmail" type="email" placeholder="namn@foretag.se" style="width:100%;padding:12px;border-radius:10px;border:1px solid var(--line);background:#0b1220;color:#fff;margin:6px 0 12px">
+      <label class="small">Lösenord</label>
+      <input id="signupPassword" type="password" placeholder="Minst 6 tecken" style="width:100%;padding:12px;border-radius:10px;border:1px solid var(--line);background:#0b1220;color:#fff;margin:6px 0 12px">
+      <button class="primary" style="width:100%" onclick="signupUser()">Skapa konto</button>
+      <button class="secondary" style="width:100%;margin-top:8px" onclick="showLogin()">Tillbaka</button>
+    </div>
+
+    <div id="authMessage" class="feedback hidden"></div>
+  </div>
+</div>
+
+<main class="wrap hidden" id="appMain">
 
 <section id="home" class="page">
 <div class="card">
@@ -791,6 +828,18 @@ table{width:100%;border-collapse:collapse} th,td{border-bottom:1px solid var(--l
 </table>
 </div>
 </section>
+
+<section id="admin" class="page hidden">
+<div class="card">
+  <span class="badge">Admin</span>
+  <h2>Träningsöversikt</h2>
+  <p class="small">Här visas användare, kapitelprogress och sparade slutprov.</p>
+  <button class="secondary" onclick="loadAdminData()">Uppdatera data</button>
+</div>
+<div class="card"><h3>Användare</h3><div id="adminUsers"></div></div>
+<div class="card"><h3>Provresultat</h3><div id="adminResults"></div></div>
+</section>
+
 </main>
 
 <script>
@@ -1471,6 +1520,158 @@ document.getElementById("weakNext").onclick=()=>{
     showWeakQuestion();
   }
 }
+
+
+// ===== SUPABASE-INTEGRATION =====
+const SUPABASE_URL = "https://xqansuafjxrgkbxzrdim.supabase.co";
+const SUPABASE_PUBLISHABLE_KEY = "sb_publishable_igOzGesJHuzGdfh3u9AUcw_ThkXWGc6";
+const sb = supabase.createClient(SUPABASE_URL, SUPABASE_PUBLISHABLE_KEY);
+
+let currentUser=null, currentProfile=null;
+
+function authMsg(msg, ok=false){
+  const el=document.getElementById("authMessage");
+  el.textContent=msg; el.classList.remove("hidden");
+  el.style.borderColor=ok?"var(--good)":"var(--bad)";
+}
+function showSignup(){
+  document.getElementById("loginPanel").classList.add("hidden");
+  document.getElementById("signupPanel").classList.remove("hidden");
+  document.getElementById("authMessage").classList.add("hidden");
+}
+function showLogin(){
+  document.getElementById("signupPanel").classList.add("hidden");
+  document.getElementById("loginPanel").classList.remove("hidden");
+  document.getElementById("authMessage").classList.add("hidden");
+}
+async function loginUser(){
+  const email=document.getElementById("loginEmail").value.trim();
+  const password=document.getElementById("loginPassword").value;
+  const {data,error}=await sb.auth.signInWithPassword({email,password});
+  if(error) return authMsg("Inloggningen misslyckades: "+error.message);
+  await activateSession(data.user);
+}
+async function signupUser(){
+  const full_name=document.getElementById("signupName").value.trim();
+  const email=document.getElementById("signupEmail").value.trim();
+  const password=document.getElementById("signupPassword").value;
+  if(!full_name || !email || password.length<6) return authMsg("Fyll i namn, e-post och minst 6 tecken i lösenordet.");
+  const {data,error}=await sb.auth.signUp({email,password,options:{data:{full_name}}});
+  if(error) return authMsg("Kontot kunde inte skapas: "+error.message);
+  if(data.session) await activateSession(data.user);
+  else { showLogin(); authMsg("Kontot är skapat. Bekräfta e-post om Supabase kräver det.", true); }
+}
+async function logoutUser(){
+  await sb.auth.signOut();
+  currentUser=null; currentProfile=null;
+  document.getElementById("appMain").classList.add("hidden");
+  document.getElementById("authGate").style.display="flex";
+  document.getElementById("accountBar").classList.add("hidden");
+  document.getElementById("adminNav").classList.add("hidden");
+}
+document.getElementById("logoutBtn").onclick=logoutUser;
+
+async function activateSession(user){
+  currentUser=user;
+  const {data,error}=await sb.from("profiles").select("id,full_name,role").eq("id",user.id).single();
+  if(error) return authMsg("Profilen kunde inte läsas: "+error.message);
+  currentProfile=data;
+  document.getElementById("authGate").style.display="none";
+  document.getElementById("appMain").classList.remove("hidden");
+  document.getElementById("accountBar").classList.remove("hidden");
+  document.getElementById("accountName").textContent=(data.full_name||user.email)+(data.role==="admin"?" • Admin":"");
+  if(data.role==="admin") document.getElementById("adminNav").classList.remove("hidden");
+  await loadRemoteProgress();
+}
+async function initAuth(){
+  const {data:{session}}=await sb.auth.getSession();
+  if(session?.user) await activateSession(session.user);
+}
+sb.auth.onAuthStateChange(async(event,session)=>{
+  if(event==="SIGNED_IN" && session?.user && !currentUser) await activateSession(session.user);
+});
+
+async function saveChapterRemote(chapter){
+  if(!currentUser) return;
+  await sb.from("chapter_progress").upsert({
+    user_id:currentUser.id, chapter, completed:true,
+    completed_at:new Date().toISOString(), updated_at:new Date().toISOString()
+  },{onConflict:"user_id,chapter"});
+}
+async function loadRemoteProgress(){
+  if(!currentUser) return;
+  const {data}=await sb.from("chapter_progress").select("chapter,completed").eq("user_id",currentUser.id);
+  (data||[]).forEach(r=>{
+    if(r.completed){
+      localStorage.setItem(`apv22_lesson${r.chapter}`,"done");
+      const btn=document.getElementById(`markLesson${r.chapter}`);
+      if(btn){btn.textContent=`Kapitel ${r.chapter} genomfört ✓`;btn.classList.add("done");}
+    }
+  });
+}
+async function saveExamRemote(result){
+  if(!currentUser || !result) return;
+  await sb.from("exam_results").insert({
+    user_id:currentUser.id,
+    exam_type:"slutprov",
+    difficulty:result.difficulty||"normal",
+    score:result.right,
+    total_questions:result.total,
+    percentage:result.pct,
+    elapsed_seconds:result.elapsed,
+    category_results:result.byCat||{}
+  });
+}
+async function loadAdminData(){
+  if(currentProfile?.role!=="admin") return;
+  const [pr,er,cp]=await Promise.all([
+    sb.from("profiles").select("id,full_name,role,created_at").order("created_at"),
+    sb.from("exam_results").select("user_id,difficulty,score,total_questions,percentage,elapsed_seconds,created_at").order("created_at",{ascending:false}).limit(200),
+    sb.from("chapter_progress").select("user_id,chapter,completed")
+  ]);
+  if(pr.error||er.error||cp.error){
+    document.getElementById("adminUsers").innerHTML='<div class="warning">Kunde inte läsa admin-data.</div>';
+    return;
+  }
+  const profiles=pr.data||[], results=er.data||[], progress=cp.data||[];
+  const byUserResults={}, byUserProgress={};
+  results.forEach(r=>{(byUserResults[r.user_id] ||= []).push(r);});
+  progress.forEach(r=>{if(r.completed)(byUserProgress[r.user_id] ||= new Set()).add(r.chapter);});
+  document.getElementById("adminUsers").innerHTML=profiles.map(p=>{
+    const rr=byUserResults[p.id]||[];
+    const avg=rr.length?Math.round(rr.reduce((s,r)=>s+r.percentage,0)/rr.length):0;
+    const best=rr.length?Math.max(...rr.map(r=>r.percentage)):0;
+    return `<div class="module" style="margin:10px 0">
+      <div class="row" style="justify-content:space-between"><b>${p.full_name||"Namnlös användare"}</b><span class="badge">${p.role}</span></div>
+      <div class="small">Kapitel: ${byUserProgress[p.id]?.size||0}/8 • Slutprov: ${rr.length} • Snitt: ${rr.length?avg+" %":"–"} • Bäst: ${rr.length?best+" %":"–"}</div>
+    </div>`;
+  }).join("");
+  const names=Object.fromEntries(profiles.map(p=>[p.id,p.full_name||p.id]));
+  document.getElementById("adminResults").innerHTML=results.length?`
+  <table><thead><tr><th>Användare</th><th>Resultat</th><th>Nivå</th><th>Datum</th></tr></thead>
+  <tbody>${results.map(r=>`<tr><td>${names[r.user_id]||"Okänd"}</td><td>${r.score}/${r.total_questions} (${r.percentage}%)</td><td>${r.difficulty||"normal"}</td><td>${new Date(r.created_at).toLocaleDateString("sv-SE")}</td></tr>`).join("")}</tbody></table>`
+  :'<p>Inga slutprov sparade ännu.</p>';
+}
+
+for(let i=1;i<=8;i++){
+  const btn=document.getElementById(`markLesson${i}`);
+  if(btn) btn.addEventListener("click",()=>saveChapterRemote(i));
+}
+
+const _finishExam=finishExam;
+finishExam=function(){
+  _finishExam();
+  try{
+    const r=JSON.parse(localStorage.getItem("apv22_exam_last")||"null");
+    if(r) saveExamRemote(r);
+  }catch(e){console.error(e);}
+};
+
+document.querySelectorAll("nav button").forEach(b=>{
+  b.addEventListener("click",()=>{if(b.dataset.page==="admin") loadAdminData();});
+});
+
+initAuth();
 
 updateHome();startQuiz();
 </script>

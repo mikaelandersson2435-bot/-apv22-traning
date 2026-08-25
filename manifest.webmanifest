@@ -1,7 +1,7 @@
 {
   "name": "APV 2.2 – Träningsportal",
   "short_name": "APV 2.2",
-  "description": "Träningsportal för APV 2.2 med teori, övningsprov och slutprov.",
+  "description": "APV 2.2 träningsportal med användarkonton och adminöversikt.",
   "start_url": "./",
   "display": "standalone",
   "background_color": "#0b1220",
