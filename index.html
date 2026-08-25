@@ -1,0 +1,1487 @@
+<!doctype html>
+<html lang="sv">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<title>APV 2.2 – Träningsportal</title>
+<style>
+:root{
+  --bg:#0b1220;--panel:#111827;--panel2:#1f2937;--text:#f8fafc;--muted:#cbd5e1;
+  --accent:#f59e0b;--good:#22c55e;--bad:#ef4444;--line:#334155;--blue:#38bdf8
+}
+*{box-sizing:border-box}
+body{margin:0;font-family:system-ui,-apple-system,Segoe UI,Roboto,Arial,sans-serif;background:linear-gradient(180deg,#07101f,#111827);color:var(--text)}
+header{position:sticky;top:0;background:rgba(11,18,32,.96);backdrop-filter:blur(8px);border-bottom:1px solid var(--line);padding:14px;z-index:5}
+.wrap{max-width:1050px;margin:auto}
+h1{font-size:1.32rem;margin:0 0 3px}.subtitle{color:var(--muted);font-size:.9rem}
+nav{display:flex;gap:7px;flex-wrap:wrap;margin-top:11px}
+button{border:0;border-radius:10px;padding:10px 13px;font-weight:800;cursor:pointer}
+nav button{background:#1e293b;color:white} nav button.active{background:var(--accent);color:#111827}
+main{padding:16px 14px 80px}
+.card{background:rgba(17,24,39,.96);border:1px solid var(--line);border-radius:16px;padding:18px;margin:13px 0;box-shadow:0 10px 30px rgba(0,0,0,.18)}
+.grid{display:grid;grid-template-columns:repeat(auto-fit,minmax(235px,1fr));gap:12px}
+.module{background:var(--panel2);border:1px solid var(--line);border-radius:14px;padding:16px}
+.module h3{margin:0 0 8px}.small{color:var(--muted);font-size:.9rem}
+.badge{display:inline-block;background:#312e81;color:#e0e7ff;border-radius:999px;padding:4px 9px;font-size:.78rem;margin-bottom:8px}
+.progress{height:10px;background:#07101f;border-radius:999px;overflow:hidden;border:1px solid var(--line)}
+.progress>div{height:100%;background:var(--good);width:0}
+.question{font-size:1.08rem;font-weight:850;margin:14px 0}
+.answer{display:block;width:100%;text-align:left;background:#1e293b;color:#fff;border:1px solid var(--line);margin:8px 0}
+.answer:hover{border-color:var(--accent)} .answer.correct{background:#14532d;border-color:var(--good)}
+.answer.wrong{background:#7f1d1d;border-color:var(--bad)}
+.feedback{margin-top:14px;padding:12px;border-radius:10px;background:#07101f;border:1px solid var(--line);line-height:1.5}
+.primary{background:var(--accent);color:#111827}.secondary{background:#334155;color:#fff}
+.row{display:flex;gap:10px;align-items:center;flex-wrap:wrap}.score{font-size:2rem;font-weight:900}
+table{width:100%;border-collapse:collapse} th,td{border-bottom:1px solid var(--line);padding:10px;text-align:left}
+.hidden{display:none} ul{line-height:1.55}.notice{border-left:4px solid var(--accent);padding:11px 13px;background:#1e293b;border-radius:8px}
+.lesson h3{margin-top:0}.lesson h4{margin:18px 0 7px;color:#fde68a}.lesson p,.lesson li{line-height:1.6}
+.key{border-left:4px solid var(--blue);padding:10px 12px;background:#0c2233;border-radius:8px;margin:12px 0}
+.warning{border-left:4px solid var(--bad);padding:10px 12px;background:#321414;border-radius:8px;margin:12px 0}
+.tip{border-left:4px solid var(--good);padding:10px 12px;background:#0f2b1b;border-radius:8px;margin:12px 0}
+.chapter-btn{width:100%;margin-top:10px;background:#334155;color:white}
+.chapter-btn.done{background:#14532d}
+.stat{font-size:1.7rem;font-weight:900}
+@media(max-width:600px){header{padding:11px}main{padding:12px 10px 70px}.card{padding:15px}nav button{flex:1 1 auto}.answer{padding:13px}}
+</style>
+
+<link rel="manifest" href="manifest.webmanifest">
+<meta name="theme-color" content="#0b1220">
+<meta name="apple-mobile-web-app-capable" content="yes">
+<meta name="apple-mobile-web-app-status-bar-style" content="black-translucent">
+<meta name="apple-mobile-web-app-title" content="APV 2.2">
+<link rel="apple-touch-icon" href="icon-192.png">
+
+</head>
+<body>
+<header>
+<div class="wrap">
+<h1>APV 2.2 – Träningsportal</h1>
+<div class="subtitle">Teori • övningsfrågor • slutprov • personlig träning</div>
+<nav>
+<button data-page="home" class="active">Start</button>
+<button data-page="theory">Utbildning</button>
+<button data-page="quiz">Övningsprov</button>
+<button data-page="weak">Träna svagheter</button>
+<button data-page="exam">Slutprov</button>
+<button data-page="history">Prohistorik</button>
+<button data-page="results">Resultat</button>
+</nav>
+</div>
+</header>
+
+<main class="wrap">
+
+<section id="home" class="page">
+<div class="card">
+<span class="badge">APV 2.2</span>
+<h2>Välkommen till träningsportalen</h2>
+<p>Här kan du läsa teori, träna frågor och göra slutprov inför APV 2.2-certifiering.</p>
+<div class="grid">
+  <div class="module">
+    <h3>📘 Utbildning</h3>
+    <p class="small">8 kapitel med teori inom alla centrala kunskapsområden.</p>
+    <button class="primary" onclick="goToPage('theory')">Öppna utbildning</button>
+  </div>
+  <div class="module">
+    <h3>📝 Övningsprov</h3>
+    <p class="small">Träna med direkt facit och förklaringar.</p>
+    <button class="primary" onclick="goToPage('quiz')">Starta övning</button>
+  </div>
+  <div class="module">
+    <h3>🎯 Slutprov</h3>
+    <p class="small">40 frågor, tidtagning och resultat efter avslutat prov.</p>
+    <button class="primary" onclick="goToPage('exam')">Starta slutprov</button>
+  </div>
+  <div class="module">
+    <h3>📊 Mina svagheter</h3>
+    <p class="small">Personlig träning baserad på tidigare resultat.</p>
+    <button class="primary" onclick="goToPage('weak')">Träna svagheter</button>
+  </div>
+</div>
+<div class="tip" style="margin-top:14px"><b>Tips:</b> På mobil kan sidan även läggas till på hemskärmen för snabb åtkomst.</div>
+</div>
+
+<div class="card">
+<span class="badge">Träningsportal</span>
+<h2>APV Steg 2.2</h2>
+<p>Nu är Kapitel 1 och Kapitel 2 fullt utbyggda. Träningsportal innehåller fördjupning i arbetsmiljö, personlig skyddsutrustning, arbetsberedning, systematiskt arbetsmiljöarbete och risker från passerande trafik.</p>
+<div class="notice"><b>Obs:</b> Detta är ett fristående träningsverktyg. Frågorna är egna och inte kopior av Trafikverkets certifieringsprov.</div>
+</div>
+<div class="grid">
+<div class="module"><div class="stat">8</div><b>Kompetensområden</b><p class="small">Utgår från Trafikverkets APV 2.2-kompetensplan.</p></div>
+<div class="module"><div class="stat">178</div><b>Träningsfrågor</b><p class="small">Träningsportal fokuserar extra på utmärkningsansvar.</p></div>
+<div class="module"><div class="stat" id="homeBest">–</div><b>Senaste resultat</b><p class="small">Sparas lokalt på enheten.</p></div>
+</div>
+<div class="card">
+<div class="notice"><b>Viktigt:</b> Detta är ett fristående träningsverktyg. Frågorna är egenproducerade och är inte Trafikverkets officiella certifieringsfrågor.</div>
+</div>
+</section>
+
+<section id="theory" class="page hidden">
+<div class="card">
+<h2>Utbildning</h2>
+<p class="small">Klicka på ett kapitel. Alla 8 grundkapitel är nu fullt utbyggda. Nästa steg är realistiskt slutprov, svårighetsnivåer och mer avancerad resultatstatistik.</p>
+</div>
+<div id="chapterList" class="grid"></div>
+
+<div id="lesson1" class="card lesson hidden">
+<span class="badge">Kapitel 1</span>
+<h3>Rollen som utmärkningsansvarig</h3>
+
+<div class="key"><b>Kompetensmål:</b> Du ska förstå vem som ansvarar för att utmärkningen är korrekt, vad regelbunden tillsyn innebär och vilket ansvar rollen har vid arbetsplatskontroll.</div>
+
+<h4>1. Vad innebär rollen?</h4>
+<p>Den utmärkningsansvarige ska ha tillräcklig kompetens för att säkerställa att arbetsplatsens trafik- och skyddsanordningar används och hålls i ett korrekt och säkert skick. Rollen handlar inte bara om hur arbetsplatsen ser ut vid etablering, utan om att utmärkningen fungerar under hela arbetets gång.</p>
+
+<h4>2. Korrekt utmärkning</h4>
+<p>Utmärkningen ska motsvara de krav som gäller för arbetet och den faktiska situationen på platsen. Om arbetsområdet, trafikföringen eller riskbilden ändras behöver utmärkningen följas upp och vid behov anpassas.</p>
+<ul>
+<li>Vägmärken ska vara relevanta, synliga och korrekt placerade.</li>
+<li>Skyddsanordningar ska stå rätt och användas på avsett sätt.</li>
+<li>Trafikanter ska få tydlig och begriplig information i tillräckligt god tid.</li>
+<li>Överflödiga eller missvisande anordningar får inte lämnas kvar.</li>
+</ul>
+
+<h4>3. Regelbunden tillsyn</h4>
+<p>Trafikverkets kompetensplan pekar uttryckligen ut regelbunden tillsyn som ett viktigt kunskapsmål. Det innebär att arbetsplatsen måste kontrolleras återkommande och inte bara vid etableringen.</p>
+<div class="tip"><b>Tänk provmässigt:</b> Om en fråga beskriver att skyltar har flyttats, vält, blivit smutsiga eller inte längre stämmer med arbetsplatsens aktuella läge är svaret normalt att utmärkningen måste kontrolleras och rättas till.</div>
+
+<h4>4. Vad ska man kontrollera?</h4>
+<ul>
+<li>Att vägmärken står kvar på rätt plats och är synliga.</li>
+<li>Att trafikanordningar inte har flyttats eller skadats.</li>
+<li>Att skyddsanordningar fortfarande uppfyller sin funktion.</li>
+<li>Att trafikföringen stämmer med den planerade lösningen.</li>
+<li>Att ändrade förhållanden på arbetsplatsen har hanterats.</li>
+<li>Att tillfälliga anordningar tas bort när de inte längre behövs.</li>
+</ul>
+
+<h4>5. Arbetsplatskontroll</h4>
+<p>Kompetensplanen anger också kunskap om ansvar att delta på arbetsplatskontroll. Den utmärkningsansvarige behöver därför kunna redogöra för hur arbetsplatsen är utmärkt, vilka kontroller som görs och hur eventuella brister hanteras.</p>
+
+<h4>6. Ansvar betyder inte att man arbetar ensam</h4>
+<p>Flera roller kan vara inblandade i ett vägarbete. Den utmärkningsansvariges uppgift är dock särskilt kopplad till att trafik- och skyddsanordningar fungerar enligt kraven. Upptäcks en brist ska den inte ignoreras bara för att någon annan tidigare har placerat ut anordningen.</p>
+
+<div class="warning"><b>Vanlig fälla:</b> En godkänd TA-lösning innebär inte att tillsynen upphör. Verkliga förhållanden kan förändras och utmärkningen måste fortfarande kontrolleras.</div>
+
+<h4>7. Så kan du tänka på provet</h4>
+<p>När en fråga handlar om ansvar, välj det svar som prioriterar säkerhet, aktuell kontroll och att brister rättas. Var försiktig med svar som säger “alltid”, “aldrig” eller att ingen kontroll behövs efter etablering.</p>
+
+<button id="markLesson1" class="chapter-btn">Markera kapitel 1 som genomfört</button>
+
+</div>
+
+<div id="lesson2" class="card lesson hidden">
+<span class="badge">Kapitel 2</span>
+<h3>Arbetsmiljö och varselkläder</h3>
+
+<div class="key"><b>Kompetensmål:</b> Du ska förstå personlig skyddsutrustning, hur ett vägarbete utformas med hänsyn till både arbetare och trafikanter, huvudansvar i arbetsmiljöarbetet, systematiskt arbetsmiljöarbete, arbetsberedningar samt risker från passerande fordonstrafik.</div>
+
+<h4>1. Säkerheten gäller både arbetare och trafikanter</h4>
+<p>Ett vägarbete ska planeras och genomföras så att riskerna blir acceptabla både för dem som arbetar på platsen och för trafikanterna som passerar. APV 2.2 kräver därför mer än kunskap om skyltar: du behöver förstå samspelet mellan arbetsmiljö, trafikmiljö och utmärkning.</p>
+
+<h4>2. Huvudansvaret för arbetsmiljön</h4>
+<p>Arbetsgivaren har ett grundläggande ansvar för arbetsmiljön och ska bedriva ett systematiskt arbetsmiljöarbete. Det innebär bland annat att undersöka arbetsförhållandena, bedöma risker, genomföra åtgärder och följa upp att åtgärderna fungerar.</p>
+<div class="warning"><b>Provfälla:</b> En utmärkningsansvarig har viktiga säkerhetsuppgifter, men rollen innebär inte automatiskt att personen övertar arbetsgivarens övergripande arbetsmiljöansvar.</div>
+
+<h4>3. Systematiskt arbetsmiljöarbete – SAM</h4>
+<p>Systematiskt arbetsmiljöarbete är ett löpande arbetssätt. Det räcker inte att göra en riskbedömning en gång och sedan lägga undan den.</p>
+<ul>
+<li>Undersök vilka risker som finns.</li>
+<li>Bedöm hur allvarliga riskerna är.</li>
+<li>Åtgärda riskerna eller minska dem så långt det är möjligt.</li>
+<li>Följ upp att åtgärderna fungerar.</li>
+<li>Gör en ny bedömning när förhållanden ändras.</li>
+</ul>
+
+<h4>4. Arbetsberedning</h4>
+<p>En arbetsberedning används för att planera hur ett arbetsmoment ska genomföras på ett säkert sätt. Den bör fånga upp arbetsmomentets risker, förutsättningar, arbetsmetod, ansvar och vilka skyddsåtgärder som behövs.</p>
+<div class="tip"><b>Tänk praktiskt:</b> Om arbetet ändras – exempelvis ny trafikföring, annan maskin, flyttat arbetsområde eller nya risker – behöver arbetsberedningen och riskhanteringen fortfarande stämma med verkligheten.</div>
+
+<h4>5. Personlig skyddsutrustning</h4>
+<p>Personlig skyddsutrustning används när risker inte kan undanröjas på annat sätt. Vid arbete på väg är hög synbarhet en central säkerhetsfråga. Varselklädsel ska vara anpassad till arbetet och de krav som gäller i det aktuella kontraktet och arbetsmiljön.</p>
+<ul>
+<li>Klädseln ska bidra till att arbetstagaren upptäcks i god tid.</li>
+<li>Smuts, slitage eller övertäckning kan försämra synbarheten.</li>
+<li>Personlig skyddsutrustning ersätter inte behovet av trafiksäkra arbetsmetoder och skyddsanordningar.</li>
+</ul>
+
+<h4>6. Passerande fordonstrafik</h4>
+<p>Passerande trafik är en av de centrala riskerna vid vägarbete. Riskbedömningen behöver ta hänsyn till hur nära trafiken passerar, hastighet, trafikmängd, sikt, arbetsmoment, arbetsmaskiner och möjligheten att skilja arbetet från trafiken.</p>
+
+<div class="key"><b>Grundprincip:</b> Risker bör i första hand hanteras genom hur arbetet planeras och avskiljs. Personlig skyddsutrustning är ett viktigt komplement men är inte ett substitut för fungerande skydd och säker trafikföring.</div>
+
+<h4>7. När förhållandena förändras</h4>
+<p>Väder, mörker, köbildning, ändrad trafikmängd, flyttat arbetsområde eller en påkörd anordning kan förändra riskbilden. Då behöver säkerhetsåtgärderna bedömas på nytt och vid behov justeras.</p>
+
+<h4>8. Kontrollfrågor att ställa på arbetsplatsen</h4>
+<ul>
+<li>Kan trafiken se arbetet och anvisningarna i tillräckligt god tid?</li>
+<li>Är personalen synlig och rätt placerad?</li>
+<li>Finns en säker väg in och ut ur arbetsområdet?</li>
+<li>Finns risk att personal exponeras för passerande trafik?</li>
+<li>Har arbetsmetoden ändrats sedan arbetsberedningen gjordes?</li>
+<li>Behöver riskbedömningen eller skyddsåtgärderna uppdateras?</li>
+</ul>
+
+<h4>9. Så kan du tänka på provet</h4>
+<p>Prioritera svar som bygger på riskbedömning, förebyggande åtgärder, fungerande skydd och uppföljning. Var skeptisk till svar som säger att varselkläder ensamma gör ett farligt arbetsmoment säkert eller att en gammal riskbedömning alltid gäller oavsett förändringar.</p>
+
+<button id="markLesson2" class="chapter-btn">Markera kapitel 2 som genomfört</button>
+
+</div>
+
+<div id="lesson3" class="card lesson hidden">
+<span class="badge">Kapitel 3</span>
+<h3>Vägen, väglagen och risker</h3>
+
+<div class="key"><b>Kompetensmål:</b> Trafikverkets kompetensplan för APV 2.2 tar särskilt upp kunskap om rätten att i vissa situationer avvika från trafikregler vid väghållning, vägens olika delar samt riskbedömningar.</div>
+
+<h4>1. Vad menas med väghållning?</h4>
+<p>Väghållning omfattar att bygga och hålla vägar i ett skick som gör dem framkomliga och säkra. Vid arbete på väg möts flera regelområden: väglagstiftning, trafikregler, arbetsmiljökrav och Trafikverkets kontraktskrav.</p>
+
+<h4>2. Vägens olika delar</h4>
+<p>För att förstå placering av arbete, fordon och trafikanordningar behöver du känna igen vägens olika delar och deras funktion. Exakta benämningar kan variera beroende på vägtyp, men centrala delar är bland annat körbana, körfält, vägren, mittremsa, sidoområde samt vägbanans och vägområdets gränser.</p>
+<ul>
+<li><b>Körbana:</b> den del av vägen som normalt används för fordonstrafik.</li>
+<li><b>Körfält:</b> längsgående del av körbanan avsedd för trafik i en fordonsrad.</li>
+<li><b>Vägren:</b> del av vägen utanför körbanan, med särskilda funktioner och regler.</li>
+<li><b>Mittremsa:</b> område som skiljer körbanor eller trafikströmmar åt på vissa vägar.</li>
+<li><b>Sidoområde:</b> området vid sidan av själva körbanan där exempelvis slänter, diken eller utrustning kan finnas.</li>
+</ul>
+
+<div class="tip"><b>Provstrategi:</b> Frågor om vägens delar testar ofta om du förstår var ett fordon, en skyddsanordning eller en trafikanordning faktiskt står i förhållande till trafiken.</div>
+
+<h4>3. Trafikregler vid väghållningsarbete</h4>
+<p>Det finns särskilda bestämmelser för väghållningsarbete. I vissa situationer kan fordon som används i väghållningsarbete ha rätt att avvika från vissa trafikregler när det behövs för att arbetsuppgiften ska kunna utföras.</p>
+<div class="warning"><b>Viktigt:</b> En möjlighet att avvika från en trafikregel är inte ett generellt undantag från säkerhetskrav. Arbetet ska fortfarande utföras med särskild försiktighet och utan att skapa onödiga risker.</div>
+
+<h4>4. “Får” är inte samma sak som “bör”</h4>
+<p>På prov kan det komma alternativ som låter som att ett undantag ger fri rätt att köra eller placera fordon hur som helst. Det är fel tänkt. Behovet av arbetsmomentet, riskerna, sikten och trafiksituationen måste fortfarande vägas in.</p>
+
+<h4>5. Riskbedömning</h4>
+<p>Riskbedömningen ska spegla verkliga förhållanden. Vid arbete på väg kan risker bland annat komma från passerande trafik, arbetsfordon, dålig sikt, trånga utrymmen, höga hastigheter, köbildning, väder och förändrade arbetsmoment.</p>
+<ul>
+<li>Identifiera vad som kan gå fel.</li>
+<li>Bedöm sannolikhet och konsekvens.</li>
+<li>Bestäm hur risken ska elimineras eller minskas.</li>
+<li>Kontrollera att åtgärden fungerar.</li>
+<li>Uppdatera bedömningen när förutsättningarna ändras.</li>
+</ul>
+
+<h4>6. Praktiska exempel</h4>
+<p><b>Exempel A:</b> Ett arbetsfordon måste tillfälligt arbeta nära eller i ett körfält. Då måste både trafikreglerna för väghållningsarbete och riskerna från passerande trafik vägas in.</p>
+<p><b>Exempel B:</b> Sikten försämras kraftigt av dimma. Då kan samma arbetsupplägg som var acceptabelt i klart väder behöva ändras.</p>
+<p><b>Exempel C:</b> Arbetsområdet flyttas från vägren in mot körbanan. Riskbedömningen behöver då ses över eftersom exponeringen mot trafik förändras.</p>
+
+<h4>7. Väglagen och vägarnas funktion</h4>
+<p>Väglagen reglerar bland annat frågor om allmän väg och väghållning. För APV 2.2 är poängen inte att kunna hela lagen utantill, utan att förstå vad väghållning innebär och att arbete på statlig väg sker inom ett juridiskt och tekniskt regelverk.</p>
+
+<h4>8. Vanliga provfällor</h4>
+<ul>
+<li>Att tro att ett väghållningsfordon alltid får bryta mot alla trafikregler.</li>
+<li>Att tro att riskbedömning endast görs före första arbetsdagen.</li>
+<li>Att blanda ihop körfält, körbana och vägren.</li>
+<li>Att bortse från trafiksituationen bara för att arbetet är kortvarigt.</li>
+<li>Att tolka ett regelundantag som att arbetsmiljökraven inte längre gäller.</li>
+</ul>
+
+<div class="key"><b>Minnesregel:</b> Undantag från trafikregler kan möjliggöra själva väghållningsarbetet, men säkerhetsansvaret följer med hela tiden.</div>
+
+<button id="markLesson3" class="chapter-btn">Markera kapitel 3 som genomfört</button>
+
+</div>
+
+<div id="lesson4" class="card lesson hidden">
+<span class="badge">Kapitel 4</span>
+<h3>Generellt om vägarbeten</h3>
+
+<div class="key"><b>Kompetensmål:</b> Trafikverkets kompetensplan anger att du ska ha kunskap om olika typer av vägarbeten och kunna identifiera när ett arbetssätt går emot de krav som gäller.</div>
+
+<h4>1. Olika typer av vägarbeten</h4>
+<p>Vägarbeten kan bedrivas på olika sätt beroende på hur arbetsplatsen rör sig, hur länge den ligger på samma plats och hur trafiken påverkas. För APV 2.2 är det viktigt att förstå att val av utmärkning, skydd och kontroll påverkas av arbetstypen.</p>
+
+<ul>
+<li><b>Fast arbete:</b> arbetsplatsen är etablerad på en bestämd plats under en längre period.</li>
+<li><b>Intermittent arbete:</b> arbetet flyttar sig stegvis och stannar kortare perioder på varje plats.</li>
+<li><b>Rörligt arbete:</b> arbetet bedrivs medan fordon eller arbetsenhet förflyttar sig kontinuerligt eller nästan kontinuerligt.</li>
+<li><b>Kortvarigt arbete:</b> arbete med begränsad varaktighet, men som fortfarande kräver korrekt riskhantering och trafiksäkerhet.</li>
+</ul>
+
+<div class="warning"><b>Provfälla:</b> Kortvarigt betyder inte riskfritt. Om personal eller fordon exponeras för trafik måste riskerna fortfarande hanteras.</div>
+
+<h4>2. Arbetstypen påverkar skyddet</h4>
+<p>En lösning som fungerar för ett fast arbete kan vara olämplig för ett intermittent eller rörligt arbete. Utmärkning, skyddsfordon, placering och kontroll måste anpassas till hur arbetet faktiskt genomförs.</p>
+
+<h4>3. Etablering</h4>
+<p>Etablering är det skede då arbetsplatsen byggs upp. Det är ett riskfyllt moment eftersom personal kan behöva arbeta nära passerande trafik innan alla skydd är på plats.</p>
+<ul>
+<li>Planera ordningsföljden.</li>
+<li>Minimera tiden då personal exponeras för trafik.</li>
+<li>Sätt ut förvarning och skydd i en säker ordning.</li>
+<li>Kontrollera att hela lösningen fungerar innan ordinarie arbete startar.</li>
+</ul>
+
+<h4>4. Avetablering</h4>
+<p>När arbetet avslutas ska trafikanordningar och skydd tas bort i en genomtänkt ordning. Under avetableringen får man inte skapa nya risker eller lämna kvar missvisande vägmärken.</p>
+<div class="tip"><b>Grundprincip:</b> Trafikanten ska aldrig få information som inte längre stämmer med verkligheten.</div>
+
+<h4>5. När arbetet ändras</h4>
+<p>Om arbetsmetod, arbetsområde, trafikföring eller skydd ändras behöver utmärkning och riskbedömning fortfarande stämma med den nya situationen. En tidigare korrekt lösning kan bli fel om verkligheten förändras.</p>
+
+<h4>6. Att göra något som går emot krav</h4>
+<p>Ett centralt APV 2.2-mål är att kunna känna igen när en lösning eller ett beteende går emot gällande krav. Det kan handla om exempelvis felplacerade anordningar, saknade skydd, missvisande vägmärken eller att en arbetsmetod avviker från beslutad lösning utan att riskerna har hanterats.</p>
+
+<div class="key"><b>Viktig princip:</b> Om verkligheten inte stämmer med gällande krav eller beslutad säker lösning ska bristen inte normaliseras bara för att “det alltid har gjorts så”.</div>
+
+<h4>7. TA-plan och verklig arbetsplats</h4>
+<p>En TA-plan eller ritning är ett viktigt styrande underlag, men den verkliga arbetsplatsen måste fortfarande kontrolleras. Utmärkningsansvarig ska kunna kvalitetssäkra och tillämpa plan och ritningar i praktiken.</p>
+
+<h4>8. Vanliga avvikelser att upptäcka</h4>
+<ul>
+<li>Vägmärken står på fel plats eller är svåra att se.</li>
+<li>Arbetsområdet har flyttats utan att trafikanordningarna följt med.</li>
+<li>Skyddsanordning saknas eller används fel.</li>
+<li>Vägmärken som inte längre gäller står kvar.</li>
+<li>Trafikdirigering utförs på annat sätt än avsett.</li>
+<li>Fordon eller arbetsmaskiner står så att de skapar onödiga risker.</li>
+</ul>
+
+<h4>9. Situation: plan och verklighet skiljer sig</h4>
+<p>Om en lösning inte kan genomföras enligt plan på grund av verkliga förhållanden ska man inte improvisera bort säkerhetskraven. Avvikelsen behöver hanteras enligt de rutiner och ansvar som gäller i projektet.</p>
+
+<h4>10. Så kan du tänka på provet</h4>
+<p>När två svar verkar möjliga, välj normalt det som innebär att arbetstypen identifieras korrekt, riskerna bedöms och utmärkning/skydd anpassas till verkligheten. Svar som säger att en kort arbetstid eller erfaren förare gör kraven onödiga är typiska felalternativ.</p>
+
+<button id="markLesson4" class="chapter-btn">Markera kapitel 4 som genomfört</button>
+
+</div>
+
+<div id="lesson5" class="card lesson hidden">
+<span class="badge">Kapitel 5</span>
+<h3>Trafikdirigering</h3>
+
+<div class="key"><b>Kompetensmål:</b> APV 2.2 omfattar kunskap om trafikdirigering med vakt, lots, signaler och vägmärken. Rollen ska också säkerställa att vakter och lotsar arbetar enligt gällande krav.</div>
+
+<h4>1. Varför trafikdirigering används</h4>
+<p>Trafikdirigering används när trafiken behöver styras genom eller förbi ett vägarbete på ett kontrollerat sätt. Syftet är att minska konflikter mellan trafikströmmar och samtidigt skapa en säker arbetsmiljö.</p>
+
+<h4>2. Metoder för trafikdirigering</h4>
+<ul>
+<li><b>Vakt:</b> en person dirigerar trafiken enligt de regler och instruktioner som gäller.</li>
+<li><b>Lots:</b> ett lotsfordon leder trafik genom arbetsområdet eller den reglerade sträckan.</li>
+<li><b>Trafiksignal:</b> signalreglering kan användas när lösningen är lämplig för platsen.</li>
+<li><b>Vägmärken och andra trafikanordningar:</b> används för att styra och informera trafiken före och genom arbetsområdet.</li>
+</ul>
+
+<h4>3. Vaktens arbetsmiljö</h4>
+<p>Vakter är särskilt utsatta eftersom de ofta arbetar nära passerande fordon och samtidigt måste vara fullt uppmärksamma på trafikflödet. Positioneringsplatsen ska ge god synbarhet, tillräcklig sikt och möjlighet att agera säkert.</p>
+
+<div class="warning"><b>Viktigt:</b> Vaktens säkerhet får inte bygga enbart på varselkläder. Placering, trafikföring, sikt och övriga skyddsåtgärder måste fungera tillsammans.</div>
+
+<h4>4. Kommunikation</h4>
+<p>När flera vakter, lotsar eller signaler används behöver trafikflödet samordnas. Otydlig kommunikation kan leda till att trafik släpps från båda håll samtidigt eller att ett lotsfordon hamnar i konflikt med mötande trafik.</p>
+
+<h4>5. Lotsning</h4>
+<p>Lotsen ska leda trafiken på ett förutsägbart och säkert sätt. Förare som följer lotsen ska inte behöva gissa vägval eller hastighet. Den reglerade sträckan och trafiken från motsatt riktning måste vara samordnade.</p>
+
+<h4>6. Kompetens och ansvar</h4>
+<p>För kontrakt där version 2 av Trafikverkets kompetensregelverk gäller finns APV 1.4 för vakt och lots. I varje aktivt arbetande vaktlag ska det finnas minst en person certifierad enligt APV 2.2 som har uppgiften att säkerställa att vakter och lotsar arbetar enligt gällande krav och att god trafiksäkerhet uppnås.</p>
+
+<div class="key"><b>Kom ihåg:</b> APV 2.2 handlar alltså inte bara om att själv kunna trafikdirigering utan också om att kunna kvalitetssäkra hur vakt och lots arbetar.</div>
+
+<h4>7. Prioriterade fordon och oväntade händelser</h4>
+<p>Vakt och lots behöver kunna hantera situationer som prioriterade fordon, otillåten genomkörning eller andra riskfyllda händelser. Det viktiga är att undvika improvisation som skapar nya konflikter i trafikflödet.</p>
+
+<h4>8. Signalreglering</h4>
+<p>En signalreglerad lösning måste vara anpassad till trafikflöde, sikt, sträckans längd och arbetsplatsens utformning. Om förhållandena förändras kan regleringen behöva följas upp eller ändras.</p>
+
+<h4>9. Vanliga risker</h4>
+<ul>
+<li>Vakten står där trafikanter upptäcker personen för sent.</li>
+<li>Två trafikströmmar släpps in samtidigt i ett enkelriktat passageavsnitt.</li>
+<li>Kommunikationen mellan vakter bryts.</li>
+<li>Lotsfordonet är otydligt eller tappar kontakt med trafikgruppen.</li>
+<li>Obehörig trafik kör förbi stoppunkten.</li>
+<li>Köbildning når bakåt till en plats där förvarningen inte längre fungerar tillräckligt.</li>
+</ul>
+
+<h4>10. Om kommunikationen bryts</h4>
+<p>Om vakterna inte längre kan säkerställa att motsatt trafik är stoppad ska de inte gissa. Trafikflödet måste åter bli kontrollerat innan trafik släpps vidare.</p>
+
+<div class="tip"><b>Provstrategi:</b> Vid scenarier om trafikdirigering är det säkraste svaret oftast det som återställer kontroll, kommunikation och tydlig trafikföring innan trafiken släpps.</div>
+
+<h4>11. Kontroller för APV 2.2</h4>
+<ul>
+<li>Har vakt/lots rätt kompetens för uppgiften?</li>
+<li>Är vaktens position säker och tydligt synlig?</li>
+<li>Fungerar kommunikationen mellan regleringspunkterna?</li>
+<li>Är väntetid och trafikflöde rimliga för den aktuella lösningen?</li>
+<li>Finns en plan för utryckningsfordon och oväntade händelser?</li>
+<li>Arbetar vaktlaget enligt arbetsberedning och gällande krav?</li>
+</ul>
+
+<button id="markLesson5" class="chapter-btn">Markera kapitel 5 som genomfört</button>
+
+</div>
+
+<div id="lesson6" class="card lesson hidden">
+<span class="badge">Kapitel 6</span>
+<h3>Fordon</h3>
+
+<div class="key"><b>Kompetensmål:</b> Trafikverkets APV 2.2-kompetensplan anger kunskap om användning av varningslyktor, storlek och montering av X2, fordonsutmärkning samt krav på fordon.</div>
+
+<h4>1. Väghållningsfordon som del av arbetsplatsen</h4>
+<p>Ett väghållningsfordon är inte bara ett transportmedel. När det används i ett vägarbete blir fordonets placering, synbarhet och utmärkning en del av arbetsplatsens säkerhetslösning.</p>
+
+<h4>2. Varningslyktor</h4>
+<p>Varningslyktor används för att uppmärksamma trafikanter på fordon som kan innebära en särskild risk eller som används i arbete på väg. De ska användas enligt gällande regler och får inte användas på ett sätt som skapar missförstånd.</p>
+
+<div class="warning"><b>Provfälla:</b> Varningslykta betyder inte att fordonet automatiskt har företräde eller att andra regler upphör att gälla.</div>
+
+<h4>3. Synbarhet</h4>
+<p>Fordonets utmärkning ska bidra till att trafikanterna kan upptäcka och förstå fordonets funktion i god tid. Smuts, skador eller felaktigt placerad utrustning kan försämra synbarheten.</p>
+
+<h4>4. X2 – markeringsskärm för hinder</h4>
+<p>X2 används för att markera hinder eller avstängning och är ett centralt kunskapsområde i APV 2.2. Trafikverkets kompetensplan kräver att den utmärkningsansvarige känner till storlek och montering.</p>
+
+<div class="key"><b>Tänk praktiskt:</b> Om X2 är felplacerad, delvis dold eller monterad så att den inte ger rätt budskap kan hela trafikföringen bli otydlig.</div>
+
+<h4>5. Fordonsutmärkning</h4>
+<p>Fordonsutmärkning ska vara anpassad till fordonets roll och det arbete som utförs. Den utmärkningsansvarige behöver kunna bedöma om fordonet är rätt utmärkt för situationen och om utmärkningen är synlig.</p>
+
+<h4>6. Krav på fordon</h4>
+<p>Trafikverkets kompetensplan hänvisar även till tillåtelsebeslut och monteringsanvisningar för skyddsprodukter. Det innebär att fordon och monterad skyddsutrustning måste användas på det sätt som produkten och regelverket medger.</p>
+
+<h4>7. Kombinationen fordon + skyddsprodukt</h4>
+<p>En skyddsprodukt som TMA eller annan energiupptagande utrustning fungerar bara som avsett om den är monterad och används enligt godkända anvisningar. Fel fordon, fel infästning eller felaktig användning kan försämra skyddsfunktionen.</p>
+
+<h4>8. Placering av fordon</h4>
+<p>Även ett korrekt utmärkt fordon kan bli en risk om det placeras olämpligt. Sikt, trafikens riktning, arbetsområdets läge och behovet av skydd måste vägas in.</p>
+
+<h4>9. Kontroll före arbete</h4>
+<ul>
+<li>Fungerar varningslyktorna?</li>
+<li>Är X2 och annan fordonsutmärkning hel, ren och synlig?</li>
+<li>Är utrustningen korrekt monterad?</li>
+<li>Passar fordonets placering arbetsmomentet?</li>
+<li>Fungerar skyddsprodukten enligt tillverkarens och Trafikverkets krav?</li>
+<li>Finns skador efter tidigare påkörning eller annan påverkan?</li>
+</ul>
+
+<h4>10. Under arbetets gång</h4>
+<p>Kontrollen slutar inte när fordonet har ställts ut. Om fordonet flyttas, arbetsområdet förändras eller trafiken ändras måste placering och utmärkning fortfarande fungera.</p>
+
+<div class="tip"><b>Provstrategi:</b> När en fråga handlar om fordon, välj svar som bygger på rätt användning, korrekt montering, tydlig utmärkning och faktisk funktion – inte bara att utrustningen “finns på fordonet”.</div>
+
+<h4>11. Vanliga fel</h4>
+<ul>
+<li>Varningslykta används men övrig utmärkning är bristfällig.</li>
+<li>X2 är skymd av utrustning eller last.</li>
+<li>Fordonet placeras så att trafikanter får dålig reaktionstid.</li>
+<li>Skyddsprodukt används utan att monteringsanvisningen följs.</li>
+<li>Skadad eller smutsig utmärkning lämnas utan åtgärd.</li>
+</ul>
+
+<button id="markLesson6" class="chapter-btn">Markera kapitel 6 som genomfört</button>
+
+</div>
+
+<div id="lesson7" class="card lesson hidden">
+<span class="badge">Kapitel 7</span>
+<h3>Skyddsanordningar</h3>
+
+<div class="key"><b>Kompetensmål:</b> APV 2.2 omfattar kunskap om när och hur skyddsanordningar används, barriärers kapacitetsklasser samt buffertzoner och skyddszoner.</div>
+
+<h4>1. Vad är en skyddsanordning?</h4>
+<p>Skyddsanordningar används för att minska konsekvenserna om ett fordon lämnar sin normala färdväg eller når arbetsområdet. De kan skydda både trafikanter och personal och är en central del av riskhanteringen vid vägarbete.</p>
+
+<h4>2. Skyddets funktion måste passa risken</h4>
+<p>Det räcker inte att “ha en barriär”. Skyddsanordningen måste vara vald och placerad för den aktuella trafikmiljön, hastigheten, arbetsplatsen och den risk som ska hanteras.</p>
+
+<div class="warning"><b>Provfälla:</b> Ett skydd som står på plats men används utanför sitt godkända användningsområde kan ge en falsk trygghet.</div>
+
+<h4>3. Barriärer</h4>
+<p>Barriärer används för att separera trafik från arbetsområde eller andra risker. Deras egenskaper skiljer sig åt, bland annat genom hur mycket de kan förskjutas vid en påkörning och vilken kapacitet de är provade för.</p>
+
+<h4>4. Kapacitetsklasser</h4>
+<p>Trafikverkets kompetensplan kräver kunskap om barriärers kapacitetsklasser. I praktiken innebär det att man behöver förstå att olika barriärsystem är provade och godkända för olika belastningar och användningsförhållanden.</p>
+
+<div class="key"><b>Princip:</b> Högre risk eller större trafikbelastning kan kräva ett skyddssystem med andra prestanda. Valet ska följa det regelverk och de produktkrav som gäller för arbetsplatsen.</div>
+
+<h4>5. Arbetsbredd och rörelse vid påkörning</h4>
+<p>Många barriärer behöver utrymme för att deformeras eller förskjutas vid en påkörning. Om arbetsområdet ligger för nära barriären kan skyddet förlora sin avsedda funktion eller i värsta fall överföra risk till personalen bakom skyddet.</p>
+
+<h4>6. Buffertzon</h4>
+<p>En buffertzon är ett område som lämnas fritt för att skapa säkerhetsmarginal mellan skydd och arbetsområde eller riskobjekt. Zonen ska hållas fri från personal, material och utrustning som kan försämra skyddets funktion.</p>
+
+<h4>7. Skyddszon</h4>
+<p>Skyddszonen är den yta som krävs för att skyddsanordningen ska kunna fungera som avsett vid en påkörning. Exakt utformning beror på skyddstyp och den tekniska lösningen.</p>
+
+<div class="tip"><b>Tänk provmässigt:</b> Om en fråga beskriver att material, maskiner eller personal står inne i den yta som skyddet behöver för att fungera är det normalt en allvarlig brist.</div>
+
+<h4>8. Energiupptagande skydd</h4>
+<p>Energiupptagande skydd, exempelvis TMA på skyddsfordon, är konstruerade för att ta upp energi vid en påkörning och minska konsekvensen. De måste användas enligt godkänd montering, placering och arbetsmetod.</p>
+
+<h4>9. Efter påkörning</h4>
+<p>Efter en påkörning ska skyddsanordningen kontrolleras. Även om den ser relativt hel ut kan delar vara deformerade, förskjutna eller ha förlorat sin godkända funktion.</p>
+
+<h4>10. Barriärens början och slut</h4>
+<p>Övergångar, avslut och ändpunkter i barriärsystem behöver hanteras enligt systemets godkända lösning. En felaktig avslutning kan skapa en ny risk i stället för att eliminera en.</p>
+
+<h4>11. Placering i förhållande till arbetsområdet</h4>
+<p>Skyddet ska vara placerat så att arbetsområdet faktiskt ligger inom det område som skyddas. Om personal arbetar framför eller utanför skyddet måste den exponeringen bedömas separat.</p>
+
+<h4>12. Kontrollpunkter för utmärkningsansvarig</h4>
+<ul>
+<li>Är rätt typ av skydd vald för risken?</li>
+<li>Är skyddet korrekt monterat och placerat?</li>
+<li>Finns tillräckligt utrymme för barriärens rörelse eller arbetsbredd?</li>
+<li>Är buffert- och skyddszoner fria?</li>
+<li>Finns skador, förskjutningar eller påkörningsspår?</li>
+<li>Står personal eller utrustning på fel sida om skyddet?</li>
+<li>Är övergångar och avslut korrekt utförda?</li>
+</ul>
+
+<h4>13. Vanliga fel</h4>
+<ul>
+<li>Material lagras i buffertzonen.</li>
+<li>Barriär står för nära arbetsområdet för att kunna röra sig som avsett.</li>
+<li>En påkörd barriär används vidare utan kontroll.</li>
+<li>Skyddsfordon står fel i förhållande till arbetsområdet.</li>
+<li>Skyddsanordningen används på annat sätt än produktens godkännande medger.</li>
+</ul>
+
+<div class="key"><b>Minnesregel:</b> Skyddets funktion avgörs av typ + montering + placering + fri zon + skick. Om en av dessa delar brister kan hela skyddseffekten försämras.</div>
+
+<button id="markLesson7" class="chapter-btn">Markera kapitel 7 som genomfört</button>
+
+</div>
+
+<div id="lesson8" class="card lesson hidden">
+<span class="badge">Kapitel 8</span>
+<h3>Trafikanordningar</h3>
+
+<div class="key"><b>Kompetensmål:</b> APV 2.2 omfattar kunskap om placering och betydelse av vägmärken, tillfälliga vägmarkeringar, A20, X-märken, X5, förvarning, upprepning, vilka vägmärken som kräver föreskrift samt rinnande ljus.</div>
+
+<h4>1. Trafikanordningarnas uppgift</h4>
+<p>Trafikanordningar ska ge trafikanterna tydlig, relevant och begriplig information i rätt tid. Vid vägarbete blir deras placering och kombination avgörande för att trafiken ska kunna reagera innan riskområdet nås.</p>
+
+<h4>2. Placering av vägmärken</h4>
+<p>Ett korrekt vägmärke kan ändå fungera dåligt om det står för sent, för långt från körbanan, är skymt eller inte är riktat mot den trafik som ska se det.</p>
+
+<div class="warning"><b>Provfälla:</b> Att ett vägmärke “finns på plats” betyder inte automatiskt att utmärkningen är korrekt.</div>
+
+<h4>3. A20 – Varning för vägarbete</h4>
+<p>A20 är det centrala varningsmärket för vägarbete och pekas särskilt ut i APV 2.2-kompetensplanen. Märket ska användas så att trafikanter får tydlig förvarning om att vägarbete påverkar vägen eller trafiken.</p>
+
+<h4>4. Förvarning</h4>
+<p>Förvarning ska ge trafikanten tillräcklig tid att förstå vad som väntar och anpassa hastighet, placering eller körsätt. Förvarningen måste anpassas till hastighet, sikt, vägtyp och arbetsplatsens utformning.</p>
+
+<h4>5. Upprepning</h4>
+<p>Vissa märken kan behöva upprepas för att budskapet ska förbli tydligt längs en längre arbetssträcka eller när trafik ansluter från andra håll. Upprepning ska ha en funktion och inte användas slentrianmässigt.</p>
+
+<h4>6. X-märken</h4>
+<p>X-märken används som särskilda anordningar för anvisning av trafik. Den utmärkningsansvarige behöver förstå deras betydelse och hur de används tillsammans med övrig utmärkning.</p>
+
+<h4>7. X5 – Gul ljuspil eller ljuspilar</h4>
+<p>X5 används för att visa riktning åt trafiken. Den måste vara tydlig, korrekt orienterad och användas så att den inte kan misstolkas.</p>
+
+<div class="key"><b>Princip:</b> Trafikanten ska kunna se budskapet, förstå riktningen och hinna agera innan konfliktpunkten.</div>
+
+<h4>8. Tillfälliga vägmarkeringar</h4>
+<p>Vid ändrad trafikföring kan tillfälliga vägmarkeringar användas. Om både gamla och tillfälliga markeringar är synliga måste lösningen vara sådan att trafikanterna inte får motstridiga budskap.</p>
+
+<h4>9. Vägmärken som kräver föreskrift</h4>
+<p>Vissa trafikreglerande vägmärken får inte sättas upp enbart som praktisk utmärkning utan bygger på ett beslut eller en föreskrift. APV 2.2 kräver att den utmärkningsansvarige känner till principen och kan skilja mellan varnings-/anvisningsutmärkning och reglering som kräver formellt stöd.</p>
+
+<h4>10. Missvisande eller överflödiga märken</h4>
+<p>Ett vägmärke som inte längre gäller ska tas bort, täckas eller hanteras enligt gällande rutiner. Missvisande utmärkning kan skapa lika stor risk som saknad utmärkning.</p>
+
+<h4>11. Rinnande ljus</h4>
+<p>Rinnande ljus kan användas för att förstärka en trafikledande funktion och göra riktningen tydligare. Ljuset måste användas i rätt situation och i rätt riktning.</p>
+
+<h4>12. Sikt och läsbarhet</h4>
+<ul>
+<li>Är märket vänt mot rätt trafikström?</li>
+<li>Är det skymt av vegetation, fordon eller utrustning?</li>
+<li>Är det rent och läsbart?</li>
+<li>Finns tillräcklig upptäckts- och reaktionstid?</li>
+<li>Kan flera märken konkurrera om uppmärksamheten?</li>
+</ul>
+
+<h4>13. Kombinationer av trafikanordningar</h4>
+<p>En korrekt lösning bygger ofta på en kedja: förvarning → reglering/anvisning → ledning genom arbetsområdet → avslut. Varje del ska stödja nästa och ge ett konsekvent budskap.</p>
+
+<h4>14. När trafikföringen ändras</h4>
+<p>Om körfält flyttas, ett körfält stängs eller arbetsområdet flyttas måste både vägmärken, X-märken, ljus och vägmarkeringar fortfarande stämma med den faktiska trafikföringen.</p>
+
+<h4>15. Kontroll av tillfälliga vägmarkeringar</h4>
+<p>Tillfälliga markeringar måste vara tydliga och inte konkurrera med gamla markeringar på ett sätt som skapar osäkerhet. Om trafikanter kan tolka två olika körlinjer är det en tydlig risk.</p>
+
+<h4>16. Vanliga fel</h4>
+<ul>
+<li>A20 står för sent för att ge fungerande förvarning.</li>
+<li>X5 visar fel riktning efter att arbetsområdet flyttats.</li>
+<li>Gamla vägmarkeringar är fortfarande så tydliga att trafiken kan välja fel spår.</li>
+<li>Ett vägmärke står kvar trots att regeln inte längre gäller.</li>
+<li>Föreskriftskrävande reglering används utan rätt beslut.</li>
+<li>Rinnande ljus används i en riktning som kan misstolkas.</li>
+</ul>
+
+<h4>17. Så kan du tänka på provet</h4>
+<p>Fråga dig alltid: Vad ser trafikanten först? Vad betyder det? Är budskapet entydigt? Finns tillräcklig tid att reagera? Stämmer anordningarna med den verkliga trafikföringen?</p>
+
+<div class="tip"><b>Minnesregel:</b> Rätt märke + rätt plats + rätt riktning + rätt tid = fungerande trafikanordning.</div>
+
+<button id="markLesson8" class="chapter-btn">Markera kapitel 8 som genomfört</button>
+</div>
+</section>
+
+<section id="quiz" class="page hidden">
+<div class="card">
+<div class="row" style="justify-content:space-between">
+<div><span class="badge" id="qcat">Kategori</span><div id="qcount" class="small"></div></div>
+<button id="restart" class="secondary">Starta om</button>
+</div>
+<div class="progress"><div id="qprogress"></div></div>
+<div id="quizBody">
+<div id="question" class="question"></div>
+<div id="answers"></div>
+<div id="feedback" class="feedback hidden"></div>
+<button id="next" class="primary hidden">Nästa fråga</button>
+</div>
+<div id="finish" class="hidden">
+<div class="score" id="finalScore"></div>
+<p id="finalText"></p>
+<button class="primary" onclick="startQuiz()">Gör provet igen</button>
+</div>
+</div>
+</section>
+
+
+
+<section id="weak" class="page hidden">
+<div class="card">
+<span class="badge">Personlig träning</span>
+<h2>Träna mina svagheter</h2>
+<p>Det här läget använder din sparade provhistorik för att välja fler frågor från de områden där du haft lägst träffsäkerhet.</p>
+<div class="notice"><b>Tips:</b> Gör minst ett slutprov först. Ju fler prov du gjort, desto bättre blir prioriteringen.</div>
+<div id="weakSummary" style="margin-top:14px"></div>
+
+<div id="weakStart" style="margin-top:16px">
+<div class="grid">
+  <div class="module">
+    <h3>10 frågor</h3>
+    <p class="small">Snabbträning på dina svagaste områden.</p>
+    <button class="primary" onclick="startWeakQuiz(10)">Starta 10</button>
+  </div>
+  <div class="module">
+    <h3>20 frågor</h3>
+    <p class="small">Djupare repetition med fler scenarier.</p>
+    <button class="primary" onclick="startWeakQuiz(20)">Starta 20</button>
+  </div>
+</div>
+</div>
+
+<div id="weakBody" class="hidden">
+<div class="progress"><div id="weakProgress"></div></div>
+<div class="row" style="justify-content:space-between;margin-top:10px">
+  <span class="badge" id="weakCat">Kategori</span>
+  <div id="weakCount" class="small"></div>
+</div>
+<div id="weakQuestion" class="question"></div>
+<div id="weakAnswers"></div>
+<div id="weakFeedback" class="feedback hidden"></div>
+<button id="weakNext" class="primary hidden">Nästa fråga</button>
+</div>
+
+<div id="weakFinish" class="hidden">
+<div class="score" id="weakScore"></div>
+<p id="weakText"></p>
+<button class="primary" onclick="startWeakQuiz(lastWeakLength||10)">Träna igen</button>
+</div>
+</div>
+</section>
+
+<section id="exam" class="page hidden">
+<div class="card">
+<div class="row" style="justify-content:space-between">
+<div>
+<span class="badge">Slutprov – träning</span>
+<div class="small">40 slumpade frågor • inget facit förrän provet är avslutat</div>
+</div>
+<div><b id="examTimer">00:00</b></div>
+</div>
+
+<div class="notice" style="margin-top:12px">
+<b>Träningsgräns: 80 %.</b> Detta är vår egen rekommenderade nivå för träning och ska inte tolkas som Trafikverkets officiella godkändgräns.
+</div>
+
+<div id="examStart" style="margin-top:18px">
+<h3>Välj provnivå</h3>
+<p>Frågorna slumpas från hela frågebanken. När du har valt svar går du vidare utan att se facit. Resultatet visas först när provet är klart.</p>
+<div class="grid">
+  <div class="module">
+    <h3>Grund</h3>
+    <p class="small">Fler raka kunskapsfrågor och enklare scenarier.</p>
+    <button class="primary" onclick="startExam('grund')">Starta Grund</button>
+  </div>
+  <div class="module">
+    <h3>Normal</h3>
+    <p class="small">Blandad nivå med tydligt fokus på praktisk tillämpning.</p>
+    <button class="primary" onclick="startExam('normal')">Starta Normal</button>
+  </div>
+  <div class="module">
+    <h3>Svår</h3>
+    <p class="small">Fler scenarier och frågor där flera svar kan verka rimliga.</p>
+    <button class="primary" onclick="startExam('svar')">Starta Svår</button>
+  </div>
+  <div class="module">
+    <h3>Balanserat</h3>
+    <p class="small">40 frågor med garanterad spridning över alla centrala kunskapsområden.</p>
+    <button class="primary" onclick="startExam('balanserat')">Starta Balanserat</button>
+  </div>
+</div>
+</div>
+
+<div id="examBody" class="hidden">
+<div class="progress"><div id="examProgress"></div></div>
+<div class="row" style="justify-content:space-between;margin-top:10px">
+<div><span class="badge" id="examCat">Kategori</span> <span class="badge" id="examLevelBadge">Nivå</span></div>
+<div id="examCount" class="small"></div>
+</div>
+<div id="examQuestion" class="question"></div>
+<div id="examAnswers"></div>
+<button id="examNext" class="primary hidden">Nästa fråga</button>
+</div>
+
+<div id="examFinish" class="hidden">
+<div class="score" id="examScore"></div>
+<p id="examStatus"></p>
+<p id="examTimeResult" class="small"></p>
+<div id="examBreakdown"></div>
+<div class="row" style="margin-top:16px">
+<button class="primary" onclick="startExam()">Gör nytt slutprov</button>
+<button class="secondary" onclick="showExamReview()">Visa felbesvarade frågor</button>
+</div>
+<div id="examReview" class="hidden"></div>
+</div>
+</div>
+</section>
+
+
+<section id="history" class="page hidden">
+<div class="card">
+<h2>Provhistorik</h2>
+<p class="small">De senaste 20 slutproven sparas lokalt på enheten.</p>
+<div id="historySummary"></div>
+<div id="historyList"></div>
+<button class="secondary" onclick="clearExamHistory()">Rensa provhistorik</button>
+</div>
+</section>
+
+<section id="results" class="page hidden">
+<div class="card">
+<h2>Dina resultat</h2>
+<div id="resultSummary"></div>
+<table>
+<thead><tr><th>Område</th><th>Rätt</th><th>Totalt</th><th>Nivå</th></tr></thead>
+<tbody id="resultTable"></tbody>
+</table>
+</div>
+</section>
+</main>
+
+<script>
+const chapters=[
+["1. Rollen som utmärkningsansvarig","Fullt studieavsnitt med ansvar, tillsyn och arbetsplatskontroll.",true],
+["2. Arbetsmiljö och varselkläder","Personlig skyddsutrustning, arbetsberedning, systematiskt arbetsmiljöarbete och passerande trafik.",true],
+["3. Vägen, väglagen och risker","Vägens olika delar, väglagen, trafikregler vid väghållning och riskbedömningar.",true],
+["4. Generellt om vägarbeten","Olika typer av vägarbeten, etablering, avetablering och att känna igen avsteg från krav.",true],
+["5. Trafikdirigering","Vakt, lots, signaler, vägmärken, vaktlag och risksituationer.",true],
+["6. Fordon","Varningslyktor, X2, fordonsutmärkning, synbarhet och fordonskrav.",true],
+["7. Skyddsanordningar","Barriärer, kapacitetsklasser, energiupptagande skydd, buffert- och skyddszoner.",true],
+["8. Trafikanordningar","Vägmärken, A20, X-märken, X5, förvarning, upprepning, föreskrifter, vägmarkeringar och rinnande ljus.",true]
+];
+
+const questions=[
+{cat:"Utmärkningsansvar",q:"Vilket ansvar ligger närmast rollen som utmärkningsansvarig?",a:["Att se till att utmärkningen är korrekt","Att besluta om vägprojektets budget","Att utfärda körkort","Att ensam ansvara för all arbetsmiljö"],c:0,e:"Kompetensplanen anger kunskap om vem som ansvarar för att utmärkningen är korrekt."},
+{cat:"Utmärkningsansvar",q:"När bör utmärkningen kontrolleras?",a:["Endast vid etableringen","Regelbundet under arbetets gång","Endast efter en olycka","Endast när beställaren är på plats"],c:1,e:"Regelbunden tillsyn är ett uttryckligt kunskapsmål i APV 2.2."},
+{cat:"Utmärkningsansvar",q:"En skylt har blåst omkull efter att arbetsplatsen etablerades. Vad är rätt agerande?",a:["Låta den ligga tills nästa arbetsdag","Rätta till bristen så att utmärkningen åter fungerar korrekt","Vänta tills någon trafikant klagar","Ta bort samtliga skyltar"],c:1,e:"Utmärkningen ska följas upp och brister som påverkar funktionen behöver åtgärdas."},
+{cat:"Utmärkningsansvar",q:"Vad innebär en godkänd plan eller etablering för den fortsatta tillsynen?",a:["Ingen mer tillsyn behövs","Tillsyn behövs fortfarande eftersom förhållanden kan förändras","Endast polisen behöver kontrollera","Endast skyddsanordningar behöver kontrolleras"],c:1,e:"En initialt korrekt lösning ersätter inte behovet av regelbunden tillsyn."},
+{cat:"Utmärkningsansvar",q:"Vilket av följande är relevant vid en arbetsplatskontroll?",a:["Att kunna redogöra för utmärkningen och hantering av brister","Att visa privat körjournal","Att redovisa företagets årsresultat","Att kontrollera privata fordon"],c:0,e:"Kompetensplanen anger ansvar att delta på arbetsplatskontroll."},
+{cat:"Utmärkningsansvar",q:"Om arbetsområdet flyttas fram längs vägen men skyltningen står kvar i gammalt läge, vad bör ske?",a:["Ingenting","Utmärkningen ska ses över och anpassas till aktuell situation","Endast hastigheten ändras","Skyltningen får stå kvar tills arbetet avslutas"],c:1,e:"Utmärkningen måste motsvara den faktiska situationen på platsen."},
+{cat:"Utmärkningsansvar",q:"Vad är en rimlig del av tillsynen?",a:["Kontroll av synlighet och placering av vägmärken","Kontroll av privat mobilabonnemang","Kontroll av semesterlista","Kontroll av kundens faktura"],c:0,e:"Synlighet och placering är centrala delar i att säkerställa fungerande utmärkning."},
+{cat:"Utmärkningsansvar",q:"En trafikanordning har blivit påkörd och står snett. Vad är viktigast?",a:["Att dokumentera den men låta den stå","Att säkerställa att anordningen åter fungerar korrekt och säkert","Att ignorera det om trafiken flyter","Att endast flytta den när arbetspasset är slut"],c:1,e:"Brister i trafikanordningar måste hanteras så att utmärkningen fortsatt är säker och tydlig."},
+{cat:"Utmärkningsansvar",q:"Vilket påstående är bäst?",a:["Utmärkningsansvar handlar bara om skyltar","Rollen omfattar trafik- och skyddsanordningarnas funktion och kontroll","Rollen handlar bara om lotsning","Rollen ersätter alla andra arbetsmiljöroller"],c:1,e:"Rollen är bredare än enbart vägmärken och är kopplad till korrekt och fungerande utmärkning."},
+{cat:"Utmärkningsansvar",q:"Vad är en varningssignal vid tillsyn?",a:["En skylt är smutsig så att budskapet blivit svårt att läsa","Alla skyltar är tydliga","Skyddet står rätt","Trafiken följer anvisningarna"],c:0,e:"En svårläst skylt kan innebära att trafikanterna inte får avsedd information."},
+{cat:"Utmärkningsansvar",q:"Vem bör reagera om den utmärkningsansvarige upptäcker en uppenbar brist?",a:["Ingen, om någon annan ställde ut anordningen","Den utmärkningsansvarige ska se till att bristen hanteras","Endast en trafikant","Endast leverantören"],c:1,e:"Ansvar för fungerande utmärkning innebär att upptäckta brister inte ska lämnas utan åtgärd."},
+{cat:"Utmärkningsansvar",q:"Vilket svar beskriver bäst syftet med regelbunden tillsyn?",a:["Att upptäcka förändringar och brister innan de skapar risker","Att minska antalet skyltar oavsett behov","Att slippa arbetsberedning","Att ersätta riskbedömningar"],c:0,e:"Tillsynen ska säkerställa att utmärkningen fortsatt fungerar trots förändrade förhållanden."},
+{cat:"Arbetsmiljö",q:"Vilket område ingår i APV 2.2 enligt kompetensplanen?",a:["Personlig skyddsutrustning","Privat försäkringsjuridik","Motorrenovering","Löneadministration"],c:0,e:"Personlig skyddsutrustning finns uttryckligen angivet under arbetsmiljö och varselkläder."},
+{cat:"Arbetsmiljö",q:"Vilken risk nämns särskilt i kompetensplanen?",a:["Passerande fordonstrafik","Bara halka i personalrum","Bara datorskärmar","Bara lyft på lager"],c:0,e:"Risker vid passerande fordonstrafik är ett särskilt kunskapsmål."},
+{cat:"Arbetsmiljö",q:"Vad bör ske om riskbilden på arbetsplatsen förändras?",a:["Riskerna ska följas upp och åtgärder anpassas","Inget får ändras","Endast arbetstiden ändras","Alla skyltar tas bort"],c:0,e:"Systematiskt arbetsmiljöarbete innebär att aktuella risker behöver hanteras."},
+{cat:"Vägen och risker",q:"Vilket kunskapsmål finns inom vägen och väglagen?",a:["Kunskap om vägens olika delar","Kunskap om bilskatt","Kunskap om motortrimning","Kunskap om semesterlagen"],c:0,e:"Vägens olika delar anges uttryckligen i kompetensplanen."},
+{cat:"Vägen och risker",q:"Vilket regelområde nämns i samband med väghållning?",a:["Trafikregler vid väghållning","Regler om pass","Regler om sjöfart","Regler om flygplatser"],c:0,e:"Kompetensplanen tar upp rätten att i vissa situationer avvika från trafikregler vid väghållning."},
+{cat:"Trafikdirigering",q:"Vilka metoder nämns för trafikdirigering?",a:["Vakt, lots, signaler och skyltar","Endast polis","Endast mobiltelefon","Endast koner"],c:0,e:"Dessa fyra anges i kompetensplanen."},
+{cat:"Trafikdirigering",q:"Vad ska APV 2.2-kompetensen omfatta när vakt och lots används?",a:["Förståelse för trafikdirigering och kompetenskrav","Kunskap om deras privata schema","Krav på deras bilmodell","Kunskap om löneavtal"],c:0,e:"Kompetensplanen omfattar trafikdirigering samt kompetenskrav för vakt och lots."},
+{cat:"Fordon",q:"Vilket område ingår i fordonsdelen?",a:["Varningslyktor","Motorolja","Privat fordonsförsäkring","Däckhotell"],c:0,e:"Användningen av varningslyktor är ett kunskapsmål."},
+{cat:"Fordon",q:"Vilket X-märke nämns specifikt i fordonsdelen?",a:["X2","X9","X11","X15"],c:0,e:"Kompetensplanen anger kunskap om storlek och montering av X2."},
+{cat:"Skyddsanordningar",q:"Vilket område ska man kunna?",a:["När och hur skyddsanordningar ska användas","Hur man lackerar barriärer","Hur de fraktas internationellt","Hur de bokförs"],c:0,e:"När och hur skyddsanordningar ska användas är ett uttryckligt kunskapsmål."},
+{cat:"Skyddsanordningar",q:"Vad behöver man kunna om barriärer?",a:["Kapacitetsklasser","Bara färg","Bara vikt","Bara pris"],c:0,e:"Kapacitetsklasser på barriärer finns med i kompetensplanen."},
+{cat:"Skyddsanordningar",q:"Vilka zoner nämns särskilt?",a:["Buffertzoner och skyddszoner","Parkeringszoner","Lastzoner","Miljözoner"],c:0,e:"Buffertzoner/skyddszoner är ett särskilt kunskapsmål."},
+{cat:"Trafikanordningar",q:"Vilket varningsmärke nämns särskilt?",a:["A20 Varning för vägarbete","A1 Farlig kurva","B1 Väjningsplikt","C1 Förbud mot infart"],c:0,e:"A20 är särskilt utpekat i kompetensplanen."},
+{cat:"Arbetsmiljö",q:"Vem har det grundläggande ansvaret för arbetsmiljön för sina arbetstagare?",a:["Arbetsgivaren","Varje förbipasserande trafikant","Enbart utmärkningsansvarig","Vägmärkestillverkaren"],c:0,e:"Arbetsgivaren har det grundläggande arbetsmiljöansvaret och ska bedriva systematiskt arbetsmiljöarbete."},
+{cat:"Arbetsmiljö",q:"Vilken beskrivning passar bäst för systematiskt arbetsmiljöarbete?",a:["Ett löpande arbete med att undersöka, riskbedöma, åtgärda och följa upp","En kontroll som görs endast första dagen","Enbart dokumentation efter en olycka","En kontroll som bara omfattar skyltar"],c:0,e:"SAM är en fortlöpande process där risker undersöks, bedöms, åtgärdas och följs upp."},
+{cat:"Arbetsmiljö",q:"När behöver en riskbedömning särskilt ses över?",a:["När arbetsförhållandena eller arbetsmetoden förändras","Aldrig efter att den skrivits under","Endast vart fjärde år","Bara när det regnar"],c:0,e:"När förutsättningarna förändras kan riskbilden förändras och bedömningen behöver då fortfarande vara aktuell."},
+{cat:"Arbetsmiljö",q:"Vad är huvudsyftet med en arbetsberedning?",a:["Att planera ett arbetsmoment och dess riskhantering innan det utförs","Att räkna ut lönen","Att boka certifieringsprov","Att beställa reservdelar"],c:0,e:"Arbetsberedningen hjälper till att planera arbetsmetod, risker och skyddsåtgärder."},
+{cat:"Arbetsmiljö",q:"Arbetsområdet flyttas och personalen kommer närmare passerande trafik. Vad är bäst?",a:["Bedöma riskerna på nytt och anpassa åtgärderna","Fortsätta oförändrat eftersom arbetet redan startat","Bara byta arbetsledare","Ta av varselkläderna"],c:0,e:"Ändrad exponering mot passerande trafik kan kräva en ny bedömning och förstärkta åtgärder."},
+{cat:"Arbetsmiljö",q:"Vad är korrekt om personlig skyddsutrustning?",a:["Den är ett komplement till andra säkerhetsåtgärder","Den ersätter alltid behovet av skyddsanordningar","Den gör all riskbedömning onödig","Den behövs bara vid regn"],c:0,e:"PPE är viktig men ersätter inte säker planering, skydd och trafikåtgärder."},
+{cat:"Arbetsmiljö",q:"Vad kan försämra en varselkläds funktion?",a:["Smuts och slitage som minskar synbarheten","Att den är korrekt använd","Att den passar arbetsuppgiften","Att den hålls ren"],c:0,e:"Synbarheten kan försämras av smuts, slitage eller att plagget täcks över."},
+{cat:"Arbetsmiljö",q:"Vilket är ett exempel på en faktor som påverkar riskerna från passerande trafik?",a:["Trafikens hastighet och avståndet till arbetsområdet","Personalens privata bilmärke","Företagets logotyp","Lönenivån"],c:0,e:"Hastighet, avstånd, sikt, trafikmängd och arbetsmoment är typiska faktorer i riskbilden."},
+{cat:"Arbetsmiljö",q:"Vad bör man göra om köbildning förändrar trafikflödet runt arbetsplatsen?",a:["Bedöma om den ändrade situationen skapar nya risker","Ignorera det eftersom skyltningen redan finns","Alltid avbryta hela projektet","Ta bort all förvarning"],c:0,e:"Förändrade trafikförhållanden kan påverka riskerna och behöver följas upp."},
+{cat:"Arbetsmiljö",q:"Vilket påstående är mest korrekt om varselklädsel?",a:["Den ska bidra till att personal upptäcks i god tid","Den gör det säkert att stå var som helst","Den ersätter barriärer","Den behövs bara nattetid"],c:0,e:"Varselklädsel är till för synbarhet men ersätter inte andra skyddsåtgärder."},
+{cat:"Arbetsmiljö",q:"Vad bör prioriteras vid en risk från passerande trafik?",a:["Att minska eller avskilja exponeringen så långt det går","Att enbart förlita sig på att föraren ser personalen","Att bara informera efter arbetspasset","Att alltid arbeta snabbare"],c:0,e:"Risker ska förebyggas genom planering och skyddsåtgärder, inte lämnas åt trafikantens uppmärksamhet."},
+{cat:"Arbetsmiljö",q:"Varför behöver arbetsberedningen spegla den faktiska arbetsmetoden?",a:["För att identifierade risker och åtgärder ska vara relevanta för det arbete som faktiskt utförs","För att göra dokumentet längre","För att ersätta alla andra krav","För att slippa tillsyn"],c:0,e:"En arbetsberedning har begränsat värde om den inte motsvarar verkligt arbete och verkliga risker."},
+{cat:"Arbetsmiljö",q:"En maskin som inte fanns med i ursprungsplaneringen tas in nära trafiken. Vad är lämpligast?",a:["Kontrollera hur ändringen påverkar riskerna och arbetsberedningen","Ingen åtgärd behövs","Ta bort varningslyktor","Bara informera ekonomiansvarig"],c:0,e:"Nya maskiner eller ändrade arbetsmoment kan skapa nya risker och ska hanteras."},
+{cat:"Arbetsmiljö",q:"Vilket svar visar bäst förebyggande arbetsmiljöarbete?",a:["Identifiera risk innan arbetet och ordna skydd innan exponering sker","Vänta tills någon skadas","Förlita sig helt på erfarenhet","Dokumentera först efter olycka"],c:0,e:"Arbetsmiljöarbete ska vara förebyggande."},
+{cat:"Arbetsmiljö",q:"Vilket är fel tänkt vid arbete nära trafik?",a:["Varselkläder räcker, därför behövs ingen annan skyddsåtgärd","Passerande trafik ska ingå i riskbedömningen","Sikt och trafikmängd kan påverka risknivån","Ändrade förhållanden kan kräva nya åtgärder"],c:0,e:"Varselkläder är inte en fristående lösning på risker från passerande fordon."},
+{cat:"Arbetsmiljö",q:"Vad bör uppföljning av en säkerhetsåtgärd visa?",a:["Om åtgärden faktiskt fungerar i praktiken","Bara vem som beställde den","Endast kostnaden","Bara när den levererades"],c:0,e:"En viktig del av systematiskt arbetsmiljöarbete är att följa upp att genomförda åtgärder fungerar."},
+{cat:"Arbetsmiljö",q:"Vilket svar är mest APV-mässigt när en risk inte längre är tillräckligt hanterad?",a:["Stoppa eller anpassa arbetssättet tills säkerheten är tillräcklig","Fortsätta eftersom tidsplanen är viktigast","Bara skriva en notering","Vänta på nästa ordinarie kontroll"],c:0,e:"När en säkerhetsbrist är betydande behöver risken hanteras innan arbetet fortsätter på samma sätt."},
+{cat:"Vägen och risker",q:"Vilket kunskapsmål nämner Trafikverket särskilt för området Vägen, väglagen och risker?",a:["Vägens olika delar","Motorfordonsbeskattning","Försäkringsvillkor","Kör- och vilotider"],c:0,e:"Kunskap om vägens olika delar är ett uttryckligt mål i APV 2.2-kompetensplanen."},
+{cat:"Vägen och risker",q:"Vad är ett körfält?",a:["En längsgående del av körbanan avsedd för trafik i en fordonsrad","Hela vägområdet","Endast vägrenen","Ett dike"],c:0,e:"Körfält är en del av körbanan, inte hela vägen eller vägområdet."},
+{cat:"Vägen och risker",q:"Vilket påstående är korrekt om väghållningsarbete och trafikregler?",a:["Det finns situationer där vissa trafikregler får frångås när arbetet kräver det","Alla trafikregler upphör alltid att gälla","Endast privatfordon får avvika","Regelundantag gäller bara nattetid"],c:0,e:"Trafikförordningen har särskilda bestämmelser för väghållningsarbete. Undantagen är knutna till arbetets behov."},
+{cat:"Vägen och risker",q:"Ett regelundantag för väghållning innebär att...",a:["arbetet fortfarande måste utföras med säkerhet och försiktighet","föraren får skapa vilken risk som helst","arbetsmiljöregler upphör","utmärkning aldrig behövs"],c:0,e:"Ett undantag från en trafikregel tar inte bort kraven på säkerhet och riskhantering."},
+{cat:"Vägen och risker",q:"När bör en riskbedömning uppdateras?",a:["När förutsättningarna eller riskbilden förändras","Aldrig efter första dagen","Bara vart fjärde år","Endast efter personskada"],c:0,e:"Riskbedömningen ska vara aktuell och behöver ses över vid förändrade förhållanden."},
+{cat:"Vägen och risker",q:"Arbetsområdet flyttas från vägren in i körbanan. Vad händer med riskbilden?",a:["Den behöver bedömas på nytt eftersom exponeringen mot trafik ändras","Ingenting","Risken försvinner automatiskt","Endast skyltarnas färg behöver kontrolleras"],c:0,e:"När arbetets läge förändras kan både trafik- och arbetsmiljörisker förändras."},
+{cat:"Vägen och risker",q:"Vilken faktor kan göra ett tidigare säkert arbetsupplägg olämpligt?",a:["Kraftigt försämrad sikt","Att samma personal arbetar","Att arbetsfordonet är tvättat","Att projektet har samma beställare"],c:0,e:"Siktförhållanden är en konkret riskfaktor vid arbete på väg."},
+{cat:"Vägen och risker",q:"Vilket är bäst om ett arbetsmoment kräver att ett fordon tillfälligt avviker från normal trafikföring?",a:["Säkerställ att avvikelsen är nödvändig för arbetet och att riskerna hanteras","Utgå från att alla regler alltid kan ignoreras","Gör avvikelsen utan att bedöma trafikmiljön","Stäng av varningsutrustningen"],c:0,e:"Behovet av arbetsmomentet och säkerheten måste vägas samman."},
+{cat:"Vägen och risker",q:"Vilket påstående beskriver bäst en riskbedömning?",a:["Identifiera risk, bedöma den och bestämma åtgärder","Räkna antal skyltar","Välja företagets logotyp","Bestämma lön"],c:0,e:"Riskbedömning handlar om att systematiskt identifiera och hantera risker."},
+{cat:"Vägen och risker",q:"Vad är en vanlig provfälla kring väghållningsfordon?",a:["Att tro att de alltid får bryta mot alla trafikregler","Att de kan behöva särskild försiktighet","Att riskbedömning behövs","Att trafiksituationen spelar roll"],c:0,e:"Undantag är inte obegränsade och säkerhetskraven kvarstår."},
+{cat:"Vägen och risker",q:"Vad är vägren i förhållande till körbanan?",a:["En del av vägen utanför körbanan","Samma sak som ett körfält","Alltid en mittremsa","Alltid ett dike"],c:0,e:"Vägrenen ligger utanför körbanan och har andra funktioner än körfälten."},
+{cat:"Vägen och risker",q:"Varför är kunskap om vägens delar viktig i APV?",a:["För att kunna bedöma placering, trafikflöde och risker korrekt","För att räkna ut bränsleförbrukning","För att utföra motorservice","För att välja företagsnamn"],c:0,e:"Placeringen i förhållande till körbana, körfält och vägren påverkar riskerna."},
+{cat:"Vägen och risker",q:"Dimma minskar sikten kraftigt under ett pågående vägarbete. Vad är korrekt?",a:["Riskbilden ska bedömas och åtgärder kan behöva ändras","Arbetet fortsätter alltid oförändrat","Alla vägmärken tas bort","Endast personalens arbetstid ändras"],c:0,e:"Sämre sikt kan påverka både trafikanternas reaktionstid och arbetarnas exponering."},
+{cat:"Vägen och risker",q:"Vad bör väga tyngst när ett arbete kan utföras på flera sätt?",a:["Det säkrare arbetssättet som samtidigt uppfyller uppgiften","Det snabbaste oavsett risk","Det som kräver minst planering","Det som ger minst dokumentation"],c:0,e:"APV bygger på att arbetet ska kunna genomföras med kontrollerade risker."},
+{cat:"Vägen och risker",q:"Ett kortvarigt arbete nära passerande trafik behöver...",a:["fortfarande riskbedömas","aldrig någon säkerhetsbedömning","bara varselväst","ingen hänsyn till hastighet"],c:0,e:"Kort varaktighet tar inte bort riskerna från passerande trafik."},
+{cat:"Vägen och risker",q:"Vilket svar visar rätt syn på väglagen i APV 2.2?",a:["Man behöver förstå väghållningens juridiska ram och hur arbete på väg ska bedrivas","Man måste memorera varje paragraf i hela lagen","Väglagen saknar koppling till APV","Den gäller bara kommunala gångvägar"],c:0,e:"Kompetensmålet handlar om förståelse av väghållning och relevanta bestämmelser, inte utantillinlärning av hela lagen."},
+{cat:"Vägen och risker",q:"Varför kan köbildning kräva en ny riskbedömning?",a:["Trafikens beteende, hastighet och placering kan förändras","För att skyltarnas färg ändras","För att vägen blir kortare","För att lagen upphör att gälla"],c:0,e:"Köer kan skapa andra rörelsemönster och risker kring arbetsområdet."},
+{cat:"Vägarbeten",q:"Vilket är ett exempel på en typ av vägarbete?",a:["Fast arbete","Privat servicearbete hemma","Besiktningsarbete på verkstad","Administrativt kontorsarbete"],c:0,e:"APV skiljer mellan olika arbetstyper på väg, exempelvis fasta, intermittenta och rörliga arbeten."},
+{cat:"Vägarbeten",q:"Vad kännetecknar ett intermittent arbete bäst?",a:["Arbetet flyttas stegvis och stannar kortare perioder","Arbetsplatsen står alltid på exakt samma plats","Arbetet sker bara inomhus","Trafiken påverkas aldrig"],c:0,e:"Intermittent arbete förflyttar sig mellan arbetslägen och stannar tillfälligt."},
+{cat:"Vägarbeten",q:"Vad kännetecknar ett rörligt arbete?",a:["Arbetsenheten förflyttar sig kontinuerligt eller nästan kontinuerligt","Arbetet står på samma plats i flera månader","Det saknar alltid fordon","Det får aldrig ske på körbana"],c:0,e:"Vid rörligt arbete sker arbetet samtidigt som arbetsenheten förflyttar sig."},
+{cat:"Vägarbeten",q:"Kortvarigt arbete innebär att...",a:["riskerna fortfarande måste hanteras","inga skydd någonsin behövs","utmärkning alltid är förbjuden","arbetsmiljöregler inte gäller"],c:0,e:"Kort varaktighet tar inte bort riskerna eller säkerhetskraven."},
+{cat:"Vägarbeten",q:"Varför är etableringen ofta ett riskfyllt moment?",a:["Personal kan behöva arbeta nära trafik innan hela skyddslösningen är på plats","För att trafiken alltid står still","För att inga fordon används","För att alla skyltar redan är borttagna"],c:0,e:"Under etablering byggs skydd och utmärkning successivt upp, vilket kan öka exponeringen."},
+{cat:"Vägarbeten",q:"Vad är en viktig princip vid avetablering?",a:["Ta bort anordningar i säker ordning och undvik missvisande information","Lämna kvar alla skyltar till nästa vecka","Ta bort skydd först oavsett trafik","Sluta kontrollera arbetsplatsen"],c:0,e:"Avetableringen måste vara planerad så att säkerheten bibehålls och missvisande anordningar tas bort."},
+{cat:"Vägarbeten",q:"En skylt står kvar efter att arbetet är avslutat och budskapet inte längre gäller. Vad är problemet?",a:["Den kan ge trafikanterna felaktig information","Inget problem","Den sparar tid nästa projekt","Den fungerar som reklam"],c:0,e:"Trafikanordningar ska motsvara den aktuella situationen."},
+{cat:"Vägarbeten",q:"Arbetsmetoden ändras men TA-lösningen gör det inte. Vad bör ske?",a:["Kontrollera om utmärkning, skydd och riskbedömning måste anpassas","Fortsätt alltid utan kontroll","Ta bort all utmärkning","Bara byta personal"],c:0,e:"När arbetets förutsättningar ändras måste säkerhetslösningen fortfarande passa verkligheten."},
+{cat:"Vägarbeten",q:"Vilket är ett exempel på att gå emot gällande krav?",a:["Att lämna ett nödvändigt skydd oanvänt trots att det krävs","Att kontrollera arbetsplatsen","Att rätta en vält skylt","Att uppdatera riskbedömningen"],c:0,e:"Att medvetet avvika från ett säkerhetskrav utan korrekt hantering är ett tydligt exempel på avvikelse."},
+{cat:"Vägarbeten",q:"Vad ska den utmärkningsansvarige göra om verklig arbetsplats inte stämmer med ritningen?",a:["Hantera avvikelsen och säkerställa en korrekt lösning enligt gällande rutiner","Ignorera skillnaden","Alltid följa ritningen även om den skapar fara","Låta trafikanterna lösa situationen"],c:0,e:"TA-planen ska kunna tillämpas och kvalitetssäkras i den verkliga miljön."},
+{cat:"Vägarbeten",q:"Vilket arbetssätt är mest korrekt vid etablering?",a:["Planera ordningsföljden så personalens exponering mot trafik minimeras","Sätta personal i trafiken först och planera senare","Börja utan riskbedömning","Placera skydd slumpmässigt"],c:0,e:"Etableringen ska ske planerat och med så liten exponering som möjligt."},
+{cat:"Vägarbeten",q:"Varför behöver arbetstypen identifieras korrekt?",a:["Den påverkar hur utmärkning och skydd ska utformas","Den avgör företagets löner","Den avgör färgen på lastbilen","Den påverkar inte säkerheten"],c:0,e:"Fast, intermittent och rörligt arbete kan kräva olika säkerhetslösningar."},
+{cat:"Vägarbeten",q:"Vad är fel med resonemanget 'det tar bara fem minuter, så vi behöver inte tänka på trafiksäkerheten'?",a:["Riskerna kan vara stora även vid kort exponering","Det är alltid korrekt","Fem minuter räknas inte som arbete","Det gäller bara på motorväg"],c:0,e:"Varaktighet är bara en av flera faktorer i riskbedömningen."},
+{cat:"Vägarbeten",q:"Vad innebär det att kvalitetssäkra en TA-plan i praktiken?",a:["Kontrollera att den går att tillämpa säkert och korrekt på den verkliga arbetsplatsen","Bara kontrollera stavningen","Endast skriva under dokumentet","Aldrig besöka arbetsplatsen"],c:0,e:"APV 2.2-rollen behöver kunna tillämpa och kvalitetssäkra TA-planer och ritningar."},
+{cat:"Vägarbeten",q:"Ett arbetsområde har flyttats men förvarningen står kvar på ursprunglig plats utan att längre fungera. Vad ska ske?",a:["Utmärkningen ska anpassas till det nya arbetsläget","Inget","Endast arbetstiden ändras","Alla varningsmärken tas bort permanent"],c:0,e:"Utmärkningens placering måste fortfarande ge avsedd funktion."},
+{cat:"Vägarbeten",q:"Vilket är bäst när en planerad lösning inte går att genomföra på plats?",a:["Hantera avvikelsen genom rätt ansvar och process innan en ny lösning används","Improvisera bort kraven","Vänta tills någon olycka sker","Låta varje förare välja själv"],c:0,e:"Avvikelser ska hanteras strukturerat, inte genom osäker improvisation."},
+{cat:"Vägarbeten",q:"Vad bör kontrolleras efter etablering innan ordinarie arbete fortsätter?",a:["Att utmärkning, skydd och trafikföring fungerar tillsammans","Bara personalens telefoner","Bara bränslenivån","Ingenting"],c:0,e:"Helheten behöver fungera innan arbetsplatsen betraktas som korrekt etablerad."},
+{cat:"Vägarbeten",q:"Vilket påstående är mest korrekt?",a:["Krav gäller även när en erfaren arbetsgrupp tycker att en genväg känns säker","Erfarenhet ersätter alltid regler","Krav gäller bara nya förare","Säkerhetskrav är frivilliga vid låg trafik"],c:0,e:"Erfarenhet är värdefull, men ersätter inte krav och riskhantering."},
+{cat:"Trafikdirigering",q:"Vilka metoder ingår uttryckligen i APV 2.2:s kompetensområde trafikdirigering?",a:["Vakt, lots, signaler och vägmärken","Endast vakt","Endast polis och signal","Endast lots"],c:0,e:"Trafikverkets kompetensplan anger trafikdirigering med vakt, lots, signaler och skyltar/vägmärken."},
+{cat:"Trafikdirigering",q:"Vad är huvudsyftet med trafikdirigering vid vägarbete?",a:["Att skapa ett kontrollerat och säkert trafikflöde förbi arbetsplatsen","Att öka trafikhastigheten","Att minska antalet arbetare","Att ersätta all utmärkning"],c:0,e:"Trafikdirigering ska minska konflikter och skapa en säkrare passage."},
+{cat:"Trafikdirigering",q:"Vad ska APV 2.2-personen säkerställa när vakter och lotsar arbetar?",a:["Att de arbetar enligt gällande krav","Att de använder privata fordon","Att de alltid står ensamma","Att de arbetar utan arbetsberedning"],c:0,e:"APV 2.2 omfattar ansvar för att vakter och lotsar arbetar enligt gällande krav."},
+{cat:"Trafikdirigering",q:"Vad gäller i ett aktivt vaktlag enligt version 2 av kompetensregelverket?",a:["Minst en person ska vara certifierad enligt APV 2.2 och tillse att vakt/lots arbetar enligt kraven","Ingen APV 2.2-person behövs","Alla trafikanter måste vara certifierade","Endast lotsföraren behöver körkort"],c:0,e:"Trafikverket anger att minst en person i varje aktivt arbetande vaktlag ska ha APV 2.2-certifiering och kontrollansvar."},
+{cat:"Trafikdirigering",q:"Vilken kompetens finns för vakt och lots i kontrakt där version 2 gäller?",a:["APV 1.4","APV 3.0","ADR 1.3","YKB 2.4"],c:0,e:"Version 2 innehåller den nya grundkompetensen APV 1.4 Vakt och Lots."},
+{cat:"Trafikdirigering",q:"Varför är vaktens position viktig?",a:["Trafikanterna måste upptäcka vakten i tid och vakten behöver arbeta säkert","För att vakten ska stå nära fikarummet","För att minska skyltbehovet till noll","För att slippa kommunikation"],c:0,e:"Synbarhet, sikt och säker placering är centrala delar av vaktens arbetsmiljö."},
+{cat:"Trafikdirigering",q:"Två vakter tappar kontakten med varandra. Vad är säkrast?",a:["Släpp inte ny trafik förrän trafikflödet åter är kontrollerat","Gissa när motgående trafik är borta","Släpp båda riktningarna samtidigt","Låt trafikanterna bestämma"],c:0,e:"Kontrollen över trafikflödet måste återställas innan ny trafik släpps."},
+{cat:"Trafikdirigering",q:"Vad är en risk om trafik släpps från båda ändar samtidigt genom en enfältssträcka?",a:["Mötande trafik kan hamna i konflikt inne i arbetsområdet","Inga risker uppstår","Trafiken går alltid snabbare","Lotsen blir överflödig"],c:0,e:"Enkelriktad passage kräver samordning mellan regleringspunkterna."},
+{cat:"Trafikdirigering",q:"Vad är lotsens huvudfunktion?",a:["Att leda en trafikgrupp säkert genom den reglerade sträckan","Att utföra vägmärkesbesiktning","Att ge böter","Att ersätta skyddsfordon i alla situationer"],c:0,e:"Lotsfordonet används för att leda trafiken genom den reglerade sträckan."},
+{cat:"Trafikdirigering",q:"Vilket är bäst om ett fordon kör förbi vakten trots stopp?",a:["Följ den fastställda rutinen för riskhändelsen och förhindra att ny konflikt uppstår","Släpp omedelbart trafik från motsatt håll","Ignorera händelsen","Spring efter fordonet i körbanan"],c:0,e:"Otillåten genomkörning måste hanteras utan att skapa ytterligare risker."},
+{cat:"Trafikdirigering",q:"Vad behöver vakt/lots kunna enligt APV 1.4?",a:["Bland annat trafikdirigering, varselklädsel, riskhantering och agerande vid riskhändelser","Endast motorservice","Endast skyltbeställning","Endast kör- och vilotider"],c:0,e:"Trafikverket beskriver APV 1.4 som kompetens för trafikdirigering, varsel, arbetsberedning, risker och särskilda händelser."},
+{cat:"Trafikdirigering",q:"Vad är korrekt om varselkläder för en vakt?",a:["De är viktiga men ersätter inte säker positionering och trafiklösning","De gör all placering säker","De ersätter kommunikation","De behövs bara i mörker"],c:0,e:"Varselkläder är bara en del av den samlade säkerhetslösningen."},
+{cat:"Trafikdirigering",q:"Vad kan köbildning vid en vaktplats leda till?",a:["Att förvarning och riskbild behöver följas upp","Att alla risker försvinner","Att vakten kan lämna platsen","Att skyltarna automatiskt blir korrekta"],c:0,e:"Långa köer kan förändra trafiksituationen och kräva uppföljning."},
+{cat:"Trafikdirigering",q:"Vad ska ske om lotsfordonet tappar den trafikgrupp det leder?",a:["Situationen ska hanteras så att trafiken åter får en tydlig och säker ledning","Lotsen kör snabbare och lämnar gruppen","Motsatt trafik släpps direkt","Ingen åtgärd behövs"],c:0,e:"Lotsning ska vara tydlig och förutsägbar för trafikgruppen."},
+{cat:"Trafikdirigering",q:"Vilket påstående är bäst om signalreglering?",a:["Den måste vara anpassad till platsens trafik, sikt och arbetsförhållanden","Den fungerar identiskt på alla arbetsplatser","Den behöver aldrig följas upp","Den ersätter alltid vakt"],c:0,e:"Signalreglering behöver dimensioneras och följas upp för den aktuella platsen."},
+{cat:"Trafikdirigering",q:"Varför är tydlig kommunikation mellan vakter viktig?",a:["För att undvika att motstående trafikströmmar släpps samtidigt","För att bestämma raster","För att minska varselbehovet","För att undvika vägmarkeringar"],c:0,e:"Samordning är avgörande för att kontrollera trafikflödet."},
+{cat:"Trafikdirigering",q:"Vilken situation bör APV 2.2-personen reagera på?",a:["En vakt står där siktsträckan är otillräcklig","En vakt är väl synlig","Kommunikationen fungerar","Trafiken är kontrollerad"],c:0,e:"Otillräcklig sikt kan göra vaktens position farlig och ineffektiv."},
+{cat:"Trafikdirigering",q:"Vad är en rimlig kontrollpunkt för ett vaktlag?",a:["Att arbetet följer arbetsberedning och gällande krav","Vakternas privata sociala medier","Fordonens stereo","Personalens semesterönskemål"],c:0,e:"APV 2.2 ska kvalitetssäkra att vakt och lots utför sitt arbete korrekt."},
+{cat:"Trafikdirigering",q:"Ett utryckningsfordon närmar sig en reglerad sträcka. Vad behövs?",a:["En förberedd och samordnad hantering som inte skapar nya trafikkonflikter","Att båda riktningar släpps samtidigt","Att all kommunikation stoppas","Att vakten lämnar platsen"],c:0,e:"APV 1.4 omfattar hantering av prioriterade fordon och vaktlaget behöver kunna agera samordnat."},
+{cat:"Trafikdirigering",q:"Vad är viktigast om trafiksignalens funktion blir osäker?",a:["Återställ en säker och kontrollerad trafikdirigering innan normal passage fortsätter","Anta att den fungerar","Ta bort all förvarning","Öka hastigheten"],c:0,e:"Trafikflödet ska inte lämnas okontrollerat när regleringen inte fungerar säkert."},
+{cat:"Trafikdirigering",q:"Vilket svar visar bäst APV 2.2-ansvar vid trafikdirigering?",a:["Kontrollera kompetens, position, kommunikation och att vakter/lotsar följer kraven","Bara kontrollera att någon står på plats","Lämna vaktlaget helt utan uppföljning","Enbart kontrollera lotsbilens bränsle"],c:0,e:"APV 2.2-rollen handlar om att säkerställa att trafikdirigeringen fungerar korrekt och trafiksäkert."},
+{cat:"Trafikdirigering",q:"Om en improviserad lösning skapar osäkerhet om vem som har företräde, vad bör göras?",a:["Återgå till eller skapa en tydligt kontrollerad lösning enligt gällande krav","Låta trafikanterna förhandla själva","Fortsätta eftersom kön annars blir längre","Ta bort vakterna"],c:0,e:"Otydlig trafikdirigering kan skapa allvarliga konflikter och måste korrigeras."},
+{cat:"Fordon",q:"Vilka fordonsområden nämns uttryckligen i APV 2.2-kompetensplanen?",a:["Varningslyktor, X2, fordonsutmärkning och krav på fordon","Motorolja och färdskrivare","Däcktryck och fordonsskatt","ADR och yrkestrafiktillstånd"],c:0,e:"Detta är de fordonsrelaterade kunskapsmålen som Trafikverket anger för APV 2.2."},
+{cat:"Fordon",q:"Vad är huvudsyftet med en varningslykta på ett väghållningsfordon?",a:["Att uppmärksamma andra trafikanter på fordonets särskilda funktion eller risk","Att ge fordonet automatiskt företräde","Att ersätta alla vägmärken","Att tillåta obegränsad hastighet"],c:0,e:"Varningslyktan är en uppmärksamhetsanordning, inte ett generellt företrädesbevis."},
+{cat:"Fordon",q:"Ger tänd varningslykta fordonet automatiskt företräde?",a:["Nej","Ja, alltid","Ja, men bara nattetid","Ja, på motorväg"],c:0,e:"Varningslykta innebär inte automatiskt företräde."},
+{cat:"Fordon",q:"Vad kan göra fordonsutmärkningen mindre effektiv?",a:["Smuts, skador eller att den skyms","Att den är ren och synlig","Att den monterats korrekt","Att den är anpassad till arbetet"],c:0,e:"Utmärkningen måste vara synlig och begriplig för trafikanterna."},
+{cat:"Fordon",q:"Vilket X-märke är särskilt utpekat i APV 2.2:s fordonsdel?",a:["X2","X7","X10","X16"],c:0,e:"Trafikverkets kompetensplan anger särskilt storlek och montering av X2."},
+{cat:"Fordon",q:"Vad behöver APV 2.2-personen kunna om X2?",a:["Storlek och montering","Endast tillverkningsår","Endast vikt","Endast inköpspris"],c:0,e:"Storlek och montering av X2 är ett uttryckligt kompetensmål."},
+{cat:"Fordon",q:"X2 är delvis skymd av last på fordonet. Vad är problemet?",a:["Budskapet kan bli otydligt och utmärkningen behöver åtgärdas","Inget, eftersom X2 finns där","Det påverkar bara fordonets vikt","Det är bara ett estetiskt problem"],c:0,e:"En anordning måste fungera visuellt, inte bara finnas monterad."},
+{cat:"Fordon",q:"Vilket är viktigast vid placering av ett utmärkt väghållningsfordon?",a:["Att placeringen ger trafikanterna tillräcklig möjlighet att upptäcka och reagera","Att stå så nära arbetsledaren som möjligt","Att alltid stå i vägrenen oavsett arbete","Att stå där mobilen har bäst täckning"],c:0,e:"Fordonets placering är en del av den samlade riskhanteringen."},
+{cat:"Fordon",q:"Vad ska man göra om fordonsutmärkningen har skadats efter en påkörning?",a:["Kontrollera och återställa funktionen innan den används som avsett","Fortsätta utan kontroll","Bara tvätta fordonet","Ta bort alla varningslyktor"],c:0,e:"Skadad säkerhetsutrustning behöver kontrolleras innan fortsatt användning."},
+{cat:"Fordon",q:"Vad gäller för en monterad skyddsprodukt?",a:["Den ska användas enligt tillåtelsebeslut och monteringsanvisningar","Den fungerar alltid oavsett montering","Den får monteras valfritt","Den behöver aldrig kontrolleras"],c:0,e:"Kompetensplanen hänvisar till tillåtelsebeslut och monteringsanvisningar för skyddsprodukter."},
+{cat:"Fordon",q:"Varför är rätt montering av skyddsutrustning viktig?",a:["Fel montering kan försämra eller slå ut skyddsfunktionen","Det påverkar bara utseendet","Det påverkar bara bränsleförbrukningen","Det spelar ingen roll om utrustningen är godkänd"],c:0,e:"En skyddsprodukt är godkänd för vissa förutsättningar och måste monteras korrekt."},
+{cat:"Fordon",q:"Vilket är ett lämpligt kontrollmoment före arbetet?",a:["Kontrollera att varningslyktor och utmärkning fungerar och är synliga","Kontrollera företagets hemsida","Kontrollera privat bilförsäkring","Kontrollera bara bränslemätaren"],c:0,e:"Synbarhet och funktion ska kontrolleras innan fordonet används i arbetsplatsens säkerhetslösning."},
+{cat:"Fordon",q:"Arbetsfordonet flyttas längre in i körbanan. Vad bör ske?",a:["Bedöm om placering, skydd och utmärkning fortfarande är säker","Ingenting","Släck alltid varningslyktorna","Ta bort X2"],c:0,e:"Ändrad placering kan ändra riskbilden och måste följas upp."},
+{cat:"Fordon",q:"Vilket påstående är mest korrekt?",a:["Ett rätt utmärkt fordon kan ändå stå farligt placerat","Rätt utmärkning gör all placering säker","Varningslykta ersätter riskbedömning","X2 ersätter alla andra anordningar"],c:0,e:"Utmärkning och placering måste fungera tillsammans."},
+{cat:"Fordon",q:"Vad betyder det att fordonsutmärkning ska vara anpassad till arbetet?",a:["Den ska motsvara fordonets funktion och den aktuella trafiksituationen","Alla fordon ska alltid se identiska ut","Endast färgen spelar roll","Utmärkningen får vara slumpmässig"],c:0,e:"Fordonsutmärkningen ska tydligt stödja den funktion fordonet har i vägarbetet."},
+{cat:"Fordon",q:"Vad är fel tänkt om varningslyktor?",a:["Att de ensamma gör ett osäkert arbetsupplägg säkert","Att de ska användas korrekt","Att deras funktion ska kontrolleras","Att de ska vara synliga"],c:0,e:"Varningslykta är endast en del av den samlade säkerhetslösningen."},
+{cat:"Fordon",q:"Ett arbetsfordon är mycket smutsigt och reflex-/markeringsytor syns dåligt. Vad bör göras?",a:["Återställ synbarheten","Ignorera det om det är dagsljus","Släck varningslyktan","Flytta bara fordonet snabbare"],c:0,e:"Smuts kan försämra fordonsutmärkningens funktion."},
+{cat:"Fordon",q:"Varför bör monteringsanvisningar för en TMA eller annan skyddsprodukt följas?",a:["För att säkerställa att produkten fungerar enligt sin godkända konstruktion","För att minska antalet skyltar","För att få högre hastighet","För att slippa kontrollera fordonet"],c:0,e:"Skyddsprodukter är beroende av korrekt installation och användning."},
+{cat:"Fordon",q:"Vad är en bra kontroll efter att ett arbetsfordon flyttats?",a:["Se att trafikanterna fortfarande möter tydlig och korrekt utmärkning","Kontrollera bara radion","Ingen kontroll behövs","Kontrollera bara körsträckan"],c:0,e:"Flytt kan påverka både sikt, funktion och trafikens förståelse."},
+{cat:"Fordon",q:"Vad bör APV 2.2-personen reagera på?",a:["En X2-skärm som inte längre är fullt synlig","En ren och korrekt monterad X2","Fungerande varningslyktor","Tydlig fordonsutmärkning"],c:0,e:"Skymd X2 kan innebära bristande eller missvisande utmärkning."},
+{cat:"Fordon",q:"Vad är viktigast vid kontroll av ett fordon som används som del av skyddet?",a:["Att både fordon och skyddsutrustning uppfyller relevanta krav och fungerar tillsammans","Att fordonet är nytvättat invändigt","Att det har samma märke som övriga fordon","Att det står nära personalboden"],c:0,e:"Skyddsfunktionen beror på rätt fordon, rätt utrustning och korrekt användning."},
+{cat:"Fordon",q:"Vilket svar sammanfattar bäst APV 2.2:s fordonsdel?",a:["Rätt utrustning, rätt montering, tydlig utmärkning och säker placering","Endast att varningslyktan lyser","Endast att X2 finns","Endast fordonets registrering"],c:0,e:"Fordonsdelen handlar om en fungerande helhet, inte en enskild komponent."},
+{cat:"Skyddsanordningar",q:"Vad måste man kunna om skyddsanordningar enligt APV 2.2?",a:["När och hur de ska användas","Endast tillverkarens namn","Endast färgen","Endast inköpspriset"],c:0,e:"Kompetensplanen anger uttryckligen kunskap om när och hur skyddsanordningar ska användas."},
+{cat:"Skyddsanordningar",q:"Vad behöver APV 2.2-personen kunna om barriärer?",a:["Kapacitetsklasser","Endast längden","Endast vikten","Endast lagringsplats"],c:0,e:"Barriärers kapacitetsklasser är ett särskilt kunskapsmål."},
+{cat:"Skyddsanordningar",q:"Vad är viktigast vid val av barriär?",a:["Att barriären är godkänd och lämplig för den aktuella risken och trafikmiljön","Att den har företagets färg","Att den är billigast","Att den är lättast att flytta"],c:0,e:"Skyddssystemet måste passa riskbilden och användas inom sitt godkända användningsområde."},
+{cat:"Skyddsanordningar",q:"Varför måste en barriär ha utrymme bakom sig?",a:["Den kan behöva deformeras eller förskjutas vid påkörning","För att personal ska kunna lagra material där","För att trafiken ska kunna köra där","Det behövs aldrig utrymme"],c:0,e:"Barriärens arbetsbredd och rörelse vid påkörning kräver fri yta."},
+{cat:"Skyddsanordningar",q:"Vad är fel om material lagras i barriärens skyddszon?",a:["Det kan hindra skyddet från att fungera som avsett","Det förbättrar skyddet","Det påverkar bara ordningen","Det spelar ingen roll"],c:0,e:"Skyddszonen ska hållas fri så att skyddsanordningen kan fungera."},
+{cat:"Skyddsanordningar",q:"Vad är en buffertzon till för?",a:["Att skapa en fri säkerhetsmarginal mellan skydd och arbetsområde/risk","Att användas som materialupplag","Att parkera personalfordon i","Att minska behovet av utmärkning"],c:0,e:"Buffertzonen är en säkerhetsmarginal och ska inte fyllas med hinder."},
+{cat:"Skyddsanordningar",q:"Vad ska man göra efter att en barriär blivit påkörd?",a:["Kontrollera den innan fortsatt användning","Fortsätta som vanligt om den står upp","Endast tvätta den","Flytta den när arbetet är slut"],c:0,e:"Påverkan kan försämra barriärens funktion även om skadan inte är uppenbar."},
+{cat:"Skyddsanordningar",q:"Vad är ett energiupptagande skydd avsett att göra?",a:["Minska konsekvensen genom att ta upp rörelseenergi vid påkörning","Stoppa all trafik utan deformation","Ersätta alla vägmärken","Göra riskbedömning onödig"],c:0,e:"Energiupptagande skydd är konstruerade för att minska krockenergin och konsekvenserna."},
+{cat:"Skyddsanordningar",q:"Vilket är ett exempel på energiupptagande skydd vid arbete på väg?",a:["TMA på skyddsfordon","Varseljacka","A20","Körfältslinje"],c:0,e:"TMA är ett exempel på energiupptagande påkörningsskydd."},
+{cat:"Skyddsanordningar",q:"Vad gäller för en TMA eller liknande skyddsprodukt?",a:["Den ska användas enligt godkännande och monteringsanvisningar","Den kan monteras på vilket fordon som helst utan kontroll","Den fungerar alltid lika oavsett placering","Den behöver aldrig inspekteras"],c:0,e:"Skyddsprodukter måste monteras och användas enligt sina godkända förutsättningar."},
+{cat:"Skyddsanordningar",q:"Vad är fel om personal arbetar framför den skyddsanordning som ska skydda dem?",a:["Personalen kan ligga utanför skyddets funktion och exponeras direkt mot trafik","Inget om de har varselkläder","Skyddet blir starkare","Trafiken saktar alltid automatiskt ner"],c:0,e:"Skyddet måste vara placerat så att arbetsområdet faktiskt ligger inom det skyddade området."},
+{cat:"Skyddsanordningar",q:"Vilket är bäst om arbetsområdet flyttas men barriären står kvar?",a:["Kontrollera om skyddets placering fortfarande skyddar det nya arbetsområdet","Inget behövs","Endast flytta vägmärken","Ta bort all barriär"],c:0,e:"Skyddsanordningens funktion måste följas upp när arbetsområdet förändras."},
+{cat:"Skyddsanordningar",q:"Vad är en vanlig risk med felaktigt avslutad barriär?",a:["Ändpunkten kan skapa en ny påkörningsrisk","Barriären blir mer synlig","Trafiken går långsammare","Det påverkar bara estetiken"],c:0,e:"Övergångar och avslut måste utföras enligt systemets godkända lösning."},
+{cat:"Skyddsanordningar",q:"Vad bör kontrolleras vid en barriär efter en tidigare påkörning?",a:["Skador, deformation, förskjutning och fortsatt funktion","Endast färgen","Endast längden","Endast tillverkarmärket"],c:0,e:"Fysisk påverkan kan förändra barriärens prestanda."},
+{cat:"Skyddsanordningar",q:"Vad betyder det att en barriär har en viss kapacitetsklass?",a:["Den är provad för vissa prestanda och belastningsförhållanden","Den har en viss färg","Den får alltid användas överallt","Den är av en viss längd"],c:0,e:"Kapacitetsklass beskriver barriärsystemets provade prestanda."},
+{cat:"Skyddsanordningar",q:"Vad är viktigast när ett skyddssystem väljs?",a:["Att prestandan motsvarar risk och användningsförhållanden","Att det är lättast att transportera","Att det är nyast","Att det är billigast"],c:0,e:"Skyddets tekniska prestanda ska passa arbetsplatsens riskbild."},
+{cat:"Skyddsanordningar",q:"En barriär står korrekt men området bakom den är fullt med maskiner. Vad är problemet?",a:["Maskinerna kan ligga i skyddets rörelse- eller skyddszon","Inget om barriären är hel","Det påverkar bara framkomligheten","Maskiner stärker alltid barriären"],c:0,e:"Skyddets fria zon måste bevaras."},
+{cat:"Skyddsanordningar",q:"Vad är rätt om skyddsfordon med TMA?",a:["Placering och användning måste vara anpassad till arbetsmoment och trafik","Det kan stå var som helst","Det ersätter alltid barriär","Det behöver aldrig flyttas när arbetsområdet flyttas"],c:0,e:"Ett skyddsfordon är en del av arbetsplatsens dynamiska skyddslösning."},
+{cat:"Skyddsanordningar",q:"Vad bör APV 2.2-personen göra om skyddsanordningen inte längre motsvarar riskbilden?",a:["Se till att skyddslösningen anpassas innan arbetet fortsätter på samma sätt","Fortsätta eftersom den redan är etablerad","Endast dokumentera det","Vänta till nästa projekt"],c:0,e:"Skyddet måste vara aktuellt och ändamålsenligt."},
+{cat:"Skyddsanordningar",q:"Vilket påstående är mest korrekt?",a:["Rätt typ av skydd kan ändå fungera dåligt om den placeras fel","Rätt typ av skydd fungerar alltid oavsett placering","Placering saknar betydelse","Buffertzoner behövs bara på motorväg"],c:0,e:"Typ, montering, placering och fria zoner måste fungera tillsammans."},
+{cat:"Skyddsanordningar",q:"Vad är fel med att använda buffertzonen som parkeringsplats?",a:["Det minskar den fria säkerhetsmarginalen","Det förbättrar skyddet","Det gör inget om fordonet är litet","Det är alltid tillåtet"],c:0,e:"Buffertzonen ska hållas fri för sin skyddsfunktion."},
+{cat:"Skyddsanordningar",q:"Vad är en bra kontrollfråga om barriärens placering?",a:["Finns tillräckligt fri arbetsbredd bakom barriären?","Är barriären företagets färg?","Är den ny?","Är den lätt att tvätta?"],c:0,e:"Barriärens dynamiska rörelse vid påkörning måste kunna ske utan att skapa ny risk."},
+{cat:"Skyddsanordningar",q:"Vad gäller om en skyddsprodukt ser oskadad ut efter kraftig påverkan?",a:["Den ska ändå kontrolleras enligt gällande rutiner","Den är automatiskt godkänd","Den behöver bara fotograferas","Den kan alltid användas direkt"],c:0,e:"Dolda eller mindre synliga skador kan påverka funktionen."},
+{cat:"Skyddsanordningar",q:"Vilken kombination beskriver bäst ett fungerande skydd?",a:["Rätt typ + rätt montering + rätt placering + fria zoner + gott skick","Bara rätt färg","Bara rätt längd","Bara att produkten finns på plats"],c:0,e:"Skyddsfunktionen beror på flera samverkande faktorer."},
+{cat:"Skyddsanordningar",q:"Vad är viktigast om en barriär blivit förskjuten ur sitt avsedda läge?",a:["Återställ och kontrollera skyddsfunktionen","Låt den stå eftersom den fortfarande syns","Flytta personal närmare barriären","Ta bort varningslyktor"],c:0,e:"Förskjutning kan innebära att barriären inte längre skyddar rätt område."},
+{cat:"Skyddsanordningar",q:"Vilken situation är tydligast ett fel?",a:["Personal står i den zon som barriären behöver för att deformeras vid påkörning","Skyddszonen är fri","Barriären är korrekt monterad","TMA används enligt anvisning"],c:0,e:"Skyddets rörelsezon ska inte användas som arbetsplats."},
+{cat:"Trafikanordningar",q:"Vilket område ingår uttryckligen i APV 2.2:s trafikanordningsdel?",a:["Placering och betydelse av vägmärken","Motorservice","Kör- och vilotider","Försäkringsvillkor"],c:0,e:"Placering och betydelse av vägmärken är ett uttryckligt kompetensmål."},
+{cat:"Trafikanordningar",q:"Vilket varningsmärke pekas särskilt ut för vägarbete?",a:["A20 Varning för vägarbete","B1 Väjningsplikt","C1 Förbud mot infart","D1 Påbjuden körriktning"],c:0,e:"A20 är särskilt nämnt i APV 2.2-kompetensplanen."},
+{cat:"Trafikanordningar",q:"Vad är viktigast med förvarning?",a:["Trafikanten ska få tillräcklig tid att förstå och reagera","Den ska alltid stå så nära hindret som möjligt","Den behövs bara nattetid","Den ersätter alla andra märken"],c:0,e:"Förvarningens funktion är att ge upptäckts- och reaktionstid."},
+{cat:"Trafikanordningar",q:"A20 står bakom en kurva där arbetsområdet redan börjar. Vad är problemet?",a:["Förvarningen kommer för sent","Inget","Märket blir tydligare","Det påverkar bara vägarbetarna"],c:0,e:"Varningsmärket behöver kunna upptäckas i tillräckligt god tid."},
+{cat:"Trafikanordningar",q:"Vad kan motivera upprepning av ett vägmärke?",a:["En lång arbetssträcka eller anslutande trafik där budskapet annars kan gå förlorat","Att man har många extra skyltar","Att märket är nytt","Att vägen är torr"],c:0,e:"Upprepning ska ha en funktion och säkerställa att budskapet fortfarande når trafiken."},
+{cat:"Trafikanordningar",q:"Vilket X-märke nämns särskilt i kompetensplanen?",a:["X5","X99","X20","X30"],c:0,e:"X5 är särskilt utpekat i kompetensplanen."},
+{cat:"Trafikanordningar",q:"Vad används X5 till?",a:["Att visa riktning åt trafiken","Att ange parkeringsplats","Att markera gångbana","Att visa vägens bärighetsklass"],c:0,e:"X5 är en ljusanordning som visar trafikens riktning."},
+{cat:"Trafikanordningar",q:"X5 visar åt vänster men den faktiska trafikföringen går åt höger. Vad bör göras?",a:["Korrigera X5 så att den stämmer med trafikföringen","Låta den stå","Ta bort A20","Öka hastigheten"],c:0,e:"En felriktad anordning kan leda trafiken fel och är en tydlig säkerhetsbrist."},
+{cat:"Trafikanordningar",q:"Vad är en risk med gamla vägmarkeringar vid tillfällig trafikföring?",a:["De kan konkurrera med de tillfälliga markeringarna och skapa osäkerhet","De gör alltid trafiken säkrare","De påverkar bara estetiken","De är alltid osynliga"],c:0,e:"Motstridiga vägmarkeringar kan ge två olika budskap."},
+{cat:"Trafikanordningar",q:"Vad ska den utmärkningsansvarige reagera på om två körlinjer är tydligt synliga?",a:["Risk för feltolkning av trafikföringen","Inget problem","Bara att vägmarkeringen är ny","Att trafiken går långsammare"],c:0,e:"Trafikanten ska inte behöva välja mellan motstridiga ledningar."},
+{cat:"Trafikanordningar",q:"Vad gäller för vägmärken som kräver föreskrift?",a:["De ska ha rätt formellt stöd innan de används som reglering","De kan sättas upp fritt av vem som helst","De gäller bara nattetid","De ersätter alltid TA-plan"],c:0,e:"Vissa reglerande vägmärken kräver beslut eller föreskrift."},
+{cat:"Trafikanordningar",q:"Varför är det viktigt att känna till vilka märken som kräver föreskrift?",a:["För att undvika att skapa en otillåten eller rättsligt felaktig reglering","För att minska antalet koner","För att slippa riskbedömning","För att spara bränsle"],c:0,e:"APV 2.2 omfattar förståelse för vilka trafikregler som kräver formellt beslut."},
+{cat:"Trafikanordningar",q:"Vad bör ske med ett vägmärke som inte längre gäller?",a:["Det ska tas bort, täckas eller hanteras enligt gällande rutin","Det ska alltid stå kvar","Det ska flyttas närmare trafiken","Det kan användas som materialstöd"],c:0,e:"Missvisande vägmärken ska inte lämnas synliga."},
+{cat:"Trafikanordningar",q:"Vad är rinnande ljus till för?",a:["Att förstärka trafikledning och tydliggöra riktning","Att ersätta alla vägmärken","Att ge fordon företräde","Att markera personalrast"],c:0,e:"Rinnande ljus används för att visuellt förstärka en ledande funktion."},
+{cat:"Trafikanordningar",q:"Vad är fel om rinnande ljus går åt motsatt håll mot trafikens avsedda passage?",a:["Det kan ge ett missvisande budskap","Inget","Det gör lösningen tydligare","Det påverkar bara energiförbrukningen"],c:0,e:"Ljusanordningar måste förstärka rätt riktning."},
+{cat:"Trafikanordningar",q:"Vad är en bra kontrollfråga för ett vägmärke?",a:["Kan rätt trafikant se och förstå märket i tid?","Är skylten företagets favoritmärke?","Är stolpen ny?","Är märket lätt att bära?"],c:0,e:"Synbarhet, begriplighet och reaktionstid är centrala."},
+{cat:"Trafikanordningar",q:"Vad kan skymma ett annars korrekt vägmärke?",a:["Fordon, vegetation eller utrustning","Endast mörker","Endast regn","Ingenting"],c:0,e:"Fysiska hinder kan göra korrekt utmärkning ineffektiv."},
+{cat:"Trafikanordningar",q:"Vad är problemet om flera märken konkurrerar om uppmärksamheten?",a:["Trafikanten kan missa det viktigaste budskapet","Trafikanten får alltid bättre information","Det ökar alltid säkerheten","Det påverkar bara kostnaden"],c:0,e:"För mycket eller motstridig information kan minska tydligheten."},
+{cat:"Trafikanordningar",q:"Vad bör hända när arbetsområdet flyttas?",a:["Trafikanordningarna ska följas upp så att de fortfarande stämmer med verkligheten","Inget","Bara personalen ska informeras","Alla märken ska tas bort"],c:0,e:"Utmärkningen måste följa den faktiska trafikföringen."},
+{cat:"Trafikanordningar",q:"Vilket är ett exempel på missvisande utmärkning?",a:["Ett vägmärke står kvar efter att begränsningen upphört","Ett tydligt A20 står på rätt plats","X5 visar rätt riktning","Tillfällig markering är tydlig"],c:0,e:"Ett budskap som inte längre gäller kan skapa onödiga eller farliga beteenden."},
+{cat:"Trafikanordningar",q:"Vad är rätt om tillfälliga vägmarkeringar?",a:["De ska ge en tydlig och entydig körlinje","De får gärna konkurrera med gamla markeringar","De behövs aldrig vid ändrad trafikföring","De används bara på parkeringsplatser"],c:0,e:"Tillfälliga markeringar ska styra trafiken tydligt genom den ändrade trafikmiljön."},
+{cat:"Trafikanordningar",q:"Varför är rätt riktning på X5 viktig?",a:["För att trafiken leds genom arbetsområdet på avsett sätt","För att X5 ska synas längre","För att minska skyltvikten","För att slippa varningslykta"],c:0,e:"X5:s funktion är direkt kopplad till trafikens riktning."},
+{cat:"Trafikanordningar",q:"Vad bör APV 2.2-personen kontrollera om A20 är smutsigt och svårläst?",a:["Att märket åter blir tydligt och synligt","Ingenting om det är dagsljus","Endast placeringen","Att märket byts mot X5"],c:0,e:"Varningsmärket måste kunna uppfattas av trafikanterna."},
+{cat:"Trafikanordningar",q:"Vilken kedja beskriver bäst en fungerande utmärkning?",a:["Förvarning → reglering/anvisning → ledning → avslut","Avslut → varning → slumpmässig ledning","Endast ett vägmärke","Endast ljuspil"],c:0,e:"En sammanhängande informationskedja hjälper trafikanten genom arbetsplatsen."},
+{cat:"Trafikanordningar",q:"Vad är fel med att sätta upp ett reglerande vägmärke utan att kontrollera om föreskrift krävs?",a:["Regleringen kan sakna rättsligt stöd","Inget","Märket blir bara rådgivande automatiskt","Det påverkar endast beställaren"],c:0,e:"APV 2.2 kräver kunskap om vilka märken som kräver föreskrift."},
+{cat:"Trafikanordningar",q:"Vad är en rimlig åtgärd om trafik från en sidoväg missar en viktig begränsning?",a:["Bedöma om märket behöver upprepas efter anslutningen","Ta bort märket","Ignorera sidovägen","Endast öka antalet koner"],c:0,e:"Anslutande trafik kan behöva få samma information som huvudströmmen."},
+{cat:"Trafikanordningar",q:"Vilket svar sammanfattar bäst APV 2.2:s trafikanordningsdel?",a:["Rätt märke, rätt plats, rätt riktning, rätt tid och rätt formellt stöd","Bara många skyltar","Endast A20","Endast X5"],c:0,e:"Trafikanordningar måste fungera som en sammanhängande och juridiskt korrekt helhet."},
+{cat:"Trafikanordningar",q:"Vad är viktigast om ett vägmärke och verklig trafikföring säger olika saker?",a:["Korrigera utmärkningen så att budskapet stämmer med verkligheten","Låta trafikanterna välja","Fortsätta tills någon klagar","Ta bort all utmärkning"],c:0,e:"Motstridiga budskap ska rättas till omedelbart."},
+{cat:"Trafikanordningar",q:"Vad ska ske om tillfälliga markeringar har slitits så att de inte längre leder trafiken tydligt?",a:["De ska återställas eller ersättas så att trafikföringen blir tydlig","Inget","Alla permanenta markeringar målas över permanent","Endast A20 flyttas"],c:0,e:"Tillfälliga vägmarkeringar måste bibehålla sin funktion under hela arbetet."},
+{cat:"Trafikanordningar",q:"Vilken situation är tydligast en säkerhetsbrist?",a:["X5 pekar åt fel håll efter ändrad trafikföring","A20 är rent och synligt","Förvarningen ger god reaktionstid","Gamla markeringar är tydligt borttagna"],c:0,e:"Felriktad X5 kan direkt leda trafik mot fel område."},
+{cat:"Trafikanordningar",q:"Vad är den utmärkningsansvariges viktigaste perspektiv på trafikanordningar?",a:["Hur trafikanten faktiskt ser, förstår och följer budskapet","Hur billigt märket är","Hur snabbt det kan lastas","Vilken leverantör som tillverkat det"],c:0,e:"Utmärkningens funktion i verklig trafik är det centrala.",level:"grund"},
+{cat:"Scenario",q:"Du kommer till en arbetsplats där A20 står rätt men en lastbil skymmer märket för trafiken. Vad är bäst?",a:["Flytta eller åtgärda så att märket åter är tydligt synligt","Låta det vara eftersom märket står på rätt plats","Sätta upp ytterligare ett slumpmässigt märke","Ta bort A20 helt"],c:0,e:"Korrekt placering räcker inte om märket inte kan ses.",level:"normal"},
+{cat:"Scenario",q:"En TMA står korrekt placerad men personal arbetar framför skyddsfordonet nära passerande trafik. Vad är den centrala risken?",a:["Personalen kan ligga utanför TMA-skyddets funktion","TMA:n blir för tung","Varningslyktorna blir svagare","Trafiken får automatiskt företräde"],c:0,e:"Skyddsanordningen skyddar bara det område den faktiskt är avsedd och placerad för.",level:"svar"},
+{cat:"Scenario",q:"Två vakter tappar radiokontakt samtidigt som en kö börjar växa i båda riktningar. Vad ska prioriteras först?",a:["Återställ kontrollerad kommunikation och säker trafikdirigering innan ny trafik släpps","Släpp båda köerna samtidigt","Låt trafikanterna avgöra själva","Fortsätt enligt tidigare rytm utan kontakt"],c:0,e:"När samordningen bryts måste kontrollen återställas innan trafikflödet fortsätter.",level:"svar"},
+{cat:"Scenario",q:"Arbetsområdet flyttas 300 meter framåt under ett intermittent arbete. Vilken åtgärd är mest komplett?",a:["Flytta och kontrollera utmärkning, skydd och förvarning så att allt stämmer med det nya läget","Flytta bara personalen","Flytta bara A20","Gör inget eftersom arbetstypen är intermittent"],c:0,e:"Hela säkerhetskedjan måste följa det verkliga arbetsläget.",level:"normal"},
+{cat:"Scenario",q:"En barriär är hel men står så nära personalen att det inte finns fri arbetsbredd bakom den. Vad är rätt bedömning?",a:["Skyddet kan vara tekniskt korrekt men funktionellt felplacerat","Skyddet är alltid godkänt om barriären är hel","Det räcker med varselkläder","Placeringen saknar betydelse"],c:0,e:"Barriären behöver fri rörelsezon för att fungera vid påkörning.",level:"svar"},
+{cat:"Scenario",q:"Du ser att ett reglerande vägmärke satts upp utan att någon kan visa att rätt föreskrift eller beslut finns. Vad är bäst?",a:["Kontrollera det formella stödet och hantera avvikelsen innan regleringen används som avsett","Anta att skylten gäller eftersom den står där","Byt ut märket mot A20","Låt trafikanterna tolka skylten själva"],c:0,e:"Vissa reglerande märken kräver formellt beslut eller föreskrift.",level:"svar"},
+{cat:"Scenario",q:"Ett arbetsfordon har fungerande varningslyktor men X2 är skymd av utrustning. Vad är mest korrekt?",a:["Fordonets totala utmärkning är bristfällig och X2 måste göras synlig","Varningslyktorna kompenserar alltid för X2","X2 behövs bara nattetid","Ingen åtgärd behövs"],c:0,e:"Fordonets säkerhetsutmärkning måste fungera som en helhet.",level:"normal"},
+{cat:"Scenario",q:"Tillfälliga gula vägmarkeringar leder trafiken rätt, men gamla vita linjer är fortfarande mycket tydliga och går åt ett annat håll. Vad är problemet?",a:["Trafikanten får två konkurrerande körlinjer och lösningen måste göras entydig","Inget eftersom gula linjer alltid vinner automatiskt","Det påverkar bara vintertid","A20 löser alltid problemet"],c:0,e:"Motstridiga vägmarkeringar kan skapa feltolkning.",level:"svar"},
+{cat:"Scenario",q:"Efter en mindre påkörning ser en energiupptagande skyddsprodukt nästan oskadad ut. Vad är rätt?",a:["Den ska ändå kontrolleras enligt gällande rutiner innan fortsatt användning","Den kan alltid användas direkt","Det räcker att tvätta den","Endast föraren behöver kontrollera den visuellt på avstånd"],c:0,e:"Även mindre eller dolda skador kan påverka skyddets funktion.",level:"normal"},
+{cat:"Scenario",q:"En erfaren arbetsgrupp vill korta etableringen genom att sätta ut skydd sist eftersom 'det går snabbare'. Vad bör APV 2.2-personen göra?",a:["Hålla fast vid en säker etableringsordning som minimerar exponeringen","Acceptera eftersom erfarenheten är stor","Ta bort förvarningen först","Endast dokumentera avvikelsen"],c:0,e:"Erfarenhet ersätter inte säker etableringsordning och riskhantering.",level:"svar"},
+{cat:"Scenario",q:"Ett lotsfordon kör för fort och tappar kontakten med delar av trafikgruppen. Vilken slutsats är bäst?",a:["Lotsningen fungerar inte längre tillräckligt förutsägbart och måste korrigeras","Det är bra eftersom genomströmningen ökar","Det spelar ingen roll om vakterna finns kvar","Trafikgruppen får köra valfri väg"],c:0,e:"Lotsning ska vara tydlig, samlad och förutsägbar.",level:"svar"},
+{cat:"Scenario",q:"En signalreglerad sträcka börjar få mycket längre kö än när lösningen planerades. Vad bör ske?",a:["Följ upp om regleringen och förvarningen fortfarande fungerar för den nya trafiksituationen","Ingen åtgärd eftersom signalen fortfarande lyser","Ta bort A20","Öka hastigheten genom arbetsområdet"],c:0,e:"Förändrad köbildning kan påverka både riskbild och förvarning.",level:"normal"},
+{cat:"Scenario",q:"En skylt är korrekt, ren och synlig men står efter den punkt där föraren måste börja bromsa. Vad är den viktigaste bristen?",a:["Otillräcklig upptäckts- och reaktionstid","Fel färg","Fel leverantör","För låg stolpe oavsett sikt"],c:0,e:"Förvarning och placering måste ge trafikanten tid att reagera.",level:"svar"},
+{cat:"Scenario",q:"Arbetet flyttas från vägren till körfält men arbetsberedningen ändras inte. Vad är mest korrekt?",a:["Riskbedömning och arbetsberedning måste ses över eftersom exponeringen mot trafik ändras","Ingen ändring behövs om samma personal arbetar","Endast varselkläder behöver kontrolleras","Endast arbetsledaren informeras"],c:0,e:"Ändrad placering i vägen förändrar riskbilden och behöver hanteras.",level:"normal"},
+{cat:"Scenario",q:"En barriär har rätt kapacitetsklass men är felaktigt avslutad i början. Hur ska det bedömas?",a:["Systemet kan ändå vara felaktigt eftersom avslut och övergångar är en del av skyddsfunktionen","Kapacitetsklassen gör alla avslut godkända","Avslutet påverkar bara estetiken","Det räcker med extra koner"],c:0,e:"Ett barriärsystem måste fungera som helhet, inklusive ändpunkter.",level:"svar"},
+{cat:"Scenario",q:"Ett vägarbete har korrekt TA-plan men verkligheten på plats gör att planen inte går att följa utan att skapa risk. Vad är bäst?",a:["Hantera avvikelsen genom rätt process och säker lösning innan arbetet fortsätter","Följ planen bokstavligt trots risken","Improvisera utan dokumentation","Ta bort all utmärkning"],c:0,e:"Planen ska tillämpas säkert i verkligheten; avvikelser måste hanteras strukturerat.",level:"svar"},
+{cat:"Scenario",q:"Rinnande ljus används åt rätt håll men ett X5 bredvid visar motsatt riktning. Vad är problemet?",a:["Budskapen motsäger varandra och trafikledningen är otydlig","Inget eftersom rinnande ljus väger tyngre","X5 gäller bara dagtid","Det påverkar endast personalen"],c:0,e:"Trafikanordningar ska ge ett samstämmigt budskap.",level:"svar"},
+{cat:"Scenario",q:"En vakt står synligt men saknar tillräcklig reträttmöjlighet om ett fordon inte stannar. Vad är mest korrekt?",a:["Placeringen behöver omprövas eftersom arbetsmiljön är otillräckligt säker","Synlighet räcker alltid","Varselkläder löser problemet","Endast hastigheten spelar roll"],c:0,e:"Vaktens position ska vara säker, inte bara synlig.",level:"svar"},
+{cat:"Scenario",q:"Ett arbetsfordon står rätt men dess varningslykta har slutat fungera under pågående arbete. Vad bör ske?",a:["Funktionen ska återställas eller en säker alternativ lösning ordnas innan fordonet fortsätter i samma roll","Fortsätt eftersom fordonet redan är etablerat","Ta bort X2","Endast notera felet efter passet"],c:0,e:"Säkerhetsutrustning som krävs för fordonets roll måste fungera.",level:"normal"}
+];
+
+document.getElementById("chapterList").innerHTML=chapters.map((c,i)=>`
+<div class="module">
+<span class="badge">${c[2]?"Utbyggt":"Kommer snart"}</span>
+<h3>${c[0]}</h3><p>${c[1]}</p>
+${i===0?'<button class="primary" onclick="openLesson1()">Öppna kapitel</button>':i===1?'<button class="primary" onclick="openLesson2()">Öppna kapitel</button>':i===2?'<button class="primary" onclick="openLesson3()">Öppna kapitel</button>':i===3?'<button class="primary" onclick="openLesson4()">Öppna kapitel</button>':i===4?'<button class="primary" onclick="openLesson5()">Öppna kapitel</button>':i===5?'<button class="primary" onclick="openLesson6()">Öppna kapitel</button>':i===6?'<button class="primary" onclick="openLesson7()">Öppna kapitel</button>':i===7?'<button class="primary" onclick="openLesson8()">Öppna kapitel</button>':''}
+</div>`).join("");
+
+function openLesson1(){document.getElementById("lesson1").classList.remove("hidden");document.getElementById("lesson1").scrollIntoView({behavior:"smooth"})}
+function openLesson2(){document.getElementById("lesson2").classList.remove("hidden");document.getElementById("lesson2").scrollIntoView({behavior:"smooth"})}
+function openLesson3(){document.getElementById("lesson3").classList.remove("hidden");document.getElementById("lesson3").scrollIntoView({behavior:"smooth"})}
+function openLesson4(){document.getElementById("lesson4").classList.remove("hidden");document.getElementById("lesson4").scrollIntoView({behavior:"smooth"})}
+function openLesson5(){document.getElementById("lesson5").classList.remove("hidden");document.getElementById("lesson5").scrollIntoView({behavior:"smooth"})}
+function openLesson6(){document.getElementById("lesson6").classList.remove("hidden");document.getElementById("lesson6").scrollIntoView({behavior:"smooth"})}
+function openLesson7(){document.getElementById("lesson7").classList.remove("hidden");document.getElementById("lesson7").scrollIntoView({behavior:"smooth"})}
+function openLesson8(){document.getElementById("lesson8").classList.remove("hidden");document.getElementById("lesson8").scrollIntoView({behavior:"smooth"})}
+
+
+function goToPage(page){
+  document.querySelectorAll("nav button").forEach(x=>{
+    x.classList.toggle("active", x.dataset.page===page);
+  });
+  document.querySelectorAll(".page").forEach(p=>p.classList.add("hidden"));
+  document.getElementById(page).classList.remove("hidden");
+  if(page==="results") renderResults();
+  if(page==="history") renderHistory();
+  if(page==="weak") renderWeakSummary();
+  window.scrollTo({top:0,behavior:"smooth"});
+}
+
+document.querySelectorAll("nav button").forEach(b=>b.onclick=()=>{
+document.querySelectorAll("nav button").forEach(x=>x.classList.remove("active"));b.classList.add("active");
+document.querySelectorAll(".page").forEach(p=>p.classList.add("hidden"));
+document.getElementById(b.dataset.page).classList.remove("hidden");
+if(b.dataset.page==="results")renderResults();
+if(b.dataset.page==="history")renderHistory();
+if(b.dataset.page==="weak")renderWeakSummary();
+});
+
+const lessonBtn=document.getElementById("markLesson1");
+if(localStorage.getItem("apv22_lesson1")==="done"){lessonBtn.textContent="Kapitel 1 genomfört ✓";lessonBtn.classList.add("done")}
+lessonBtn.onclick=()=>{
+localStorage.setItem("apv22_lesson1","done");lessonBtn.textContent="Kapitel 1 genomfört ✓";lessonBtn.classList.add("done");
+};
+const lessonBtn2=document.getElementById("markLesson2");
+if(localStorage.getItem("apv22_lesson2")==="done"){lessonBtn2.textContent="Kapitel 2 genomfört ✓";lessonBtn2.classList.add("done")}
+lessonBtn2.onclick=()=>{
+localStorage.setItem("apv22_lesson2","done");lessonBtn2.textContent="Kapitel 2 genomfört ✓";lessonBtn2.classList.add("done");
+};
+const lessonBtn3=document.getElementById("markLesson3");
+if(localStorage.getItem("apv22_lesson3")==="done"){lessonBtn3.textContent="Kapitel 3 genomfört ✓";lessonBtn3.classList.add("done")}
+lessonBtn3.onclick=()=>{
+localStorage.setItem("apv22_lesson3","done");lessonBtn3.textContent="Kapitel 3 genomfört ✓";lessonBtn3.classList.add("done");
+};
+const lessonBtn4=document.getElementById("markLesson4");
+if(localStorage.getItem("apv22_lesson4")==="done"){lessonBtn4.textContent="Kapitel 4 genomfört ✓";lessonBtn4.classList.add("done")}
+lessonBtn4.onclick=()=>{
+localStorage.setItem("apv22_lesson4","done");lessonBtn4.textContent="Kapitel 4 genomfört ✓";lessonBtn4.classList.add("done");
+};
+const lessonBtn5=document.getElementById("markLesson5");
+if(localStorage.getItem("apv22_lesson5")==="done"){lessonBtn5.textContent="Kapitel 5 genomfört ✓";lessonBtn5.classList.add("done")}
+lessonBtn5.onclick=()=>{
+localStorage.setItem("apv22_lesson5","done");lessonBtn5.textContent="Kapitel 5 genomfört ✓";lessonBtn5.classList.add("done");
+};
+const lessonBtn6=document.getElementById("markLesson6");
+if(localStorage.getItem("apv22_lesson6")==="done"){lessonBtn6.textContent="Kapitel 6 genomfört ✓";lessonBtn6.classList.add("done")}
+lessonBtn6.onclick=()=>{
+localStorage.setItem("apv22_lesson6","done");lessonBtn6.textContent="Kapitel 6 genomfört ✓";lessonBtn6.classList.add("done");
+};
+const lessonBtn7=document.getElementById("markLesson7");
+if(localStorage.getItem("apv22_lesson7")==="done"){lessonBtn7.textContent="Kapitel 7 genomfört ✓";lessonBtn7.classList.add("done")}
+lessonBtn7.onclick=()=>{
+localStorage.setItem("apv22_lesson7","done");lessonBtn7.textContent="Kapitel 7 genomfört ✓";lessonBtn7.classList.add("done");
+};
+const lessonBtn8=document.getElementById("markLesson8");
+if(localStorage.getItem("apv22_lesson8")==="done"){lessonBtn8.textContent="Kapitel 8 genomfört ✓";lessonBtn8.classList.add("done")}
+lessonBtn8.onclick=()=>{
+localStorage.setItem("apv22_lesson8","done");lessonBtn8.textContent="Kapitel 8 genomfört ✓";lessonBtn8.classList.add("done");
+};
+
+questions.forEach(q=>{if(!q.level) q.level="grund";});
+let order=[],qi=0,score=0,answered=false,perCat={};
+function startQuiz(){
+order=[...questions].sort(()=>Math.random()-.5);qi=0;score=0;answered=false;perCat={};
+document.getElementById("finish").classList.add("hidden");document.getElementById("quizBody").classList.remove("hidden");showQuestion();
+}
+function showQuestion(){
+answered=false;const x=order[qi];
+document.getElementById("qcat").textContent=x.cat;
+document.getElementById("qcount").textContent=`Fråga ${qi+1} av ${order.length}`;
+document.getElementById("qprogress").style.width=`${(qi/order.length)*100}%`;
+document.getElementById("question").textContent=x.q;
+const ans=document.getElementById("answers");ans.innerHTML="";
+x.a.forEach((t,i)=>{const b=document.createElement("button");b.className="answer";b.textContent=t;b.onclick=()=>choose(i,b);ans.appendChild(b)});
+document.getElementById("feedback").classList.add("hidden");document.getElementById("next").classList.add("hidden");
+}
+function choose(i,btn){
+if(answered)return;answered=true;const x=order[qi];
+perCat[x.cat] ||= {right:0,total:0};perCat[x.cat].total++;
+document.querySelectorAll(".answer").forEach((b,j)=>{b.disabled=true;if(j===x.c)b.classList.add("correct")});
+if(i===x.c){score++;perCat[x.cat].right++;}else btn.classList.add("wrong");
+const f=document.getElementById("feedback");f.textContent=(i===x.c?"Rätt. ":"Fel. ")+x.e;f.classList.remove("hidden");
+document.getElementById("next").classList.remove("hidden");
+}
+document.getElementById("next").onclick=()=>{qi++;if(qi>=order.length)finishQuiz();else showQuestion()};
+document.getElementById("restart").onclick=startQuiz;
+function finishQuiz(){
+document.getElementById("quizBody").classList.add("hidden");document.getElementById("finish").classList.remove("hidden");
+const pct=Math.round(score/order.length*100);document.getElementById("qprogress").style.width="100%";
+document.getElementById("finalScore").textContent=`${score}/${order.length} – ${pct}%`;
+document.getElementById("finalText").textContent=pct>=85?"Stark nivå. Målet är att hålla en hög nivå över flera prov, inte bara ett enda.":"Fortsätt träna på de områden där du tappade poäng.";
+localStorage.setItem("apv22_last",JSON.stringify({score,total:order.length,pct,perCat,date:new Date().toISOString()}));updateHome();
+}
+function renderResults(){
+const raw=localStorage.getItem("apv22_last"),s=document.getElementById("resultSummary"),tb=document.getElementById("resultTable");
+if(!raw){s.innerHTML="<p>Du har ännu inget sparat provresultat.</p>";tb.innerHTML="";return}
+const r=JSON.parse(raw);s.innerHTML=`<p>Senaste prov: <b>${r.score}/${r.total}</b> (${r.pct} %)</p>`;
+tb.innerHTML=Object.entries(r.perCat).map(([cat,v])=>{const pct=Math.round(v.right/v.total*100);const lvl=pct>=85?"Stark":pct>=70?"På väg":"Träna mer";return `<tr><td>${cat}</td><td>${v.right}</td><td>${v.total}</td><td>${lvl}</td></tr>`}).join("");
+}
+function updateHome(){const raw=localStorage.getItem("apv22_last");document.getElementById("homeBest").textContent=raw?JSON.parse(raw).pct+" %":"–"}
+
+// ===== SLUTPROV =====
+let examOrder=[], examIndex=0, examAnswersChosen=[], examStartedAt=null, examTimerHandle=null, examDifficulty="normal";
+
+function selectExamPool(level){
+  const grund=questions.filter(q=>q.level==="grund");
+  const normal=questions.filter(q=>q.level==="normal");
+  const svar=questions.filter(q=>q.level==="svar");
+
+  function pick(arr,n){ return [...arr].sort(()=>Math.random()-.5).slice(0,n); }
+
+  if(level==="balanserat"){
+    const coreCats=["Utmärkningsansvar","Arbetsmiljö","Vägen och risker","Vägarbeten","Trafikdirigering","Fordon","Skyddsanordningar","Trafikanordningar"];
+    let chosen=[];
+    for(const cat of coreCats){
+      const pool=questions.filter(q=>q.cat===cat);
+      chosen.push(...pick(pool,4));
+    }
+    // 32 frågor från kärnområden + 8 scenarier/fyllnad
+    const used=new Set(chosen.map(q=>q.q));
+    const scenarioPool=questions.filter(q=>q.cat==="Scenario" && !used.has(q.q));
+    chosen.push(...pick(scenarioPool,8));
+    const used2=new Set(chosen.map(q=>q.q));
+    const remainder=questions.filter(q=>!used2.has(q.q)).sort(()=>Math.random()-.5);
+    while(chosen.length<40 && remainder.length) chosen.push(remainder.shift());
+    return chosen.sort(()=>Math.random()-.5).slice(0,40);
+  }
+
+  let chosen=[];
+  if(level==="grund"){
+    chosen=[...pick(grund,28),...pick(normal,10),...pick(svar,2)];
+  }else if(level==="svar"){
+    chosen=[...pick(grund,10),...pick(normal,14),...pick(svar,16)];
+  }else{
+    chosen=[...pick(grund,18),...pick(normal,14),...pick(svar,8)];
+  }
+
+  const used=new Set(chosen.map(q=>q.q));
+  const remainder=questions.filter(q=>!used.has(q.q)).sort(()=>Math.random()-.5);
+  while(chosen.length<40 && remainder.length) chosen.push(remainder.shift());
+  return chosen.sort(()=>Math.random()-.5).slice(0,40);
+}
+
+function startExam(level="normal"){
+  examDifficulty=level;
+  examOrder=selectExamPool(level);
+  examIndex=0;
+  examAnswersChosen=[];
+  examStartedAt=Date.now();
+  document.getElementById("examStart").classList.add("hidden");
+  document.getElementById("examFinish").classList.add("hidden");
+  document.getElementById("examReview").classList.add("hidden");
+  document.getElementById("examBody").classList.remove("hidden");
+  if(examTimerHandle) clearInterval(examTimerHandle);
+  examTimerHandle=setInterval(updateExamTimer,1000);
+  updateExamTimer();
+  showExamQuestion();
+}
+
+function updateExamTimer(){
+  if(!examStartedAt) return;
+  const sec=Math.floor((Date.now()-examStartedAt)/1000);
+  const mm=String(Math.floor(sec/60)).padStart(2,"0");
+  const ss=String(sec%60).padStart(2,"0");
+  document.getElementById("examTimer").textContent=`${mm}:${ss}`;
+}
+
+function showExamQuestion(){
+  const x=examOrder[examIndex];
+  const displayLevel=x.level==="svar"?"Svår":x.level==="normal"?"Normal":"Grund";
+  document.getElementById("examCat").textContent=x.cat;
+  document.getElementById("examLevelBadge").textContent=displayLevel;
+  document.getElementById("examCount").textContent=`Fråga ${examIndex+1} av ${examOrder.length}`;
+  document.getElementById("examProgress").style.width=`${(examIndex/examOrder.length)*100}%`;
+  document.getElementById("examQuestion").textContent=x.q;
+  const wrap=document.getElementById("examAnswers");
+  wrap.innerHTML="";
+  document.getElementById("examNext").classList.add("hidden");
+
+  x.a.forEach((t,i)=>{
+    const b=document.createElement("button");
+    b.className="answer";
+    b.textContent=t;
+    b.onclick=()=>{
+      document.querySelectorAll("#examAnswers .answer").forEach(btn=>{
+        btn.style.outline="";
+      });
+      b.style.outline="3px solid #f59e0b";
+      examAnswersChosen[examIndex]=i;
+      document.getElementById("examNext").classList.remove("hidden");
+    };
+    wrap.appendChild(b);
+  });
+}
+
+document.getElementById("examNext").onclick=()=>{
+  if(examAnswersChosen[examIndex]===undefined) return;
+  examIndex++;
+  if(examIndex>=examOrder.length) finishExam();
+  else showExamQuestion();
+};
+
+function finishExam(){
+  if(examTimerHandle) clearInterval(examTimerHandle);
+  const elapsed=Math.floor((Date.now()-examStartedAt)/1000);
+  let right=0;
+  const byCat={};
+  examOrder.forEach((q,i)=>{
+    const ok=examAnswersChosen[i]===q.c;
+    if(ok) right++;
+    byCat[q.cat] ||= {right:0,total:0};
+    byCat[q.cat].total++;
+    if(ok) byCat[q.cat].right++;
+  });
+  const pct=Math.round(right/examOrder.length*100);
+  document.getElementById("examBody").classList.add("hidden");
+  document.getElementById("examFinish").classList.remove("hidden");
+  document.getElementById("examProgress").style.width="100%";
+  document.getElementById("examScore").textContent=`${right}/${examOrder.length} – ${pct}%`;
+  document.getElementById("examStatus").innerHTML = pct>=80
+    ? "<b>Träningsnivå uppnådd ✓</b> Du ligger över vår träningsgräns på 80 %."
+    : "<b>Fortsätt träna.</b> Sikta på minst 80 % stabilt över flera slutprov.";
+  const mm=String(Math.floor(elapsed/60)).padStart(2,"0");
+  const ss=String(elapsed%60).padStart(2,"0");
+  const lvl=examDifficulty==="svar"?"Svår":examDifficulty==="grund"?"Grund":examDifficulty==="balanserat"?"Balanserat":"Normal";
+  document.getElementById("examTimeResult").textContent=`Nivå: ${lvl} • Tid: ${mm}:${ss}`;
+
+  const rows=Object.entries(byCat)
+    .sort((a,b)=>(a[1].right/a[1].total)-(b[1].right/b[1].total))
+    .map(([cat,v])=>{
+      const cp=Math.round(v.right/v.total*100);
+      const bed=cp>=85?"Stark":cp>=70?"På väg":"Prioritera";
+      return `<tr><td>${cat}</td><td>${v.right}/${v.total}</td><td>${cp}%</td><td>${bed}</td></tr>`;
+    }).join("");
+  document.getElementById("examBreakdown").innerHTML=`
+    <h3>Områdesanalys</h3>
+    <table><thead><tr><th>Område</th><th>Rätt</th><th>Andel</th><th>Bedömning</th></tr></thead><tbody>${rows}</tbody></table>`;
+
+  const result={right,total:examOrder.length,pct,elapsed,byCat,date:new Date().toISOString(),difficulty:examDifficulty};
+  localStorage.setItem("apv22_exam_last",JSON.stringify(result));
+  saveExamHistory(result);
+}
+
+function showExamReview(){
+  const box=document.getElementById("examReview");
+  const wrong=examOrder.map((q,i)=>({q,i,chosen:examAnswersChosen[i]})).filter(x=>x.chosen!==x.q.c);
+  if(!wrong.length){
+    box.innerHTML='<div class="tip"><b>Inga felbesvarade frågor.</b> Full pott på detta prov.</div>';
+  }else{
+    box.innerHTML='<h3>Felbesvarade frågor</h3>'+wrong.map((x,n)=>`
+      <div class="module" style="margin:10px 0">
+        <span class="badge">${x.q.level==="svar"?"Svår":x.q.level==="normal"?"Normal":"Grund"}</span>
+        <b>${n+1}. ${x.q.q}</b>
+        <p class="small">Ditt svar: ${x.q.a[x.chosen] ?? "Inget svar"}</p>
+        <p><b>Rätt svar:</b> ${x.q.a[x.q.c]}</p>
+        <p class="small">${x.q.e}</p>
+      </div>`).join("");
+  }
+  box.classList.remove("hidden");
+  box.scrollIntoView({behavior:"smooth"});
+}
+
+function saveExamHistory(result){
+  const hist=JSON.parse(localStorage.getItem("apv22_exam_history")||"[]");
+  hist.unshift(result);
+  localStorage.setItem("apv22_exam_history",JSON.stringify(hist.slice(0,20)));
+}
+
+function renderHistory(){
+  const hist=JSON.parse(localStorage.getItem("apv22_exam_history")||"[]");
+  const summary=document.getElementById("historySummary");
+  const list=document.getElementById("historyList");
+  if(!hist.length){
+    summary.innerHTML="<p>Ingen provhistorik ännu.</p>";
+    list.innerHTML="";
+    return;
+  }
+  const avg=Math.round(hist.reduce((s,r)=>s+r.pct,0)/hist.length);
+  const best=Math.max(...hist.map(r=>r.pct));
+  const latest=hist[0].pct;
+  summary.innerHTML=`<div class="grid">
+    <div class="module"><div class="stat">${latest}%</div><b>Senaste</b></div>
+    <div class="module"><div class="stat">${avg}%</div><b>Snitt</b></div>
+    <div class="module"><div class="stat">${best}%</div><b>Bästa</b></div>
+  </div>`;
+
+  list.innerHTML="<h3>Senaste prov</h3>"+hist.map((r,i)=>{
+    const d=new Date(r.date);
+    const lvl=r.difficulty==="svar"?"Svår":r.difficulty==="grund"?"Grund":r.difficulty==="balanserat"?"Balanserat":"Normal";
+    const mm=String(Math.floor(r.elapsed/60)).padStart(2,"0");
+    const ss=String(r.elapsed%60).padStart(2,"0");
+    return `<div class="module" style="margin:10px 0">
+      <div class="row" style="justify-content:space-between">
+        <b>${i+1}. ${r.pct}%</b><span class="badge">${lvl}</span>
+      </div>
+      <div class="small">${d.toLocaleString("sv-SE")} • ${r.right}/${r.total} • ${mm}:${ss}</div>
+    </div>`;
+  }).join("");
+}
+
+function clearExamHistory(){
+  if(confirm("Vill du rensa all sparad provhistorik?")){
+    localStorage.removeItem("apv22_exam_history");
+    renderHistory();
+  }
+}
+
+
+// ===== TRÄNA SVAGHETER =====
+let weakOrder=[], weakIndex=0, weakScore=0, weakAnswered=false, lastWeakLength=10;
+
+function aggregateWeaknesses(){
+  const hist=JSON.parse(localStorage.getItem("apv22_exam_history")||"[]");
+  const coreCats=["Utmärkningsansvar","Arbetsmiljö","Vägen och risker","Vägarbeten","Trafikdirigering","Fordon","Skyddsanordningar","Trafikanordningar"];
+  const agg={};
+  coreCats.forEach(c=>agg[c]={right:0,total:0});
+
+  hist.forEach(r=>{
+    Object.entries(r.byCat||{}).forEach(([cat,v])=>{
+      if(!agg[cat]) return;
+      agg[cat].right+=v.right||0;
+      agg[cat].total+=v.total||0;
+    });
+  });
+
+  return coreCats.map(cat=>{
+    const v=agg[cat];
+    const pct=v.total?Math.round(v.right/v.total*100):50;
+    return {cat,pct,total:v.total};
+  }).sort((a,b)=>a.pct-b.pct);
+}
+
+function renderWeakSummary(){
+  const data=aggregateWeaknesses();
+  const box=document.getElementById("weakSummary");
+  const hist=JSON.parse(localStorage.getItem("apv22_exam_history")||"[]");
+  if(!hist.length){
+    box.innerHTML='<div class="module"><b>Ingen provhistorik ännu.</b><p class="small">Systemet använder en neutral viktning tills du gjort minst ett slutprov.</p></div>';
+    return;
+  }
+  const top=data.slice(0,3);
+  box.innerHTML='<h3>Prioriterade områden</h3>'+top.map(x=>`
+    <div class="module" style="margin:8px 0">
+      <b>${x.cat}</b>
+      <div class="small">${x.total?x.pct+" % historisk träffsäkerhet":"Inte testat ännu"}</div>
+    </div>`).join("");
+}
+
+function buildWeakPool(n){
+  const ranked=aggregateWeaknesses();
+  const weights={};
+  ranked.forEach((x,i)=>{weights[x.cat]=ranked.length-i;});
+
+  let expanded=[];
+  questions.forEach(q=>{
+    if(q.cat==="Scenario"){
+      expanded.push(q,q); // scenarier får extra tyngd
+      return;
+    }
+    const w=weights[q.cat]||1;
+    for(let i=0;i<w;i++) expanded.push(q);
+  });
+
+  // weighted draw without duplicate questions
+  const chosen=[];
+  const used=new Set();
+  while(chosen.length<n && expanded.length){
+    const idx=Math.floor(Math.random()*expanded.length);
+    const q=expanded[idx];
+    expanded.splice(idx,1);
+    if(!used.has(q.q)){
+      chosen.push(q);
+      used.add(q.q);
+    }
+  }
+  if(chosen.length<n){
+    const rest=questions.filter(q=>!used.has(q.q)).sort(()=>Math.random()-.5);
+    chosen.push(...rest.slice(0,n-chosen.length));
+  }
+  return chosen;
+}
+
+function startWeakQuiz(n){
+  lastWeakLength=n;
+  weakOrder=buildWeakPool(n);
+  weakIndex=0; weakScore=0; weakAnswered=false;
+  document.getElementById("weakStart").classList.add("hidden");
+  document.getElementById("weakFinish").classList.add("hidden");
+  document.getElementById("weakBody").classList.remove("hidden");
+  showWeakQuestion();
+}
+
+function showWeakQuestion(){
+  weakAnswered=false;
+  const q=weakOrder[weakIndex];
+  document.getElementById("weakCat").textContent=q.cat;
+  document.getElementById("weakCount").textContent=`Fråga ${weakIndex+1} av ${weakOrder.length}`;
+  document.getElementById("weakProgress").style.width=`${(weakIndex/weakOrder.length)*100}%`;
+  document.getElementById("weakQuestion").textContent=q.q;
+  const wrap=document.getElementById("weakAnswers");
+  wrap.innerHTML="";
+  document.getElementById("weakFeedback").classList.add("hidden");
+  document.getElementById("weakNext").classList.add("hidden");
+
+  q.a.forEach((t,i)=>{
+    const b=document.createElement("button");
+    b.className="answer";
+    b.textContent=t;
+    b.onclick=()=>chooseWeak(i,b);
+    wrap.appendChild(b);
+  });
+}
+
+function chooseWeak(i,btn){
+  if(weakAnswered) return;
+  weakAnswered=true;
+  const q=weakOrder[weakIndex];
+  document.querySelectorAll("#weakAnswers .answer").forEach((b,j)=>{
+    b.disabled=true;
+    if(j===q.c) b.classList.add("correct");
+  });
+  if(i===q.c){
+    weakScore++;
+  }else{
+    btn.classList.add("wrong");
+  }
+  const f=document.getElementById("weakFeedback");
+  f.textContent=(i===q.c?"Rätt. ":"Fel. ")+q.e;
+  f.classList.remove("hidden");
+  document.getElementById("weakNext").classList.remove("hidden");
+}
+
+document.getElementById("weakNext").onclick=()=>{
+  weakIndex++;
+  if(weakIndex>=weakOrder.length){
+    const pct=Math.round(weakScore/weakOrder.length*100);
+    document.getElementById("weakBody").classList.add("hidden");
+    document.getElementById("weakFinish").classList.remove("hidden");
+    document.getElementById("weakProgress").style.width="100%";
+    document.getElementById("weakScore").textContent=`${weakScore}/${weakOrder.length} – ${pct}%`;
+    document.getElementById("weakText").textContent=pct>=85
+      ?"Starkt. Dina svagaste områden börjar sitta bättre."
+      :"Fortsätt ett varv till på samma läge.";
+  }else{
+    showWeakQuestion();
+  }
+}
+
+updateHome();startQuiz();
+</script>
+
+<script>
+if ('serviceWorker' in navigator && location.protocol.startsWith('http')) {
+  window.addEventListener('load', () => {
+    navigator.serviceWorker.register('./service-worker.js').catch(console.error);
+  });
+}
+</script>
+
+</body>
+</html>
