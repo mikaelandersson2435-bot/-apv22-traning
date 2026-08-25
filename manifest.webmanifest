@@ -1,7 +1,7 @@
 {
   "name": "APV 2.2 – Träningsportal",
   "short_name": "APV 2.2",
-  "description": "APV 2.2 träningsportal med användarkonton och adminöversikt.",
+  "description": "APV 2.2 träningsportal med konton, adminöversikt och lösenordsåterställning.",
   "start_url": "./",
   "display": "standalone",
   "background_color": "#0b1220",

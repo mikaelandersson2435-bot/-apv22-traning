@@ -41,3 +41,8 @@ Version 11:
 - Kapitelprogress sparas centralt
 - Slutprov sparas centralt
 - Adminpanel med användare, kapitel och provresultat
+
+Version 12:
+- Glömt lösenord?-knapp
+- Supabase password recovery mail
+- Nytt lösenord kan väljas direkt i portalen efter recovery-länken

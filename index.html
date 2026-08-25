@@ -88,6 +88,7 @@ table{width:100%;border-collapse:collapse} th,td{border-bottom:1px solid var(--l
       <label class="small">Lösenord</label>
       <input id="loginPassword" type="password" placeholder="••••••••" style="width:100%;padding:12px;border-radius:10px;border:1px solid var(--line);background:#0b1220;color:#fff;margin:6px 0 12px">
       <button class="primary" style="width:100%" onclick="loginUser()">Logga in</button>
+      <button class="secondary" style="width:100%;margin-top:8px" onclick="requestPasswordReset()">Glömt lösenord?</button>
       <button class="secondary" style="width:100%;margin-top:8px" onclick="showSignup()">Skapa konto</button>
     </div>
 
@@ -100,6 +101,16 @@ table{width:100%;border-collapse:collapse} th,td{border-bottom:1px solid var(--l
       <input id="signupPassword" type="password" placeholder="Minst 6 tecken" style="width:100%;padding:12px;border-radius:10px;border:1px solid var(--line);background:#0b1220;color:#fff;margin:6px 0 12px">
       <button class="primary" style="width:100%" onclick="signupUser()">Skapa konto</button>
       <button class="secondary" style="width:100%;margin-top:8px" onclick="showLogin()">Tillbaka</button>
+    </div>
+
+    <div id="resetPanel" class="hidden">
+      <h3>Välj nytt lösenord</h3>
+      <p class="small">Skriv in ett nytt lösenord för ditt konto.</p>
+      <label class="small">Nytt lösenord</label>
+      <input id="newPassword" type="password" placeholder="Minst 6 tecken" style="width:100%;padding:12px;border-radius:10px;border:1px solid var(--line);background:#0b1220;color:#fff;margin:6px 0 12px">
+      <label class="small">Upprepa lösenord</label>
+      <input id="newPassword2" type="password" placeholder="Upprepa lösenord" style="width:100%;padding:12px;border-radius:10px;border:1px solid var(--line);background:#0b1220;color:#fff;margin:6px 0 12px">
+      <button class="primary" style="width:100%" onclick="setNewPassword()">Spara nytt lösenord</button>
     </div>
 
     <div id="authMessage" class="feedback hidden"></div>
@@ -1541,8 +1552,41 @@ function showSignup(){
 }
 function showLogin(){
   document.getElementById("signupPanel").classList.add("hidden");
+  document.getElementById("resetPanel").classList.add("hidden");
   document.getElementById("loginPanel").classList.remove("hidden");
   document.getElementById("authMessage").classList.add("hidden");
+}
+
+async function requestPasswordReset(){
+  const typed=document.getElementById("loginEmail").value.trim();
+  const email=typed || prompt("Skriv e-postadressen till ditt APV-konto:");
+  if(!email) return;
+  const redirectTo=window.location.origin + window.location.pathname;
+  const {error}=await sb.auth.resetPasswordForEmail(email,{redirectTo});
+  if(error) return authMsg("Kunde inte skicka återställningsmail: "+error.message);
+  authMsg("Återställningsmail skickat. Öppna länken i mailet och välj sedan ett nytt lösenord här.", true);
+}
+
+function showResetPanel(){
+  document.getElementById("loginPanel").classList.add("hidden");
+  document.getElementById("signupPanel").classList.add("hidden");
+  document.getElementById("resetPanel").classList.remove("hidden");
+  document.getElementById("authGate").style.display="flex";
+  document.getElementById("appMain").classList.add("hidden");
+}
+
+async function setNewPassword(){
+  const p1=document.getElementById("newPassword").value;
+  const p2=document.getElementById("newPassword2").value;
+  if(p1.length<6) return authMsg("Lösenordet måste vara minst 6 tecken.");
+  if(p1!==p2) return authMsg("Lösenorden matchar inte.");
+  const {error}=await sb.auth.updateUser({password:p1});
+  if(error) return authMsg("Lösenordet kunde inte ändras: "+error.message);
+  authMsg("Lösenordet är ändrat. Du kan nu logga in med det nya lösenordet.", true);
+  setTimeout(async()=>{
+    await sb.auth.signOut();
+    showLogin();
+  },1200);
 }
 async function loginUser(){
   const email=document.getElementById("loginEmail").value.trim();
@@ -1584,10 +1628,23 @@ async function activateSession(user){
   await loadRemoteProgress();
 }
 async function initAuth(){
+  const hash=window.location.hash||"";
+  const search=window.location.search||"";
+  const isRecovery=hash.includes("type=recovery") || search.includes("type=recovery");
   const {data:{session}}=await sb.auth.getSession();
+  if(isRecovery && session?.user){
+    currentUser=session.user;
+    showResetPanel();
+    return;
+  }
   if(session?.user) await activateSession(session.user);
 }
 sb.auth.onAuthStateChange(async(event,session)=>{
+  if(event==="PASSWORD_RECOVERY"){
+    currentUser=session?.user||null;
+    showResetPanel();
+    return;
+  }
   if(event==="SIGNED_IN" && session?.user && !currentUser) await activateSession(session.user);
 });
 
