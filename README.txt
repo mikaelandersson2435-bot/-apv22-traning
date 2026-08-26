@@ -64,3 +64,9 @@ Version 15:
 - Kapitel 1–7 öppnar automatiskt nästa kapitel
 - Kapitel 8 leder direkt till övningsprovet
 - Kapitel markeras och sparas samtidigt på användarkontot
+
+Version 16:
+- Alla menyknappar flyttade till hamburgermeny
+- Menyn öppnas/stängs med ☰ Meny
+- Menyn stängs automatiskt när användaren väljer en sida
+- Renare mobilvy och mindre höjd i toppområdet

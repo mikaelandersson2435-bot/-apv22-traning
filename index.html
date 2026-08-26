@@ -98,17 +98,53 @@ table{width:100%;border-collapse:collapse} th,td{border-bottom:1px solid var(--l
 .chapter-actions button{width:100%;min-height:48px}
 .next-chapter-btn{font-weight:800}
 </style>
+
+<style>
+.menu-toggle{
+  min-height:48px;
+  font-weight:800;
+  font-size:1rem;
+}
+.nav-drawer{
+  display:grid;
+  gap:10px;
+  margin-top:12px;
+  padding:12px;
+  border:1px solid var(--line);
+  border-radius:16px;
+  background:var(--panel, #111827);
+}
+.nav-drawer button{
+  width:100%;
+  min-height:46px;
+  text-align:left;
+  justify-content:flex-start;
+}
+.nav-drawer.hidden{display:none!important}
+@media(min-width:900px){
+  .nav-drawer{
+    max-width:460px;
+  }
+}
+</style>
 </head>
 <body>
 <header id="appHeader" class="hidden">
 <div class="wrap">
 <h1>APV 2.2 – Träningsportal</h1>
 <div class="subtitle">Teori • övningsfrågor • slutprov • personlig träning</div>
+
+<div id="mobileMenuTop" class="row hidden" style="justify-content:space-between;align-items:center;margin-top:10px">
+  <button id="menuToggle" class="secondary menu-toggle" type="button" aria-expanded="false" aria-controls="mainNav">
+    ☰ Meny
+  </button>
+</div>
 <div id="accountBar" class="row hidden" style="margin-top:8px;justify-content:space-between">
   <span id="accountName" class="small"></span>
   <button id="logoutBtn" class="secondary" style="padding:7px 10px">Logga ut</button>
 </div>
-<nav>
+<nav id="mainNav" class="nav-drawer hidden" aria-label="Huvudmeny">
+
 <button data-page="home" class="active">Start</button>
 <button data-page="theory">Utbildning</button>
 <button data-page="quiz">Övningsprov</button>
@@ -118,6 +154,7 @@ table{width:100%;border-collapse:collapse} th,td{border-bottom:1px solid var(--l
 <button data-page="results">Resultat</button>
 <button data-page="account" id="accountNav">Mitt konto</button>
 <button data-page="admin" id="adminNav" class="hidden">Admin</button>
+
 </nav>
 </div>
 </header>
@@ -193,7 +230,7 @@ table{width:100%;border-collapse:collapse} th,td{border-bottom:1px solid var(--l
     <button class="primary" onclick="goToPage('weak')">Träna svagheter</button>
   </div>
 </div>
-<div class="tip" style="margin-top:14px"><b>Tips:</b> På mobil kan sidan även läggas till på hemskärmen för snabb åtkomst.</div><div class="version-tag">Portalversion 15</div>
+<div class="tip" style="margin-top:14px"><b>Tips:</b> På mobil kan sidan även läggas till på hemskärmen för snabb åtkomst.</div><div class="version-tag">Portalversion 16</div>
 </div>
 
 <div class="card">
@@ -1752,6 +1789,7 @@ async function logoutUser(){
   document.getElementById("appHeader").classList.add("hidden");
   document.getElementById("appMain").classList.add("hidden");
   document.getElementById("authGate").style.display="flex";
+  document.getElementById("mobileMenuTop").classList.add("hidden");
   document.getElementById("accountBar").classList.add("hidden");
   document.getElementById("adminNav").classList.add("hidden");
 }
@@ -1765,6 +1803,7 @@ async function activateSession(user){
   document.getElementById("authGate").style.display="none";
   document.getElementById("appHeader").classList.remove("hidden");
   document.getElementById("appMain").classList.remove("hidden");
+  document.getElementById("mobileMenuTop").classList.remove("hidden");
   document.getElementById("accountBar").classList.remove("hidden");
   document.getElementById("accountName").textContent=(data.full_name||user.email)+(data.role==="admin"?" • Admin":"");
   if(data.role==="admin") document.getElementById("adminNav").classList.remove("hidden");
@@ -2014,6 +2053,39 @@ document.querySelectorAll(".next-chapter-btn").forEach(btn=>{
     completeAndGoNext(Number(btn.dataset.current),btn.dataset.next);
   });
 });
+
+
+// ===== HAMBURGERMENY =====
+const menuToggle=document.getElementById("menuToggle");
+const mainNav=document.getElementById("mainNav");
+
+function closeMainMenu(){
+  if(!mainNav || !menuToggle) return;
+  mainNav.classList.add("hidden");
+  menuToggle.setAttribute("aria-expanded","false");
+  menuToggle.textContent="☰ Meny";
+}
+
+function openMainMenu(){
+  if(!mainNav || !menuToggle) return;
+  mainNav.classList.remove("hidden");
+  menuToggle.setAttribute("aria-expanded","true");
+  menuToggle.textContent="✕ Stäng meny";
+}
+
+if(menuToggle && mainNav){
+  menuToggle.addEventListener("click",()=>{
+    const isOpen=!mainNav.classList.contains("hidden");
+    if(isOpen) closeMainMenu();
+    else openMainMenu();
+  });
+
+  mainNav.querySelectorAll("button").forEach(btn=>{
+    btn.addEventListener("click",()=>{
+      closeMainMenu();
+    });
+  });
+}
 
 initAuth();
 
