@@ -1,8 +1,9 @@
-const CACHE_NAME = 'apv22-pwa-v17';
+const CACHE_NAME = 'apv22-pwa-v18';
 const STATIC_ASSETS = [
   './manifest.webmanifest',
   './icon-192.png',
-  './icon-512.png'
+  './icon-512.png',
+  './vscn-logo.jpg'
 ];
 
 self.addEventListener('install', event => {
