@@ -1,4 +1,4 @@
-const CACHE_NAME = 'apv22-pwa-v18';
+const CACHE_NAME = 'apv22-pwa-v20';
 const STATIC_ASSETS = [
   './manifest.webmanifest',
   './icon-192.png',

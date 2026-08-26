@@ -75,3 +75,7 @@ Version 17:
 - Hamburgermenyn från v16 behålls.
 - PWA-cache ändrad till network-first för HTML/navigation.
 - Nya GitHub-versioner ska visas snabbare utan att gammal index.html ligger kvar i cache.
+
+Version 20:
+- Vägservice Centralens logga flyttad till en separat headerbild allra högst upp.
+- Loggan borttagen från välkomstkortet.
