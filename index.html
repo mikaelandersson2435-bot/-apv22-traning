@@ -92,6 +92,12 @@ table{width:100%;border-collapse:collapse} th,td{border-bottom:1px solid var(--l
 }
 </style>
 
+
+<style>
+.chapter-actions{display:grid;gap:10px;margin-top:18px}
+.chapter-actions button{width:100%;min-height:48px}
+.next-chapter-btn{font-weight:800}
+</style>
 </head>
 <body>
 <header id="appHeader" class="hidden">
@@ -187,7 +193,7 @@ table{width:100%;border-collapse:collapse} th,td{border-bottom:1px solid var(--l
     <button class="primary" onclick="goToPage('weak')">Träna svagheter</button>
   </div>
 </div>
-<div class="tip" style="margin-top:14px"><b>Tips:</b> På mobil kan sidan även läggas till på hemskärmen för snabb åtkomst.</div><div class="version-tag">Portalversion 14</div>
+<div class="tip" style="margin-top:14px"><b>Tips:</b> På mobil kan sidan även läggas till på hemskärmen för snabb åtkomst.</div><div class="version-tag">Portalversion 15</div>
 </div>
 
 <div class="card">
@@ -256,7 +262,10 @@ table{width:100%;border-collapse:collapse} th,td{border-bottom:1px solid var(--l
 <h4>7. Så kan du tänka på provet</h4>
 <p>När en fråga handlar om ansvar, välj det svar som prioriterar säkerhet, aktuell kontroll och att brister rättas. Var försiktig med svar som säger “alltid”, “aldrig” eller att ingen kontroll behövs efter etablering.</p>
 
+<div class="chapter-actions">
 <button id="markLesson1" class="chapter-btn">Markera kapitel 1 som genomfört</button>
+<button class="primary next-chapter-btn" data-current="1" data-next="2">Genomfört &amp; gå till kapitel 2 →</button>
+</div>
 
 </div>
 
@@ -316,7 +325,10 @@ table{width:100%;border-collapse:collapse} th,td{border-bottom:1px solid var(--l
 <h4>9. Så kan du tänka på provet</h4>
 <p>Prioritera svar som bygger på riskbedömning, förebyggande åtgärder, fungerande skydd och uppföljning. Var skeptisk till svar som säger att varselkläder ensamma gör ett farligt arbetsmoment säkert eller att en gammal riskbedömning alltid gäller oavsett förändringar.</p>
 
+<div class="chapter-actions">
 <button id="markLesson2" class="chapter-btn">Markera kapitel 2 som genomfört</button>
+<button class="primary next-chapter-btn" data-current="2" data-next="3">Genomfört &amp; gå till kapitel 3 →</button>
+</div>
 
 </div>
 
@@ -415,7 +427,10 @@ table{width:100%;border-collapse:collapse} th,td{border-bottom:1px solid var(--l
 
 <div class="tip"><b>Minnesregel:</b> Omsorg → anvisning → behörig persons tecken → polisens anvisning har högst prioritet.</div>
 
+<div class="chapter-actions">
 <button id="markLesson3" class="chapter-btn">Markera kapitel 3 som genomfört</button>
+<button class="primary next-chapter-btn" data-current="3" data-next="4">Genomfört &amp; gå till kapitel 4 →</button>
+</div>
 
 </div>
 
@@ -480,7 +495,10 @@ table{width:100%;border-collapse:collapse} th,td{border-bottom:1px solid var(--l
 <h4>10. Så kan du tänka på provet</h4>
 <p>När två svar verkar möjliga, välj normalt det som innebär att arbetstypen identifieras korrekt, riskerna bedöms och utmärkning/skydd anpassas till verkligheten. Svar som säger att en kort arbetstid eller erfaren förare gör kraven onödiga är typiska felalternativ.</p>
 
+<div class="chapter-actions">
 <button id="markLesson4" class="chapter-btn">Markera kapitel 4 som genomfört</button>
+<button class="primary next-chapter-btn" data-current="4" data-next="5">Genomfört &amp; gå till kapitel 5 →</button>
+</div>
 
 </div>
 
@@ -548,7 +566,10 @@ table{width:100%;border-collapse:collapse} th,td{border-bottom:1px solid var(--l
 <li>Arbetar vaktlaget enligt arbetsberedning och gällande krav?</li>
 </ul>
 
+<div class="chapter-actions">
 <button id="markLesson5" class="chapter-btn">Markera kapitel 5 som genomfört</button>
+<button class="primary next-chapter-btn" data-current="5" data-next="6">Genomfört &amp; gå till kapitel 6 →</button>
+</div>
 
 </div>
 
@@ -610,7 +631,10 @@ table{width:100%;border-collapse:collapse} th,td{border-bottom:1px solid var(--l
 <li>Skadad eller smutsig utmärkning lämnas utan åtgärd.</li>
 </ul>
 
+<div class="chapter-actions">
 <button id="markLesson6" class="chapter-btn">Markera kapitel 6 som genomfört</button>
+<button class="primary next-chapter-btn" data-current="6" data-next="7">Genomfört &amp; gå till kapitel 7 →</button>
+</div>
 
 </div>
 
@@ -681,7 +705,10 @@ table{width:100%;border-collapse:collapse} th,td{border-bottom:1px solid var(--l
 
 <div class="key"><b>Minnesregel:</b> Skyddets funktion avgörs av typ + montering + placering + fri zon + skick. Om en av dessa delar brister kan hela skyddseffekten försämras.</div>
 
+<div class="chapter-actions">
 <button id="markLesson7" class="chapter-btn">Markera kapitel 7 som genomfört</button>
+<button class="primary next-chapter-btn" data-current="7" data-next="8">Genomfört &amp; gå till kapitel 8 →</button>
+</div>
 
 </div>
 
@@ -761,7 +788,10 @@ table{width:100%;border-collapse:collapse} th,td{border-bottom:1px solid var(--l
 
 <div class="tip"><b>Minnesregel:</b> Rätt märke + rätt plats + rätt riktning + rätt tid = fungerande trafikanordning.</div>
 
+<div class="chapter-actions">
 <button id="markLesson8" class="chapter-btn">Markera kapitel 8 som genomfört</button>
+<button class="primary next-chapter-btn" data-current="8" data-next="quiz">Utbildningen klar – gå till övningsprov →</button>
+</div>
 </div>
 </section>
 
@@ -1937,6 +1967,51 @@ loadAdminData = async function(){
 document.querySelectorAll("nav button").forEach(b=>{
   b.addEventListener("click",()=>{
     if(b.dataset.page==="account") loadAccountSummary();
+  });
+});
+
+
+// ===== KAPITELNAVIGERING =====
+async function completeAndGoNext(current,next){
+  localStorage.setItem(`apv22_lesson${current}`,"done");
+  const markBtn=document.getElementById(`markLesson${current}`);
+  if(markBtn){
+    markBtn.textContent=`Kapitel ${current} genomfört ✓`;
+    markBtn.classList.add("done");
+  }
+  if(typeof saveChapterRemote==="function"){
+    try{ await saveChapterRemote(current); }catch(e){ console.error(e); }
+  }
+
+  if(next==="quiz"){
+    if(typeof goToPage==="function"){
+      goToPage("quiz");
+    }else{
+      document.querySelectorAll(".page").forEach(p=>p.classList.add("hidden"));
+      document.getElementById("quiz")?.classList.remove("hidden");
+      window.scrollTo({top:0,behavior:"smooth"});
+    }
+    return;
+  }
+
+  const nextNumber=Number(next);
+  if(typeof goToPage==="function"){
+    goToPage("theory");
+  }else{
+    document.querySelectorAll(".page").forEach(p=>p.classList.add("hidden"));
+    document.getElementById("theory")?.classList.remove("hidden");
+  }
+
+  const nextLesson=document.getElementById(`lesson${nextNumber}`);
+  if(nextLesson){
+    nextLesson.classList.remove("hidden");
+    setTimeout(()=>nextLesson.scrollIntoView({behavior:"smooth",block:"start"}),120);
+  }
+}
+
+document.querySelectorAll(".next-chapter-btn").forEach(btn=>{
+  btn.addEventListener("click",()=>{
+    completeAndGoNext(Number(btn.dataset.current),btn.dataset.next);
   });
 });
 

@@ -58,3 +58,9 @@ Version 14:
 - Nytt teoriavsnitt: Trafikförordningen – grundbestämmelser 1–6 §§
 - APV-koppling för omsorg, anvisningar, polis/vakt, fri väg och kolonner
 - 13 nya tränings- och scenariofrågor
+
+Version 15:
+- Ny knapp längst ner i varje kapitel: Genomfört & gå vidare
+- Kapitel 1–7 öppnar automatiskt nästa kapitel
+- Kapitel 8 leder direkt till övningsprovet
+- Kapitel markeras och sparas samtidigt på användarkontot
