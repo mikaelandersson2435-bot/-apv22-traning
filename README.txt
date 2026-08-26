@@ -70,3 +70,8 @@ Version 16:
 - Menyn öppnas/stängs med ☰ Meny
 - Menyn stängs automatiskt när användaren väljer en sida
 - Renare mobilvy och mindre höjd i toppområdet
+
+Version 17:
+- Hamburgermenyn från v16 behålls.
+- PWA-cache ändrad till network-first för HTML/navigation.
+- Nya GitHub-versioner ska visas snabbare utan att gammal index.html ligger kvar i cache.
