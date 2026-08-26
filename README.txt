@@ -53,3 +53,8 @@ Version 13:
 - Förbättrad adminpanel med status och KPI-kort
 - Mitt konto med egen statistik och lösenordsbyte
 - Bekräftelse när slutprov sparas centralt
+
+Version 14:
+- Nytt teoriavsnitt: Trafikförordningen – grundbestämmelser 1–6 §§
+- APV-koppling för omsorg, anvisningar, polis/vakt, fri väg och kolonner
+- 13 nya tränings- och scenariofrågor

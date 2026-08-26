@@ -187,7 +187,7 @@ table{width:100%;border-collapse:collapse} th,td{border-bottom:1px solid var(--l
     <button class="primary" onclick="goToPage('weak')">Träna svagheter</button>
   </div>
 </div>
-<div class="tip" style="margin-top:14px"><b>Tips:</b> På mobil kan sidan även läggas till på hemskärmen för snabb åtkomst.</div><div class="version-tag">Portalversion 13</div>
+<div class="tip" style="margin-top:14px"><b>Tips:</b> På mobil kan sidan även läggas till på hemskärmen för snabb åtkomst.</div><div class="version-tag">Portalversion 14</div>
 </div>
 
 <div class="card">
@@ -198,7 +198,7 @@ table{width:100%;border-collapse:collapse} th,td{border-bottom:1px solid var(--l
 </div>
 <div class="grid">
 <div class="module"><div class="stat">8</div><b>Kompetensområden</b><p class="small">Utgår från Trafikverkets APV 2.2-kompetensplan.</p></div>
-<div class="module"><div class="stat">178</div><b>Träningsfrågor</b><p class="small">Träningsportal fokuserar extra på utmärkningsansvar.</p></div>
+<div class="module"><div class="stat">191</div><b>Träningsfrågor</b><p class="small">Träningsportal fokuserar extra på utmärkningsansvar.</p></div>
 <div class="module"><div class="stat" id="homeBest">–</div><b>Senaste resultat</b><p class="small">Sparas lokalt på enheten.</p></div>
 </div>
 <div class="card">
@@ -376,6 +376,44 @@ table{width:100%;border-collapse:collapse} th,td{border-bottom:1px solid var(--l
 </ul>
 
 <div class="key"><b>Minnesregel:</b> Undantag från trafikregler kan möjliggöra själva väghållningsarbetet, men säkerhetsansvaret följer med hela tiden.</div>
+
+
+<h4>Trafikförordningen – grundbestämmelser</h4>
+<p>Trafikförordningens grundbestämmelser är viktiga även vid arbete på väg. De beskriver hur trafikanter ska uppträda, vilka anvisningar som gäller och när vissa aktörer får ge anvisningar som går före andra trafikregler.</p>
+
+<h4>1 § – Omsorg, varsamhet och hänsyn</h4>
+<p>En trafikant ska iaktta den omsorg och varsamhet som krävs med hänsyn till omständigheterna. Särskild hänsyn ska visas mot bland annat barn, äldre och personer som har svårt att klara sig i trafiken. Trafikanten ska också anpassa färdväg och hastighet så att människor och djur inte störs i onödan och så att skada undviks.</p>
+
+<div class="key"><b>APV-koppling:</b> Vid vägarbete räcker det inte att bara följa skyltning. Trafikanten har fortfarande ett eget ansvar att köra med omsorg och anpassa hastigheten efter situationen.</div>
+
+<h4>2 § – Anvisningar för trafiken</h4>
+<p>Trafikanten ska följa anvisningar som meddelas genom vägmärken, vägmarkeringar, trafiksignaler, ljussignaler eller tecken från vakt. Om en sådan anvisning innebär en avvikelse från en vanlig trafikregel gäller anvisningen framför den generella trafikregeln.</p>
+
+<h4>3 § – Polisens och andra behöriga personers anvisningar</h4>
+<p>En trafikant ska lyda en polismans anvisning. Sådana anvisningar gäller framför trafikregler och andra anvisningar. Motsvarande kan gälla anvisningar från andra behöriga personer när de enligt lag har rätt att övervaka eller leda trafiken.</p>
+
+<div class="warning"><b>Provfälla:</b> Om polisens anvisning strider mot ett vägmärke är det polisens anvisning som gäller.</div>
+
+<h4>4 § – Behörighet ska framgå</h4>
+<p>Den som övervakar eller ger anvisningar för trafiken i vissa myndighetsroller ska kunna identifieras genom klädsel eller annat särskilt kännetecken som visar behörigheten.</p>
+
+<h4>5 § – Fri väg</h4>
+<p>Trafikanter ska lämna fri väg för utryckningsfordon som avger signal med föreskriven larmanordning. Den som ska lämna fri väg ska stanna om det är nödvändigt.</p>
+
+<h4>6 § – Kolonner och processioner</h4>
+<p>En trafikant får inte bryta eller på annat sätt hindra exempelvis en militärkolonn, kolonn av fordon från räddningstjänsten, grupp av barn under ledning av tillsynsperson eller ett begravningsfölje.</p>
+
+<h4>Praktisk sammanfattning för APV 2.2</h4>
+<ul>
+<li>Trafikanten har alltid ett grundläggande omsorgsansvar.</li>
+<li>Vägmärken, vägmarkeringar och trafiksignaler ska följas.</li>
+<li>Vaktens tecken är en trafikreglerande anvisning när vakten agerar inom sin behörighet.</li>
+<li>Polisens anvisning går före vanliga trafikregler och vägmärken.</li>
+<li>Utryckningsfordon ska ges fri väg.</li>
+<li>En trafiklösning vid vägarbete får inte utformas så att den skapar motstridiga eller otydliga anvisningar.</li>
+</ul>
+
+<div class="tip"><b>Minnesregel:</b> Omsorg → anvisning → behörig persons tecken → polisens anvisning har högst prioritet.</div>
 
 <button id="markLesson3" class="chapter-btn">Markera kapitel 3 som genomfört</button>
 
@@ -1121,6 +1159,21 @@ const questions=[
 {cat:"Scenario",q:"Rinnande ljus används åt rätt håll men ett X5 bredvid visar motsatt riktning. Vad är problemet?",a:["Budskapen motsäger varandra och trafikledningen är otydlig","Inget eftersom rinnande ljus väger tyngre","X5 gäller bara dagtid","Det påverkar endast personalen"],c:0,e:"Trafikanordningar ska ge ett samstämmigt budskap.",level:"svar"},
 {cat:"Scenario",q:"En vakt står synligt men saknar tillräcklig reträttmöjlighet om ett fordon inte stannar. Vad är mest korrekt?",a:["Placeringen behöver omprövas eftersom arbetsmiljön är otillräckligt säker","Synlighet räcker alltid","Varselkläder löser problemet","Endast hastigheten spelar roll"],c:0,e:"Vaktens position ska vara säker, inte bara synlig.",level:"svar"},
 {cat:"Scenario",q:"Ett arbetsfordon står rätt men dess varningslykta har slutat fungera under pågående arbete. Vad bör ske?",a:["Funktionen ska återställas eller en säker alternativ lösning ordnas innan fordonet fortsätter i samma roll","Fortsätt eftersom fordonet redan är etablerat","Ta bort X2","Endast notera felet efter passet"],c:0,e:"Säkerhetsutrustning som krävs för fordonets roll måste fungera.",level:"normal"}
+,
+{cat:"Trafikförordningen",q:"Vad är grundprincipen i Trafikförordningens 1 §?",a:["Trafikanten ska visa omsorg och varsamhet med hänsyn till omständigheterna","Trafikanten får alltid hålla skyltad hastighet oavsett situation","Endast yrkestrafik har ansvar för andra trafikanter","Varsamhet krävs bara vid vägarbete"],c:0,e:"1 § bygger på ett generellt ansvar att visa omsorg och varsamhet.",level:"grund"},
+{cat:"Trafikförordningen",q:"Vilka ska trafikanter visa särskild hänsyn mot enligt grundbestämmelserna?",a:["Bland annat barn, äldre och personer som har svårt att klara sig i trafiken","Endast gående","Endast yrkesförare","Endast personer i arbetsfordon"],c:0,e:"Grundbestämmelsen pekar särskilt ut sårbara trafikanter.",level:"grund"},
+{cat:"Trafikförordningen",q:"Vad gäller om ett vägmärke innebär en avvikelse från en vanlig trafikregel?",a:["Anvisningen genom vägmärket gäller framför den allmänna trafikregeln","Den allmänna regeln gäller alltid först","Föraren väljer själv","Båda gäller lika mycket"],c:0,e:"Anvisningar genom bland annat vägmärken och signaler kan gälla framför generella trafikregler.",level:"normal"},
+{cat:"Trafikförordningen",q:"Vilken anvisning gäller framför ett vägmärke om de säger olika saker?",a:["En polismans anvisning","Vägmärket gäller alltid","Förarens egen bedömning","Den senaste skylten som sattes upp"],c:0,e:"Polisens anvisning gäller framför trafikregler och andra anvisningar.",level:"grund"},
+{cat:"Trafikförordningen",q:"Vad gäller för en trafikant när polis ger en anvisning?",a:["Trafikanten ska följa anvisningen även om den avviker från annan trafikreglering","Anvisningen är bara rådgivande","Endast yrkesförare behöver följa den","Den gäller bara om ett vägmärke stödjer den"],c:0,e:"Polisens anvisning har hög prioritet.",level:"normal"},
+{cat:"Trafikförordningen",q:"Vad är syftet med att behörighet ska framgå genom klädsel eller kännetecken?",a:["Trafikanter ska kunna förstå att personen har rätt att övervaka eller ge anvisningar","Det är bara en arbetsmiljöfråga","Det ersätter all annan utmärkning","Det visar vem som är arbetsledare"],c:0,e:"Behörigheten ska vara tydlig för trafikanterna.",level:"normal"},
+{cat:"Trafikförordningen",q:"Vad ska en trafikant göra när ett utryckningsfordon med föreskriven larmanordning behöver fri väg?",a:["Lämna fri väg och stanna om det behövs","Fortsätta om den egna signalen är grön","Alltid köra upp på gångbanan","Endast sakta ner"],c:0,e:"Fri väg ska lämnas, och stannande kan krävas.",level:"grund"},
+{cat:"Trafikförordningen",q:"Vad gäller för en militärkolonn eller räddningstjänstkolonn?",a:["Den får inte brytas eller hindras av annan trafik","Den får alltid passeras på höger sida","Den saknar särskilt skydd","Den får brytas om kön är lång"],c:0,e:"Trafikanten får inte bryta eller på annat sätt hindra vissa kolonner och processioner.",level:"grund"},
+{cat:"Scenario",q:"Vid ett vägarbete visar en vakt stopptecken samtidigt som ett fast vägmärke normalt skulle tillåta fortsatt färd. Vad ska föraren göra?",a:["Följa vaktens anvisning och stanna","Följa det fasta vägmärket","Fortsätta om kön är kort","Välja det som verkar snabbast"],c:0,e:"Tecken från behörig vakt är en trafikreglerande anvisning som ska följas.",level:"normal"},
+{cat:"Scenario",q:"En polis vinkar fram trafik genom en korsning trots rött ljus. Vad gäller?",a:["Polisens anvisning gäller framför trafiksignalen","Rött ljus gäller alltid","Endast bussar får köra","Trafikanterna ska vänta tills signalen blir grön"],c:0,e:"Polisens anvisning går före trafiksignal och andra anvisningar.",level:"normal"},
+{cat:"Scenario",q:"Ett utryckningsfordon närmar sig genom ett vägarbetsområde med blåljus och siren. Vad är den viktigaste principen?",a:["Trafiklösningen måste ge möjlighet att lämna fri väg på ett säkert sätt","Vägarbetet har alltid företräde","Utryckningsfordonet ska vänta tills arbetet avslutas","Endast vakten behöver reagera"],c:0,e:"Fri väg ska lämnas samtidigt som säkerheten i arbetsområdet måste bevaras.",level:"svar"},
+{cat:"Scenario",q:"En förare håller exakt skyltad hastighet men passerar mycket nära vägarbetare i en trång passage utan att sänka farten. Vilken princip är viktigast?",a:["Skyltad hastighet befriar inte från kravet på omsorg och anpassning till situationen","Skyltad hastighet är alltid tillräcklig","Endast vägarbetarna har ansvar","Det är bara ett problem om en olycka sker"],c:0,e:"1 § innebär ett självständigt omsorgs- och varsamhetsansvar.",level:"svar"},
+{cat:"Scenario",q:"En tillfällig skyltning och en gammal vägmarkering ger olika budskap. Hur ska det bedömas?",a:["Det är en säkerhetsbrist eftersom trafikanterna ska få en tydlig och entydig anvisning","Det är acceptabelt om den tillfälliga skylten är större","Vägmarkeringen gäller alltid först","Trafikanten får välja"],c:0,e:"Motstridiga anvisningar skapar risk och ska undvikas.",level:"svar"}
+
 ];
 
 document.getElementById("chapterList").innerHTML=chapters.map((c,i)=>`
