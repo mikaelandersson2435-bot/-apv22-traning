@@ -1,0 +1,61 @@
+APV 2.2 – version 21: Svenska/English och uppläsning
+
+BYGGER PÅ
+Den sparade versionen APV22_Traningsportal_v20_Headerbild.zip från 26 augusti 2026.
+Den publicerade GitHub-versionen har inte ändrats av denna uppdatering.
+
+NYTT
+- Svenska eller engelska väljs högst upp efter inloggning.
+- 210 frågor med svarsalternativ och förklaringar samt åtta utbildningskapitel finns på båda språken.
+- Läs upp-knappar i utbildningen, övningsprovet, slutprovet och Träna svagheter.
+- Förklaringar kan läsas efter besvarad fråga, och felbesvarade frågor efter avslutat slutprov.
+- Pausa, fortsätt, stoppa och läshastighet 0,7–1,1 gånger.
+- Språk och hastighet sparas på enheten.
+- Språkbyte behåller valda svar, poäng och pågående prov.
+- Uppläsningen stoppas vid byte av fråga eller sida och när fliken lämnas.
+- Frågornas interna kategorier och rättningslogik har behållits.
+
+LÄGG UPP PÅ GITHUB PAGES
+1. Spara en kopia av de filer som ligger på GitHub idag.
+2. Packa upp zip-filen.
+3. Lägg innehållet direkt i samma mapp som din nuvarande index.html:
+   index.html
+   service-worker.js
+   accessibility.js
+   accessibility.css
+   language-en.js
+   manifest.webmanifest
+   icon-192.png
+   icon-512.png
+   vscn-logo.jpg
+   Lägg alltså inte en extra mapp ovanför index.html.
+4. Spara ändringen i GitHub och invänta att GitHub Pages publicerat den.
+5. Stäng portalen helt och öppna den igen. Ladda om vid behov.
+6. Kontrollera att startsidan visar Portalversion 21.
+
+Om du ändrat kod, frågor eller inställningar direkt på GitHub efter version 20
+behöver dessa ändringar först jämföras med paketet så att de inte skrivs över.
+Ingen databasändring krävs för språkstödet. Befintlig inloggning är kvar.
+
+PROVLYSSNA PÅ TELEFONEN
+1. Logga in och välj Svenska.
+2. Öppna ett kapitel och tryck Läs upp kapitlet.
+3. Prova paus, fortsätt, stopp och läshastighet.
+4. Byt till English och prova samma kapitel.
+5. Prova en fråga i Övningsprov och en i Slutprov.
+6. Kontrollera att frågan och alla svar hörs, men att facit inte läses under slutprovet.
+Uppläsningen använder webbläsarens/enhetens röster. Rösttillgång och uttal varierar.
+Om en svensk eller engelsk röst saknas visas information om det. Aktivera då
+rätt röst på enheten eller prova en annan webbläsare. Vissa röster kräver internet.
+
+KONTROLLERAT
+Automatiska kontroller av alla 210 frågors språk och svarsföljd, språkbyte mitt i
+besvarad fråga, poängberäkning i övningsprov och balanserat 40-frågors slutprov,
+Träna svagheter samt att uppläsning inte hämtar facit under slutprovet.
+Gränssnittet har kontrollerats i Chromium i mobilbredd 390 px och datorbredd
+1280 px. Ingen horisontell överströmning eller JavaScript-fel upptäcktes.
+Testerna använde simulerad inloggning och simulerade röster utan kontakt med
+produktionsdatabasen. Verkligt ljud och iPhone/Safari är inte provlyssnat.
+
+Översättningen återger det befintliga utbildningsmaterialet. Denna uppdatering
+är en språk- och tillgänglighetsändring, inte en ny granskning av APV-regelverket.
