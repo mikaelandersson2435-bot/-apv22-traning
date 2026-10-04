@@ -1,0 +1,28 @@
+APV 2.2 – Version 22
+
+Komplettering av utbildningsinnehåll, svenska och engelska:
+- TrF, VMF, AML och Väglagen samt skillnaden mellan lagstiftning och kontraktskrav.
+- Riskbedömning, arbetsberedning och instruktion av medhjälpare.
+- Daglig kontroll, avvikelser, åtgärder och efterkontroll.
+- Funktionskontroll av trafikdirigering och montering av skydd.
+- 24 nya frågor: totalt 234. Ingår i befintliga övnings- och provurval.
+- Rättade hänvisningar till Trafikförordningens 2 kap.
+- Myndighetslänkar i kapitel 3. Kompletteringar källkontrollerade 2026-10-04.
+
+UPPDATERA GITHUB
+Packa upp zip-filen. Ladda upp filerna i samma mapp i ditt befintliga
+GitHub-repository som nuvarande index.html och ersätt befintliga filer.
+Ladda inte upp själva zip-filen som webbplats. Spara med Commit changes.
+Vänta på GitHub Pages-publiceringen. Öppna appen med internet och ladda om.
+Kontrollera att det står Portalversion 22. Vid gammal version: stäng appen
+och öppna igen eller gör en hård omladdning i webbläsaren.
+
+Tekniskt ändrade filer: index.html, language-en.js, service-worker.js.
+Befintlig inloggning och uppläsning är oförändrade. Samma kapitel-ID:n och
+lagringsnycklar används. Redan markerade kapitel förblir markerade; läs
+kompletteringarna även om du redan har slutfört ett kapitel.
+
+Materialet är ett träningsstöd och ingen garanti för att samtliga
+certifieringskrav är täckta. Följ aktuell kompetensplan, lagstiftning,
+kontraktskrav och tillverkarens anvisningar för det verkliga arbetet.
+De nya praktiska checklistorna är exempel, inte officiella blanketter.

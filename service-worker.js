@@ -1,4 +1,4 @@
-const CACHE_NAME = 'apv22-pwa-v21';
+const CACHE_NAME = 'apv22-pwa-v22';
 const STATIC_ASSETS = [
   './manifest.webmanifest',
   './language-en.js',
