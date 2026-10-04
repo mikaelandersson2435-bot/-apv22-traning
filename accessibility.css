@@ -9,3 +9,5 @@ button:disabled{opacity:.65;cursor:default}
 .read-controls button{min-height:44px;border:1px solid #64748b;text-align:left}
 button:focus-visible,select:focus-visible{outline:3px solid var(--accent);outline-offset:3px}
 @media(max-width:600px){.speech-settings .row{gap:6px}.speech-settings label{font-size:.8rem}.speech-settings button{padding:8px}.speech-settings p{max-height:3em;overflow:auto}header{position:relative}}
+
+.speech-settings .voice-choice{flex:1;min-width:0;max-width:100%}.speech-settings #apvVoice{width:100%;max-width:100%;min-width:0}.speech-settings .row{flex-wrap:wrap} #apvVoiceHelp{overflow-wrap:anywhere}

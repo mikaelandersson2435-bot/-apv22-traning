@@ -1,0 +1,19 @@
+VERSION 23 – RÖSTVAL
+
+Packa upp ZIP-filen och ersätt filerna i samma GitHub-mapp som index.html.
+Spara med Commit changes och invänta publiceringen. Ladda om appen med
+internetanslutning. Kontrollera att Portalversion 23 visas.
+
+Välj Svenska eller English i appens språkval. Välj sedan röst och tryck
+Provlyssna / Preview voice. Valet sparas separat för svenska och engelska
+i den aktuella webbläsaren på enheten. Rösten används för kapitel, frågor,
+svar och förklaringar även i provlägena.
+
+Endast röster som webbläsaren gör tillgängliga visas. Om den nedladdade
+rösten saknas: tryck Uppdatera röstlistan eller stäng och öppna appen igen.
+Appen kan inte göra en röst tillgänglig som webbläsaren inte tillhandahåller.
+Om en sparad röst försvinner får du välja en annan eller Automatiskt val.
+
+Alla kompletteringar och 234 frågor från version 22 finns kvar.
+Ändrade programfiler: accessibility.js, accessibility.css, index.html,
+language-en.js och service-worker.js.

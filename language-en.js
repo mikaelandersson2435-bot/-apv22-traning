@@ -1812,7 +1812,7 @@ window.APV_EN = {
   "2 kap. 1 § innebär ett självständigt omsorgs- och varsamhetsansvar.": "Chapter 2: Section 1 imposes an independent duty of care and caution.",
   "Polisens anvisning går före trafikregler och anvisningarna i 2 kap. 2 §. Det finns ingen generell rangordning mellan alla typer av skyltar och signaler; läs den aktuella bestämmelsen.": "Police directions take priority over traffic rules and the directions in Chapter 2, Section 2. There is no universal ranking covering every sign and signal; consult the applicable provision.",
   "Åtta kapitel med övningsfrågor. Version 22 kompletterar regelverk, instruktion av medhjälpare och daglig egenkontroll. Materialet är ett träningsstöd; följ även aktuell kompetensplan och arbetsplatsens krav.": "Eight chapters with practice questions. Version 22 adds legislation, helper briefings and daily self-checks. This is a training aid; also follow the current competence plan and site requirements.",
-  "Portalversion 22": "Portal version 22",
+  "Portalversion 23": "Portal version 23",
   "Källor till kompletteringarna": "Sources for these additions",
   "Kompletteringarna kontrollerades mot dessa myndighetskällor den 4 oktober 2026. Länkarna kräver internet. Kontrollera alltid aktuell lydelse och vilken kravversion som gäller för uppdraget.": "These additions were checked against these official sources on 4 October 2026. Links require internet access. Always check the current text and the version applicable to the contract.",
   "Trafikförordningen (TrF)": "Road Traffic Ordinance (TrF)",
