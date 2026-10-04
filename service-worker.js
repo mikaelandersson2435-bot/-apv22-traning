@@ -1,9 +1,9 @@
-const CACHE_NAME = 'apv22-pwa-v23';
+const CACHE_NAME = 'apv22-pwa-v24';
 const STATIC_ASSETS = [
   './manifest.webmanifest',
-  './language-en.js',
-  './accessibility.js',
-  './accessibility.css',
+  './language-en-v24.js',
+  './accessibility-v24.js',
+  './accessibility-v24.css',
   './icon-192.png',
   './icon-512.png',
   './vscn-logo.jpg'
@@ -11,7 +11,7 @@ const STATIC_ASSETS = [
 
 self.addEventListener('install', event => {
   event.waitUntil(
-    caches.open(CACHE_NAME).then(cache => cache.addAll(STATIC_ASSETS))
+    caches.open(CACHE_NAME).then(cache => cache.addAll(STATIC_ASSETS.map(url => new Request(url, {cache: 'reload'}))))
   );
   self.skipWaiting();
 });

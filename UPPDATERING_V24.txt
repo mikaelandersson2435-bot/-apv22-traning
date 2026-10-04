@@ -1,0 +1,17 @@
+VERSION 24 – RÄTTNING AV UPPDATERING OCH RÖSTVAL
+
+1. Packa upp hela ZIP-filen.
+2. Ladda upp ALLA filerna i samma GitHub-mapp som nuvarande index.html.
+   De nya filerna accessibility-v24.js, accessibility-v24.css och
+   language-en-v24.js måste följa med.
+3. Spara med Commit changes och invänta GitHub Pages-publiceringen.
+4. Öppna appen med internet och ladda om sidan. Kontrollera Portalversion 24.
+5. Under språk och läshastighet ska Svensk röst, Provlyssna och
+   Uppdatera röstlistan visas. Välj röst och provlyssna.
+
+Svenska och engelska röstval sparas separat. Webbläsaren avgör vilka
+röster som är tillgängliga. Version 24 använder nya filnamn så att
+en äldre cachad röstpanel inte återanvänds. Befintliga resultat och
+inloggningsuppgifter raderas inte av uppdateringen.
+
+Alla 234 frågor och utbildningskompletteringar finns kvar.
