@@ -1,13 +1,13 @@
-const CACHE_NAME = 'apv22-pwa-v25';
+const CACHE_NAME = 'apv22-pwa-v26';
 const STATIC_ASSETS = [
   './index.html', './apv21.html', './apv22.html',
   './manifest.webmanifest',
-  './language-en-v25.js',
-  './accessibility-v25.js',
-  './accessibility-v25.css',
+  './language-en-v26.js',
+  './accessibility-v26.js',
+  './accessibility-v26.css',
   './icon-192.png',
   './icon-512.png',
-  './vscn-logo.jpg'
+  './vscn-eleda-v26.jpg'
 ];
 
 self.addEventListener('install', event => {

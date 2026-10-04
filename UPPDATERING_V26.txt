@@ -1,0 +1,14 @@
+VERSION 26 – NY LOGOTYP
+
+Den nya logotypen med Part of Eleda visas på startsidan, APV 2.1 och
+APV 2.2. Bilden är oförändrad och visas i sin helhet utan beskärning.
+Utbildningarnas innehåll, inloggning och resultat är oförändrade.
+
+1. Packa upp ZIP-filen.
+2. Ladda upp ALLA uppackade filer till samma GitHub-mapp som index.html.
+3. Spara med Commit changes och invänta publicering.
+4. Öppna i Safari:
+https://mikaelandersson2435-bot.github.io/-apv22-traning/index.html?v=26
+
+Startsidan ska visa Portalversion 26 och den nya logotypen.
+Ingen ändring i Supabase behövs.
