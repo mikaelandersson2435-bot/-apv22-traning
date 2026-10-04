@@ -1,0 +1,1425 @@
+<!doctype html>
+<html lang="sv">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<title>APV 2.1 – Träningsportal</title>
+<style>
+:root{
+  --bg:#0b1220;--panel:#111827;--panel2:#1f2937;--text:#f8fafc;--muted:#cbd5e1;
+  --accent:#f59e0b;--good:#22c55e;--bad:#ef4444;--line:#334155;--blue:#38bdf8
+}
+*{box-sizing:border-box}
+body{margin:0;font-family:system-ui,-apple-system,Segoe UI,Roboto,Arial,sans-serif;background:linear-gradient(180deg,#07101f,#111827);color:var(--text)}
+header{position:sticky;top:0;background:rgba(11,18,32,.96);backdrop-filter:blur(8px);border-bottom:1px solid var(--line);padding:14px;z-index:5}
+.wrap{max-width:1050px;margin:auto}
+h1{font-size:1.32rem;margin:0 0 3px}.subtitle{color:var(--muted);font-size:.9rem}
+nav{display:flex;gap:7px;flex-wrap:wrap;margin-top:11px}
+button{border:0;border-radius:10px;padding:10px 13px;font-weight:800;cursor:pointer}
+nav button{background:#1e293b;color:white} nav button.active{background:var(--accent);color:#111827}
+main{padding:16px 14px 80px}
+.card{background:rgba(17,24,39,.96);border:1px solid var(--line);border-radius:16px;padding:18px;margin:13px 0;box-shadow:0 10px 30px rgba(0,0,0,.18)}
+.grid{display:grid;grid-template-columns:repeat(auto-fit,minmax(235px,1fr));gap:12px}
+.module{background:var(--panel2);border:1px solid var(--line);border-radius:14px;padding:16px}
+.module h3{margin:0 0 8px}.small{color:var(--muted);font-size:.9rem}
+.badge{display:inline-block;background:#312e81;color:#e0e7ff;border-radius:999px;padding:4px 9px;font-size:.78rem;margin-bottom:8px}
+.progress{height:10px;background:#07101f;border-radius:999px;overflow:hidden;border:1px solid var(--line)}
+.progress>div{height:100%;background:var(--good);width:0}
+.question{font-size:1.08rem;font-weight:850;margin:14px 0}
+.answer{display:block;width:100%;text-align:left;background:#1e293b;color:#fff;border:1px solid var(--line);margin:8px 0}
+.answer:hover{border-color:var(--accent)} .answer.correct{background:#14532d;border-color:var(--good)}
+.answer.wrong{background:#7f1d1d;border-color:var(--bad)}
+.feedback{margin-top:14px;padding:12px;border-radius:10px;background:#07101f;border:1px solid var(--line);line-height:1.5}
+.primary{background:var(--accent);color:#111827}.secondary{background:#334155;color:#fff}
+.row{display:flex;gap:10px;align-items:center;flex-wrap:wrap}.score{font-size:2rem;font-weight:900}
+table{width:100%;border-collapse:collapse} th,td{border-bottom:1px solid var(--line);padding:10px;text-align:left}
+.hidden{display:none} ul{line-height:1.55}.notice{border-left:4px solid var(--accent);padding:11px 13px;background:#1e293b;border-radius:8px}
+.lesson h3{margin-top:0}.lesson h4{margin:18px 0 7px;color:#fde68a}.lesson p,.lesson li{line-height:1.6}
+.key{border-left:4px solid var(--blue);padding:10px 12px;background:#0c2233;border-radius:8px;margin:12px 0}
+.warning{border-left:4px solid var(--bad);padding:10px 12px;background:#321414;border-radius:8px;margin:12px 0}
+.tip{border-left:4px solid var(--good);padding:10px 12px;background:#0f2b1b;border-radius:8px;margin:12px 0}
+.chapter-btn{width:100%;margin-top:10px;background:#334155;color:white}
+.chapter-btn.done{background:#14532d}
+.stat{font-size:1.7rem;font-weight:900}
+@media(max-width:600px){header{padding:11px}main{padding:12px 10px 70px}.card{padding:15px}nav button{flex:1 1 auto}.answer{padding:13px}}
+</style>
+
+<link rel="manifest" href="manifest.webmanifest">
+<meta name="theme-color" content="#0b1220">
+<meta name="apple-mobile-web-app-capable" content="yes">
+<meta name="apple-mobile-web-app-status-bar-style" content="black-translucent">
+<meta name="apple-mobile-web-app-title" content="APV 2.1">
+<link rel="apple-touch-icon" href="icon-192.png">
+
+<script src="https://cdn.jsdelivr.net/npm/@supabase/supabase-js@2"></script>
+
+<style>
+@media (max-width: 640px){
+  nav{gap:8px!important}
+  nav button{padding:10px 12px!important;font-size:.92rem!important}
+  #accountBar{margin-top:6px!important}
+}
+.admin-user-card{
+  border:1px solid var(--line);
+  border-radius:16px;
+  padding:14px;
+  margin:12px 0;
+  background:rgba(255,255,255,.025);
+}
+.admin-kpis{
+  display:grid;
+  grid-template-columns:repeat(4,minmax(0,1fr));
+  gap:8px;
+  margin-top:10px;
+}
+.admin-kpi{
+  border:1px solid var(--line);
+  border-radius:12px;
+  padding:10px;
+  text-align:center;
+}
+.admin-kpi b{font-size:1.15rem;display:block}
+.status-good{border-left:4px solid #22c55e}
+.status-warn{border-left:4px solid #f59e0b}
+.status-bad{border-left:4px solid #ef4444}
+@media(max-width:640px){
+  .admin-kpis{grid-template-columns:repeat(2,minmax(0,1fr))}
+}
+.version-tag{
+  font-size:.78rem;
+  opacity:.7;
+  margin-top:10px;
+}
+</style>
+
+
+<style>
+.chapter-actions{display:grid;gap:10px;margin-top:18px}
+.chapter-actions button{width:100%;min-height:48px}
+.next-chapter-btn{font-weight:800}
+</style>
+
+<style>
+.menu-toggle{
+  min-height:48px;
+  font-weight:800;
+  font-size:1rem;
+}
+.nav-drawer{
+  display:grid;
+  gap:10px;
+  margin-top:12px;
+  padding:12px;
+  border:1px solid var(--line);
+  border-radius:16px;
+  background:var(--panel, #111827);
+}
+.nav-drawer button{
+  width:100%;
+  min-height:46px;
+  text-align:left;
+  justify-content:flex-start;
+}
+.nav-drawer.hidden{display:none!important}
+@media(min-width:900px){
+  .nav-drawer{
+    max-width:460px;
+  }
+}
+</style>
+
+<style>
+.home-hero{display:grid;grid-template-columns:1.35fr .9fr;gap:16px;align-items:center}
+.brand-logo-box{background:#0b1220;border:1px solid var(--line);border-radius:16px;padding:18px;display:flex;align-items:center;justify-content:center;min-height:170px}
+.brand-logo-box img{max-width:100%;height:auto;border-radius:12px;display:block}
+.top-logo-box{margin-bottom:16px;min-height:auto;padding:14px 18px}
+.top-logo-box img{max-width:640px;width:100%}
+.home-hero-stacked{display:block}
+.info-list,.steps-list{margin:10px 0 0 0;padding-left:20px}
+.info-list li,.steps-list li{margin:0 0 9px;line-height:1.6}
+.home-stat-grid{display:grid;grid-template-columns:repeat(auto-fit,minmax(220px,1fr));gap:12px;margin-top:14px}
+.highlight-box{border-left:4px solid var(--accent);padding:12px 14px;background:#1e293b;border-radius:10px;margin-top:14px;line-height:1.6}
+@media(max-width:720px){
+  .home-hero{grid-template-columns:1fr}
+  .brand-logo-box{min-height:auto}
+}
+</style>
+
+
+<style>
+#brandHeader{background:#0b1220;border-bottom:1px solid var(--line);padding:12px 14px 10px}
+#brandHeader .wrap{max-width:1050px;margin:auto}
+#brandHeader img{display:block;width:100%;max-height:190px;object-fit:contain;border-radius:14px;border:1px solid var(--line);background:#111827}
+@media(max-width:600px){#brandHeader{padding:8px 10px}#brandHeader img{max-height:150px;border-radius:12px}}
+</style>
+<link rel="stylesheet" href="accessibility-v25.css">
+</head>
+<body>
+<div id="brandHeader" class="hidden">
+  <div class="wrap">
+    <img src="vscn-logo.jpg" alt="Vägservice Centralen AB logga">
+  </div>
+</div>
+<header id="appHeader" class="hidden">
+<div class="wrap">
+<h1>APV 2.1 – Träningsportal</h1>
+<div class="subtitle">Teori • övningsfrågor • slutprov • personlig träning</div>
+
+<div id="mobileMenuTop" class="row hidden" style="justify-content:space-between;align-items:center;margin-top:10px">
+  <button id="menuToggle" class="secondary menu-toggle" type="button" aria-expanded="false" aria-controls="mainNav">
+    ☰ Meny
+  </button>
+</div>
+<div id="accountBar" class="row hidden" style="margin-top:8px;justify-content:space-between">
+  <span id="accountName" class="small"></span>
+  <button id="logoutBtn" class="secondary" style="padding:7px 10px">Logga ut</button>
+</div>
+<nav id="mainNav" class="nav-drawer hidden" aria-label="Huvudmeny">
+
+<button data-page="home" class="active">Start</button>
+<button data-page="theory">Utbildning</button>
+<button data-page="quiz">Övningsprov</button>
+<button data-page="weak">Träna svagheter</button>
+<button data-page="exam">Slutprov</button>
+<button data-page="history">Prohistorik</button>
+<button data-page="results">Resultat</button>
+<button data-page="account" id="accountNav">Mitt konto</button>
+<button data-page="admin" id="adminNav" class="hidden">Admin</button>
+
+</nav>
+</div>
+</header>
+
+
+<div id="authGate" style="min-height:100vh;display:flex;align-items:center;justify-content:center;padding:20px">
+  <div class="card" style="max-width:520px;width:100%">
+    <span class="badge">APV 2.1</span>
+    <h2>Logga in till träningsportalen</h2>
+    <p class="small">Dina kapitel och provresultat sparas på ditt eget konto.</p>
+
+    <div id="loginPanel">
+      <label class="small">E-post</label>
+      <input id="loginEmail" type="email" placeholder="namn@foretag.se" style="width:100%;padding:12px;border-radius:10px;border:1px solid var(--line);background:#0b1220;color:#fff;margin:6px 0 12px">
+      <label class="small">Lösenord</label>
+      <input id="loginPassword" type="password" placeholder="••••••••" style="width:100%;padding:12px;border-radius:10px;border:1px solid var(--line);background:#0b1220;color:#fff;margin:6px 0 12px">
+      <button class="primary" style="width:100%" onclick="loginUser()">Logga in</button>
+      <button class="secondary" style="width:100%;margin-top:8px" onclick="requestPasswordReset()">Glömt lösenord?</button>
+      <button class="secondary" style="width:100%;margin-top:8px" onclick="showSignup()">Skapa konto</button>
+    </div>
+
+    <div id="signupPanel" class="hidden">
+      <label class="small">Namn</label>
+      <input id="signupName" type="text" placeholder="Förnamn Efternamn" style="width:100%;padding:12px;border-radius:10px;border:1px solid var(--line);background:#0b1220;color:#fff;margin:6px 0 12px">
+      <label class="small">E-post</label>
+      <input id="signupEmail" type="email" placeholder="namn@foretag.se" style="width:100%;padding:12px;border-radius:10px;border:1px solid var(--line);background:#0b1220;color:#fff;margin:6px 0 12px">
+      <label class="small">Lösenord</label>
+      <input id="signupPassword" type="password" placeholder="Minst 6 tecken" style="width:100%;padding:12px;border-radius:10px;border:1px solid var(--line);background:#0b1220;color:#fff;margin:6px 0 12px">
+      <button class="primary" style="width:100%" onclick="signupUser()">Skapa konto</button>
+      <button class="secondary" style="width:100%;margin-top:8px" onclick="showLogin()">Tillbaka</button>
+    </div>
+
+    <div id="resetPanel" class="hidden">
+      <h3>Välj nytt lösenord</h3>
+      <p class="small">Skriv in ett nytt lösenord för ditt konto.</p>
+      <label class="small">Nytt lösenord</label>
+      <input id="newPassword" type="password" placeholder="Minst 6 tecken" style="width:100%;padding:12px;border-radius:10px;border:1px solid var(--line);background:#0b1220;color:#fff;margin:6px 0 12px">
+      <label class="small">Upprepa lösenord</label>
+      <input id="newPassword2" type="password" placeholder="Upprepa lösenord" style="width:100%;padding:12px;border-radius:10px;border:1px solid var(--line);background:#0b1220;color:#fff;margin:6px 0 12px">
+      <button class="primary" style="width:100%" onclick="setNewPassword()">Spara nytt lösenord</button>
+    </div>
+
+    <div id="authMessage" class="feedback hidden"></div>
+  </div>
+</div>
+
+<main class="wrap hidden" id="appMain"><div class="course-switch"><a href="./index.html">← Byt utbildning</a><span class="badge">APV 2.1</span></div><p id="courseSync" class="warning hidden" role="status"></p>
+
+<section id="home" class="page">
+<div class="card">
+  <span class="badge">Vägservice Centralen AB</span>
+  <div class="home-hero home-hero-stacked">
+    <div>
+      <h2>Välkommen till APV 2.1 – Träningsportal</h2>
+      <p>Det här är Vägservice Centralens träningsportal för att stärka kunskaperna inom APV 2.1. Här kan du läsa teori, träna på frågor, följa dina resultat och repetera de områden där du behöver bli starkare.</p>
+      <div class="tip"><b>Målet:</b> att ge varje deltagare bättre förståelse för säkra arbetssätt, ansvar, riskbedömning och tryggare arbete på väg.</div>
+      <div class="version-tag">Portalversion 25</div>
+    </div>
+  </div>
+</div>
+
+<div class="grid">
+  <div class="card">
+    <span class="badge">Så fungerar portalen</span>
+    <h3>Arbeta dig fram steg för steg</h3>
+    <ol class="steps-list">
+      <li><b>Börja i Utbildning</b> och läs kapitlen i lugn och ro.</li>
+      <li><b>Gör Övningsprov</b> efter varje avsnitt för att kontrollera vad du har förstått.</li>
+      <li><b>Använd Träna svagheter</b> för att repetera det som behöver stärkas.</li>
+      <li><b>Avsluta med Slutprov</b> och följ utvecklingen i Resultat och Prohistorik.</li>
+    </ol>
+    <div class="highlight-box"><b>Tips:</b> Använd menyn högst upp för att snabbt hoppa mellan portalens olika delar.</div>
+  </div>
+
+  <div class="card">
+    <span class="badge">Det här kan du göra</span>
+    <h3>Funktioner som hjälper dig att lyckas</h3>
+    <ul class="info-list">
+      <li>läsa teori om förarrollen, TMA, fordon, utmärkning och säkerhet</li>
+      <li>träna med övningsfrågor och få direkt återkoppling</li>
+      <li>genomföra slutprov under mer provliknande former</li>
+      <li>se resultat, provhistorik och din egen utveckling över tid</li>
+      <li>repetera de områden där du tidigare haft svårare frågor</li>
+    </ul>
+  </div>
+</div>
+
+<div class="home-stat-grid">
+  <div class="module">
+    <h3>Varför APV 2.1 är viktigt</h3>
+    <p class="small">Kunskap i APV 2.1 bidrar till säkrare arbetsplatser, bättre planering och tydligare ansvar vid arbete på väg. Det hjälper dig att förstå både riskerna och hur de ska hanteras i praktiken.</p>
+  </div>
+  <div class="module">
+    <h3>Så vässar du dina kunskaper</h3>
+    <ul class="small info-list">
+      <li>ta ett kapitel i taget</li>
+      <li>repetera ofta i stället för att stressläsa</li>
+      <li>använd övningsproven direkt efter teorin</li>
+      <li>gå tillbaka till dina svagare områden innan slutprov</li>
+    </ul>
+  </div>
+  <div class="module">
+    <div class="stat" id="homeBest">–</div>
+    <b>Senaste resultat</b>
+    <p class="small">Här visas ditt senaste sparade slutprovsresultat i portalen.</p>
+  </div>
+</div>
+
+<div class="card">
+  <span class="badge">Viktigt att känna till</span>
+  <p>Träningsportalen är framtagen som ett internt stöd för lärande och repetition inom Vägservice Centralen. Innehållet är till för att stärka kunskap och trygghet i arbetet, men ersätter inte krav, regler eller officiella certifieringsmoment från berörda utbildningsanordnare och myndigheter.</p>
+</div>
+</section>
+
+<section id="theory" class="page hidden">
+<div class="card">
+<h2>Utbildning</h2>
+<p class="small">Åtta kapitel och 64 frågor för APV 2.1. Läs även originalkällorna i kapitel 8.</p>
+</div>
+<div id="chapterList" class="grid"></div>
+
+<div id="lesson1" class="card lesson hidden"><h3>1. Förarroll och kompetenskrav</h3><p>APV 2.1 gäller förare av TMA-fordon och förare som utför intermittent arbete på skyddsklassade vägar. APV 2.2 gäller andra ansvarsuppgifter, bland annat utmärkning.</p><p>Trafikverkets certifiering är giltig i fyra år och provet görs på svenska. Engelskan i appen är ett studiestöd. Appens egna frågor och träningsprov är inte Trafikverkets prov eller ett certifikat.</p><p>APV-kompetens ersätter inte körkort. Kontrollera behörighet för både fordon och eventuell släpvagn. Kontrollera också giltig certifiering, arbetsplatsens instruktioner och utbildning på utrustningen.</p><p>Lagstiftning, kontraktskrav och produktanvisningar fyller olika funktioner. Kontrollera vilken version av APV-kraven som åberopas i kontraktet. Tekniska exempel här hänvisar till TDOK 2012:86 version 5.0.</p><p>Före start: stäm av uppgift, vägklass, arbetsmetod, skyddsfordon, utmärkning, radiokontakt och felrutin. Som APV 2.1-förare blir du inte automatiskt utmärkningsansvarig enligt APV 2.2.</p><div class="chapter-actions">
+<button id="markLesson1" class="chapter-btn">Markera kapitel 1 som genomfört</button>
+<button class="primary next-chapter-btn" data-current="1" data-next="2">Genomfört &amp; gå till kapitel 2 →</button>
+</div>
+
+</div>
+
+<div id="lesson2" class="card lesson hidden"><h3>2. Fordonskontroll och bromsar</h3><p>Kontrollera fordon, redskap och skydd före användning: bromsar, däck, lyktor, speglar, kameror, kopplingar, läckage och säkrad utrustning. Hantera säkerhetsfel innan arbetet startar.</p><p>TDOK 2012:86 v5.0 avsnitt 5.3.2 kräver extra bromskontroll för tung lastbil och släpvagn över 3,5 tons totalvikt, utöver kontrollbesiktningen. Kontrollen utförs av ackrediterat besiktningsorgan eller ackrediterad verkstad.</p><p>Det får gå högst åtta månader mellan bromskontroller. Första kontrollen ska ske senast åtta månader efter att fordonet först togs i trafik. Kontrollera protokollet; en egen provbromsning ersätter inte denna kontroll.</p><p>Vid backning med begränsad sikt där personal eller oskyddade trafikanter finns anger avsnitt 5.3.3 kamera, bildskärm och två lågt placerade backvarningslyktor. Avbryt manövern om du tappar uppsikten över riskområdet.</p><p>Enligt avsnitt 5.3.4 används varningslykta när fordonet är hinder eller fara. På mötesseparerad väg används den inte på varnings- eller skyddsfordon när SIG18 förstärker de fordonsburna märkena. Skilj därför varningslykta från SIG18.</p><div class="chapter-actions">
+<button id="markLesson2" class="chapter-btn">Markera kapitel 2 som genomfört</button>
+<button class="primary next-chapter-btn" data-current="2" data-next="3">Genomfört &amp; gå till kapitel 3 →</button>
+</div>
+
+</div>
+
+<div id="lesson3" class="card lesson hidden"><h3>3. TMA, bärare och last</h3><p>TMA tar upp energi vid påkörning. Skyddets funktion beror på rätt kombination av skydd, bärare, montering och användning. Skyltar och lyktor ersätter inte ett energiupptagande skydd.</p><p>Kontrollera modellens tillåtelsebeslut och monteringsanvisning: bärarvikt, infästningar, draganordning, arbetshöjd och driftläge. En enda bärarvikt gäller inte automatiskt alla modeller. Dokumentation, skötsel och serviceintervaller ska följas enligt v5.0 avsnitt 13.2.1.2.</p><p>Last och ballast ska uppfylla produktvillkoren och vara säkrade. Kontrollera fordons- och axelvikter. På en sop- eller spolbil kan vatten och upptaget material ändra vikten under passet; kontrollera därför hela det planerade arbetsförloppet.</p><p>TMA ska vara i fullständigt funktionsläge innan fordonet etableras på vägen och så länge påkörningsrisk finns. Planera en säker plats för omställning mellan transport- och arbetsläge.</p><p>Arbetsfordon får vara sitt eget skyddsfordon om det utrustas för detta. V5.0 avsnitt 13.2.1.2.1 undantar personkorgsarbete och farligt gods; ett särskilt undantag för gods som behövs för arbetet kräver beställarens godkännande. Varningsfordon får inte vara lastat med farligt gods enligt avsnitt 13.2.1.2.2.</p><p>Efter påkörning eller misstänkt skada: säkra situationen och kontakta ansvarig. Rätt kompetens ska bedöma skydd och bärare enligt anvisningarna före fortsatt användning. Ett oskadat utseende bevisar inte bibehållen funktion.</p><div class="chapter-actions">
+<button id="markLesson3" class="chapter-btn">Markera kapitel 3 som genomfört</button>
+<button class="primary next-chapter-btn" data-current="3" data-next="4">Genomfört &amp; gå till kapitel 4 →</button>
+</div>
+
+</div>
+
+<div id="lesson4" class="card lesson hidden"><h3>4. Placering och buffertzon</h3><p>Vid intermittent arbete på skyddsklassad väg ska TMA vara det första trafikanten når i varje körfält och på vägrenen där arbete pågår, enligt v5.0 avsnitt 13.2.1.2.</p><p>Buffertzonen ligger mellan tvärgående skydd och det som skyddas. Minimilängden enligt v5.0 avsnitt 13.2.1.1 är halva talet för ordinarie hastighetsbegränsning plus 10 meter: 70 km/tim ger 45 meter, 90 ger 55 meter och 110 ger 65 meter.</p><p>Använd ordinarie hastighet i beräkningen, inte en tillfällig sänkning. Personal, arbete, upplag och föremål får inte finnas i buffertzonen. Produktvillkor och platsens risker måste också beaktas.</p><p>Vid intermittent arbete är avståndet till arbetsfordonet högst 250 meter enligt samma avsnitt, mätt från fronten på det TMA-fordon som ligger längst fram. Maxavståndet ersätter inte buffertzonen.</p><p>Om arbetet går mer än 0,5 meter över vägmitt räknas det enligt v5.0 som arbete i båda färdriktningarna. Ordna skydd och utmärkning för båda riktningarna före fortsatt arbete.</p><p>Intermittent arbete flyttar sig etappvis eller går så långsamt att det avviker markant från trafikrytmen. Rörligt arbete sker kontinuerligt utan sådan markant avvikelse. En långsamt rullande sopbil är därför inte automatiskt ett rörligt arbete.</p><div class="chapter-actions">
+<button id="markLesson4" class="chapter-btn">Markera kapitel 4 som genomfört</button>
+<button class="primary next-chapter-btn" data-current="4" data-next="5">Genomfört &amp; gå till kapitel 5 →</button>
+</div>
+
+</div>
+
+<div id="lesson5" class="card lesson hidden"><h3>5. Fordonsutmärkning</h3><p>A20 varnar för vägarbete. X2 markerar hinder. X5 är gul ljuspil eller ljuspilar som visar passageriktning. Utmärkning ger vägledning men tar inte upp krockenergi.</p><p>Vid intermittent arbete monteras X2 bakåt längst bak på hindrande fordon eller redskap. V5.0 avsnitt 10.1.8.1 anger centrerad montering, högst 0,2 meter smalare än fordonet och normalt högst 1,2 meter till underkanten.</p><p>Takmontering får användas när arbetsfordonets fysiska förutsättningar kräver det. X2 ska då minst täcka takets bredd och vara minst 0,4 meter hög. Gränsen 1,2 meter till underkant gäller inte detta undantag.</p><p>Enligt v5.0 tabell 10.1 används X5 endast på riktnings- och mötesseparerad väg med mer än ett körfält i färdriktningen. Den ska sitta på fordonet trafiken först hinner ifatt i respektive körfält, inte på vägrenen. X5 får inte kombineras med E15 eller F25 på samma fordon.</p><p>X5 ska minst vara normalstorlek. V5.0 tabellerna 10.8–10.9 anger normalformat 1000 × 1100 mm och stort format 2200 × 1500 mm. Kontrollera att pilen visar rätt håll och att passagen verkligen är säker.</p><p>T1 anger vägsträckans längd, T2 avstånd till det märket avser. F25 visar att körfält upphör och J2 lämnar upplysning. Kontrollera tillåtna fordonsburna märken och kombinationer mot VMF, TSFS 2019:74 och kontraktskrav; alla märken får inte användas fritt på rullande fordon.</p><p>Under transport till och från arbetsplatsen ska fordonsmonterade vägmärken och avstängningsanordningar täckas, släckas eller demonteras enligt v5.0 avsnitt 10.1.8.1. Kontrollera även renhet, infästning och att ordinarie fordonslyktor inte skyms.</p><div class="chapter-actions">
+<button id="markLesson5" class="chapter-btn">Markera kapitel 5 som genomfört</button>
+<button class="primary next-chapter-btn" data-current="5" data-next="6">Genomfört &amp; gå till kapitel 6 →</button>
+</div>
+
+</div>
+
+<div id="lesson6" class="card lesson hidden"><h3>6. Vägen och trafikreglerna</h3><p>Väglagen behandlar allmän väg, vägområde och väghållning. Trafikverket sköter statlig väghållning; även kommuner kan vara väghållare. Ta reda på vem som ansvarar för vägen.</p><p>Körbanan är avsedd för fordonstrafik men omfattar inte cykelbana eller vägren. Körfält är ett längsgående fält som rymmer en rad fyrhjuliga fordon. Vägbanan omfattar körbanan och vägrenen. Vägområdet är ett annat begrepp enligt Väglagen.</p><p>Trafikförordningen 2 kap. 1 § kräver omsorg och varsamhet efter situationen. Skyltad hastighet kan vara för hög för en säker passage. Polisens anvisning går före trafikregler och anvisningarna i 2 kap. 2 §. Gul varningslykta ger inte automatiskt företräde.</p><p>Undantag vid väghållningsarbete finns i Trafikförordningen 12 kap. De gäller angivna bestämmelser och villkor, inte all körning med ett arbetsfordon. Kontrollera den konkreta regeln innan exempelvis en heldragen linje behöver passeras i arbetet.</p><p>Om arbetet lämnar grus, halka, material eller skador på vägen ska risken hanteras enligt arbetsplatsens rutiner: varna, åtgärda och rapportera till ansvarig. En TA-plan ersätter inte nödvändiga myndighetsbeslut eller riskbedömning.</p><div class="chapter-actions">
+<button id="markLesson6" class="chapter-btn">Markera kapitel 6 som genomfört</button>
+<button class="primary next-chapter-btn" data-current="6" data-next="7">Genomfört &amp; gå till kapitel 7 →</button>
+</div>
+
+</div>
+
+<div id="lesson7" class="card lesson hidden"><h3>7. Arbetsmiljö och rapportering</h3><p>Arbetsgivaren ska förebygga ohälsa och olycksfall. Arbetstagaren ska medverka, följa instruktioner och använda skydd. Vid omedelbar och allvarlig fara ska arbetsgivaren eller skyddsombudet snarast meddelas enligt AML 3 kap. 4 §.</p><p>AFS 2023:1 kräver skriftliga riskbedömningar, även inför planerade ändringar. Åtgärder som inte görs direkt förs in i handlingsplan med ansvarig och tidpunkt. Utförda åtgärder ska kontrolleras. Allvarliga risker kräver skriftliga säkerhetsinstruktioner.</p><p>Etablering och avetablering är särskilt riskfyllda när skydd och vägledning ändras medan trafik passerar. Bestäm säker ordning, tillträdesvägar, radiokontakt och felrutin före start. Tappad kontakt får inte ersättas av gissningar.</p><p>V5.0 avsnitt 5.2 anger varselkläder klass 3 på överkroppen vid arbete med passerande trafik, med möjlighet till samcertifierad kombination vid små storlekar. Dålig sikt kräver dessutom angiven varselbyxa och lågt sittande reflex. Läs hela kravet och håll plaggen rena och hela.</p><p>Rapportera tillbud även när ingen skadas. Beskriv plats, tid, händelse, risk och åtgärd. Arbetsgivaren hanterar utredning och rapportering av allvarliga tillbud. Varselkläder gör dig synlig men ersätter inte skydd mot påkörning.</p><div class="chapter-actions">
+<button id="markLesson7" class="chapter-btn">Markera kapitel 7 som genomfört</button>
+<button class="primary next-chapter-btn" data-current="7" data-next="8">Genomfört &amp; gå till kapitel 8 →</button>
+</div>
+
+</div>
+
+<div id="lesson8" class="card lesson hidden"><h3>8. Situationer, repetition och källor</h3><p>Bedöm hela situationen: arbetsmetod, vägklass, hastighet, sikt, människor, skydd och produktvillkor. Ett godkänt fordon gör inte automatiskt varje uppställning säker.</p><p>Exempel: sopningen flyttas från vägrenen ut i ett körfält. Stäm av skydd, placering, förvarning och eventuell X5 innan arbetet fortsätter. Om arbetet breddas över vägmitt måste även den andra färdriktningen bedömas.</p><p>Exempel: en kollega går in i buffertzonen efter ett verktyg eller pilen visar fel efter en förflyttning. Hantera faran enligt rutinerna innan arbetet fortsätter. En kort vistelse eller ett kort fel är fortfarande en risk.</p><p>Träningsprovet har 40 frågor. Poänggränsen är appens träningsmål, inte ett besked om Trafikverkets provupplägg. Läs förklaringarna till felaktiga svar och repetera källavsnitten.</p><p>Källkontroll: 4 oktober 2026. Materialet är ett studiestöd och garanterar inte att varje möjligt certifieringsmoment täcks. Följ aktuell kompetensplan, kontraktskrav och tillåtelsebeslut för din TMA-modell.</p><h4>Fördjupning och originalkällor</h4><ul><li><a target="_blank" rel="noopener noreferrer" href="https://bransch.trafikverket.se/contentassets/cbe9a9d6a7d24c0dbf40f7f6a9a9a640/kompetensplan-apv-2.1.pdf">Kompetensplan APV 2.1</a></li><li><a target="_blank" rel="noopener noreferrer" href="https://bransch.trafikverket.se/for-dig-i-branschen/Arbetsmiljo-och-sakerhet/Arbete-pa-vag/kompetenskrav-i-upphandlad-verksamhet/kompetens-for-arbete-pa-vag-apv/steg-2-kompetenskrav-med-certifieringskrav/">Trafikverkets roller och kompetenskrav</a></li><li><a target="_blank" rel="noopener noreferrer" href="https://bransch.trafikverket.se/for-dig-i-branschen/Arbetsmiljo-och-sakerhet/Arbete-pa-vag/Trafikverkets-nya-sakerhetsregler-for-vagarbeten/">Krav, råd och skisser för arbete på väg</a></li><li><a target="_blank" rel="noopener noreferrer" href="https://bransch.trafikverket.se/for-dig-i-branschen/Arbetsmiljo-och-sakerhet/Arbete-pa-vag/regelverk-for-arbete-pa-vag/">Tillåtelsebeslut och vägklassning</a></li><li><a target="_blank" rel="noopener noreferrer" href="https://www.riksdagen.se/sv/dokument-och-lagar/dokument/svensk-forfattningssamling/trafikforordning-19981276_sfs-1998-1276/">Trafikförordningen</a></li><li><a target="_blank" rel="noopener noreferrer" href="https://www.riksdagen.se/sv/dokument-och-lagar/dokument/svensk-forfattningssamling/vagmarkesforordning-200790_sfs-2007-90/">Vägmärkesförordningen</a></li><li><a target="_blank" rel="noopener noreferrer" href="https://www.av.se/arbetsmiljoarbete-och-inspektioner/publikationer/foreskrifter/afs-20231/">Arbetsmiljöverkets AFS 2023:1</a></li></ul><div class="chapter-actions">
+<button id="markLesson8" class="chapter-btn">Markera kapitel 8 som genomfört</button>
+<button class="primary next-chapter-btn" data-current="8" data-next="quiz">Utbildningen klar – gå till övningsprov →</button>
+</div>
+</div>
+</section>
+
+<section id="quiz" class="page hidden">
+<div class="card">
+<div class="row" style="justify-content:space-between">
+<div><span class="badge" id="qcat">Kategori</span><div id="qcount" class="small"></div></div>
+<button id="restart" class="secondary">Starta om</button>
+</div>
+<div class="progress"><div id="qprogress"></div></div>
+<div id="quizBody">
+<div id="question" class="question"></div>
+<div id="answers"></div>
+<div id="feedback" class="feedback hidden"></div>
+<button id="next" class="primary hidden">Nästa fråga</button>
+</div>
+<div id="finish" class="hidden">
+<div class="score" id="finalScore"></div>
+<p id="finalText"></p>
+<button class="primary" onclick="startQuiz()">Gör provet igen</button>
+</div>
+</div>
+</section>
+
+
+
+<section id="weak" class="page hidden">
+<div class="card">
+<span class="badge">Personlig träning</span>
+<h2>Träna mina svagheter</h2>
+<p>Det här läget använder din sparade provhistorik för att välja fler frågor från de områden där du haft lägst träffsäkerhet.</p>
+<div class="notice"><b>Tips:</b> Gör minst ett slutprov först. Ju fler prov du gjort, desto bättre blir prioriteringen.</div>
+<div id="weakSummary" style="margin-top:14px"></div>
+
+<div id="weakStart" style="margin-top:16px">
+<div class="grid">
+  <div class="module">
+    <h3>10 frågor</h3>
+    <p class="small">Snabbträning på dina svagaste områden.</p>
+    <button class="primary" onclick="startWeakQuiz(10)">Starta 10</button>
+  </div>
+  <div class="module">
+    <h3>20 frågor</h3>
+    <p class="small">Djupare repetition med fler scenarier.</p>
+    <button class="primary" onclick="startWeakQuiz(20)">Starta 20</button>
+  </div>
+</div>
+</div>
+
+<div id="weakBody" class="hidden">
+<div class="progress"><div id="weakProgress"></div></div>
+<div class="row" style="justify-content:space-between;margin-top:10px">
+  <span class="badge" id="weakCat">Kategori</span>
+  <div id="weakCount" class="small"></div>
+</div>
+<div id="weakQuestion" class="question"></div>
+<div id="weakAnswers"></div>
+<div id="weakFeedback" class="feedback hidden"></div>
+<button id="weakNext" class="primary hidden">Nästa fråga</button>
+</div>
+
+<div id="weakFinish" class="hidden">
+<div class="score" id="weakScore"></div>
+<p id="weakText"></p>
+<button class="primary" onclick="startWeakQuiz(lastWeakLength||10)">Träna igen</button>
+</div>
+</div>
+</section>
+
+<section id="exam" class="page hidden">
+<div class="card">
+<div class="row" style="justify-content:space-between">
+<div>
+<span class="badge">Slutprov – träning</span>
+<div class="small">40 slumpade frågor • inget facit förrän provet är avslutat</div>
+</div>
+<div><b id="examTimer">00:00</b></div>
+</div>
+
+<div class="notice" style="margin-top:12px">
+<b>Träningsgräns: 80 %.</b> Detta är vår egen rekommenderade nivå för träning och ska inte tolkas som Trafikverkets officiella godkändgräns.
+</div>
+
+<div id="examStart" style="margin-top:18px">
+<h3>Välj provnivå</h3>
+<p>Frågorna slumpas från hela frågebanken. När du har valt svar går du vidare utan att se facit. Resultatet visas först när provet är klart.</p>
+<div class="grid">
+  <div class="module">
+    <h3>Grund</h3>
+    <p class="small">Fler raka kunskapsfrågor och enklare scenarier.</p>
+    <button class="primary" onclick="startExam('grund')">Starta Grund</button>
+  </div>
+  <div class="module">
+    <h3>Normal</h3>
+    <p class="small">Blandad nivå med tydligt fokus på praktisk tillämpning.</p>
+    <button class="primary" onclick="startExam('normal')">Starta Normal</button>
+  </div>
+  <div class="module">
+    <h3>Svår</h3>
+    <p class="small">Fler scenarier och frågor där flera svar kan verka rimliga.</p>
+    <button class="primary" onclick="startExam('svar')">Starta Svår</button>
+  </div>
+  <div class="module">
+    <h3>Balanserat</h3>
+    <p class="small">40 frågor med garanterad spridning över alla centrala kunskapsområden.</p>
+    <button class="primary" onclick="startExam('balanserat')">Starta Balanserat</button>
+  </div>
+</div>
+</div>
+
+<div id="examBody" class="hidden">
+<div class="progress"><div id="examProgress"></div></div>
+<div class="row" style="justify-content:space-between;margin-top:10px">
+<div><span class="badge" id="examCat">Kategori</span> <span class="badge" id="examLevelBadge">Nivå</span></div>
+<div id="examCount" class="small"></div>
+</div>
+<div id="examQuestion" class="question"></div>
+<div id="examAnswers"></div>
+<button id="examNext" class="primary hidden">Nästa fråga</button>
+</div>
+
+<div id="examFinish" class="hidden">
+<div class="score" id="examScore"></div>
+<p id="examStatus"></p>
+<p id="examTimeResult" class="small"></p>
+<div id="examBreakdown"></div>
+<div class="row" style="margin-top:16px">
+<button class="primary" onclick="startExam()">Gör nytt slutprov</button>
+<button class="secondary" onclick="showExamReview()">Visa felbesvarade frågor</button>
+</div>
+<div id="examReview" class="hidden"></div>
+</div>
+</div>
+</section>
+
+
+<section id="history" class="page hidden">
+<div class="card">
+<h2>Provhistorik</h2>
+<p class="small">De senaste 20 slutproven sparas lokalt på enheten.</p>
+<div id="historySummary"></div>
+<div id="historyList"></div>
+<button class="secondary" onclick="clearExamHistory()">Rensa provhistorik</button>
+</div>
+</section>
+
+<section id="results" class="page hidden">
+<div class="card">
+<h2>Dina resultat</h2>
+<div id="resultSummary"></div>
+<table>
+<thead><tr><th>Område</th><th>Rätt</th><th>Totalt</th><th>Nivå</th></tr></thead>
+<tbody id="resultTable"></tbody>
+</table>
+</div>
+</section>
+
+
+<section id="account" class="page hidden">
+<div class="card">
+  <span class="badge">Mitt konto</span>
+  <h2>Min träningsöversikt</h2>
+  <div id="accountSummary"></div>
+</div>
+<div class="card">
+  <h3>Byt lösenord</h3>
+  <p class="small">Du kan när som helst välja ett nytt lösenord här.</p>
+  <input id="accountNewPassword" type="password" placeholder="Nytt lösenord" style="width:100%;padding:12px;border-radius:10px;border:1px solid var(--line);background:#0b1220;color:#fff;margin:6px 0 12px">
+  <input id="accountNewPassword2" type="password" placeholder="Upprepa nytt lösenord" style="width:100%;padding:12px;border-radius:10px;border:1px solid var(--line);background:#0b1220;color:#fff;margin:6px 0 12px">
+  <button class="primary" onclick="changePasswordFromAccount()">Spara nytt lösenord</button>
+  <div id="accountPasswordMsg" class="feedback hidden"></div>
+</div>
+</section>
+
+<section id="admin" class="page hidden">
+<div class="card">
+  <span class="badge">Admin</span>
+  <h2>Träningsöversikt</h2>
+  <p class="small">Här visas användare, kapitelprogress och sparade slutprov.</p>
+  <button class="secondary" onclick="loadAdminData()">Uppdatera data</button>
+</div>
+<div class="card"><h3>Användare</h3><div id="adminUsers"></div></div>
+<div class="card"><h3>Provresultat</h3><div id="adminResults"></div></div>
+</section>
+
+</main>
+
+<script>
+let courseUserId = null;
+const courseStorage = {
+ getItem(key){try{return courseUserId?localStorage.getItem(courseUserId+':'+key):null;}catch{return null;}},
+ setItem(key,value){try{if(courseUserId)localStorage.setItem(courseUserId+':'+key,value);}catch{}},
+ removeItem(key){try{if(courseUserId)localStorage.removeItem(courseUserId+':'+key);}catch{}}
+};
+const chapters=[["1. Förarroll och kompetenskrav", "APV 2.1 gäller förare av TMA-fordon och förare som utför intermittent arbete på skyddsklassade vägar. APV 2.2 gäller andra ansvarsuppgifter, bland annat utmärkning.", true], ["2. Fordonskontroll och bromsar", "Kontrollera fordon, redskap och skydd före användning: bromsar, däck, lyktor, speglar, kameror, kopplingar, läckage och säkrad utrustning. Hantera säkerhetsfel innan arbetet startar.", true], ["3. TMA, bärare och last", "TMA tar upp energi vid påkörning. Skyddets funktion beror på rätt kombination av skydd, bärare, montering och användning. Skyltar och lyktor ersätter inte ett energiupptagande skydd.", true], ["4. Placering och buffertzon", "Vid intermittent arbete på skyddsklassad väg ska TMA vara det första trafikanten når i varje körfält och på vägrenen där arbete pågår, enligt v5.0 avsnitt 13.2.1.2.", true], ["5. Fordonsutmärkning", "A20 varnar för vägarbete. X2 markerar hinder. X5 är gul ljuspil eller ljuspilar som visar passageriktning. Utmärkning ger vägledning men tar inte upp krockenergi.", true], ["6. Vägen och trafikreglerna", "Väglagen behandlar allmän väg, vägområde och väghållning. Trafikverket sköter statlig väghållning; även kommuner kan vara väghållare. Ta reda på vem som ansvarar för vägen.", true], ["7. Arbetsmiljö och rapportering", "Arbetsgivaren ska förebygga ohälsa och olycksfall. Arbetstagaren ska medverka, följa instruktioner och använda skydd. Vid omedelbar och allvarlig fara ska arbetsgivaren eller skyddsombudet snarast meddelas enligt AML 3 kap. 4 §.", true], ["8. Situationer, repetition och källor", "Bedöm hela situationen: arbetsmetod, vägklass, hastighet, sikt, människor, skydd och produktvillkor. Ett godkänt fordon gör inte automatiskt varje uppställning säker.", true]];
+
+const questions=[{"cat": "Förarroll och krav", "q": "Vilken förare omfattas av APV 2.1 enligt Trafikverkets rollbeskrivning?", "a": ["Förare av TMA-fordon", "Alla privatbilister", "Enbart kontorspersonal", "Enbart gående trafikanter"], "c": 0, "e": "APV 2.1 omfattar förare av fordon utrustade med TMA.", "level": "grund"}, {"cat": "Förarroll och krav", "q": "Vilket arbete omfattas också av APV 2.1 för fordonsförare?", "a": ["Endast arbete inomhus", "Intermittent arbete på skyddsklassad väg", "Endast parkering på depån", "Alla privata resor"], "c": 1, "e": "Trafikverkets rollbeskrivning omfattar även dessa förare.", "level": "grund"}, {"cat": "Förarroll och krav", "q": "Ersätter APV 2.1 rätt körkortsbehörighet?", "a": ["Ja, om TMA är monterat", "Ja, under korta arbetspass", "Nej, båda kraven måste uppfyllas", "Ja, för alla lastbilar"], "c": 2, "e": "APV-kompetens och körkortsbehörighet är olika krav.", "level": "normal"}, {"cat": "Förarroll och krav", "q": "Hur länge gäller APV 2.1-certifieringen enligt Trafikverket?", "a": ["Ett år", "Tio år", "Utan tidsgräns", "Fyra år"], "c": 3, "e": "Rollbeskrivningen anger fyra års giltighet.", "level": "svar"}, {"cat": "Förarroll och krav", "q": "På vilket språk görs Trafikverkets APV 2.1-certifieringsprov?", "a": ["Svenska", "Valfritt språk i appen", "Endast engelska", "Endast tyska"], "c": 0, "e": "Det officiella provet görs på svenska. Appens engelska är studiestöd.", "level": "grund"}, {"cat": "Förarroll och krav", "q": "Vilket underlag avgör vilken APV-kravversion som gäller i uppdraget?", "a": ["En kollegas gamla prov", "Kontraktets åberopade krav", "Förarens favoritversion", "Den kortaste kursboken"], "c": 1, "e": "Kontrollera kontraktsversion och objektspecifika krav.", "level": "grund"}, {"cat": "Förarroll och krav", "q": "Blir en APV 2.1-förare automatiskt utmärkningsansvarig enligt APV 2.2?", "a": ["Ja, med gul varningslykta", "Ja, med C-körkort", "Nej, det är olika roller och kompetenskrav", "Ja, efter en arbetsdag"], "c": 2, "e": "Förarrollen ersätter inte kraven för utmärkningsansvarig.", "level": "normal"}, {"cat": "Förarroll och krav", "q": "Vad visar ett godkänt träningsprov i denna app?", "a": ["Att Trafikverket utfärdat certifikat", "Att körkortet är förnyat", "Att alla TMA-modeller får köras", "Resultat på appens övningsfrågor"], "c": 3, "e": "Appen utfärdar ingen APV-certifiering.", "level": "svar"}, {"cat": "Fordonskontroll", "q": "Vilka fordon omfattas av extra bromskontroll i TDOK 2012:86 v5.0 avsnitt 5.3.2?", "a": ["Tung lastbil och släpvagn över 3,5 tons totalvikt", "Enbart personbilar", "Endast cyklar", "Enbart nya lätta släp"], "c": 0, "e": "Det är ett kontraktskrav utöver obligatorisk kontrollbesiktning.", "level": "grund"}, {"cat": "Fordonskontroll", "q": "Hur lång tid får högst gå mellan bromskontroller enligt v5.0 avsnitt 5.3.2?", "a": ["Fem år", "Åtta månader", "Tolv månader", "Två år"], "c": 1, "e": "Tiden mellan bromskontroller får inte överstiga åtta månader.", "level": "grund"}, {"cat": "Fordonskontroll", "q": "När ska första extra bromskontrollen senast ske enligt v5.0?", "a": ["När föraren känner vibrationer", "Efter första olyckan", "Inom åtta månader efter första trafiktagandet", "Efter tre år"], "c": 2, "e": "Tidsgränsen räknas från när fordonet först togs i trafik.", "level": "normal"}, {"cat": "Fordonskontroll", "q": "Vem utför den extra bromskontrollen enligt v5.0?", "a": ["Valfri kollega på depån", "Enbart föraren", "Endast skyltleverantören", "Ackrediterat besiktningsorgan eller ackrediterad verkstad"], "c": 3, "e": "En egen provbromsning ersätter inte den föreskrivna kontrollen.", "level": "svar"}, {"cat": "Fordonskontroll", "q": "Du tappar uppsikten över riskområdet vid backning. Vad gör du?", "a": ["Avbryter manövern och återställer säker uppsikt", "Backar snabbare", "Förlitar mig enbart på ljudsignalen", "Fortsätter tills någon ropar"], "c": 0, "e": "Kamera och varningsutrustning ersätter inte kontroll över manövern.", "level": "grund"}, {"cat": "Fordonskontroll", "q": "Vilken kombination anges vid backning med begränsad sikt nära personal i v5.0 avsnitt 5.3.3?", "a": ["En skylt i hytten", "Kamera, bildskärm och två lågt placerade backvarningslyktor", "Enbart radio", "Enbart extra backspegel"], "c": 1, "e": "Kontrollera både utrustning och riskområdet innan du backar.", "level": "grund"}, {"cat": "Fordonskontroll", "q": "När används varningslykta som huvudregel enligt v5.0 avsnitt 5.3.4?", "a": ["Enbart vid parkering hemma", "För att slippa annan utmärkning", "När fordonet utgör hinder eller fara", "För att få fri väg vid privat körning"], "c": 2, "e": "Varningslyktan uppmärksammar fara men ger inte automatiskt företräde.", "level": "normal"}, {"cat": "Fordonskontroll", "q": "SIG18 förstärker märken på ett skyddsfordon på mötesseparerad väg. Vad säger v5.0 om varningslyktan?", "a": ["Den ska alltid blinka samtidigt", "Den ersätter X2", "Den ska bytas mot blåljus", "Den ska inte användas i denna situation"], "c": 3, "e": "Avsnitt 5.3.4 skiljer denna situation från huvudregeln.", "level": "svar"}, {"cat": "TMA och last", "q": "Vilken huvudfunktion har ett TMA-skydd?", "a": ["Ta upp energi vid påkörning", "Mäta trafikens hastighet", "Ge föraren företräde", "Ersätta alla vägmärken"], "c": 0, "e": "TMA är ett energiupptagande påkörningsskydd.", "level": "grund"}, {"cat": "TMA och last", "q": "Hur kontrolleras tillåten bärarvikt för ett TMA?", "a": ["Enbart genom körkortsklassen", "I den aktuella modellens beslut och anvisningar", "Med ett enda tal för alla modeller", "Genom att titta på lacken"], "c": 1, "e": "Skyddets produktvillkor styr kombinationen av bärare och skydd.", "level": "grund"}, {"cat": "TMA och last", "q": "Varför är ändrad vattenmängd i en sopbil relevant för TMA-användning?", "a": ["Den gör alla viktgränser ogiltiga", "Den ändrar körkortet", "Den kan ändra bärarens vikt och påverka produktvillkoren", "Vattnet ersätter alltid TMA"], "c": 2, "e": "Kontrollera att villkoren uppfylls under hela arbetet, inte bara vid start.", "level": "normal"}, {"cat": "TMA och last", "q": "När ska TMA vara i fullständigt funktionsläge enligt v5.0?", "a": ["Först när kön uppstår", "Bara under rast", "Efter att första bilen passerat", "Före etablering på vägen och medan påkörningsrisk finns"], "c": 3, "e": "Planera omställningen till arbetsläge på en säker plats.", "level": "svar"}, {"cat": "TMA och last", "q": "Får ett arbetsfordon vid personkorgsarbete vara sitt eget skyddsfordon enligt v5.0?", "a": ["Nej", "Ja, alltid", "Ja, med extra reflex", "Ja, om arbetet är kort"], "c": 0, "e": "Personkorgsarbete är uttryckligen undantaget i avsnitt 13.2.1.2.1.", "level": "grund"}, {"cat": "TMA och last", "q": "Får varningsfordon vara lastat med farligt gods enligt v5.0 avsnitt 13.2.1.2.2?", "a": ["Ja, enbart på motorväg", "Nej", "Ja, alltid med TMA", "Ja, om föraren har radio"], "c": 1, "e": "Bestämmelsen förbjuder farligt gods som last på varningsfordon.", "level": "grund"}, {"cat": "TMA och last", "q": "TMA har blivit påkört men ser helt ut. Vad är rätt?", "a": ["Måla över märkena", "Byt bara radions batteri", "Låt rätt kompetens bedöma funktionen före fortsatt användning", "Fortsätt utan kontroll"], "c": 2, "e": "Utseendet bevisar inte att skydd och infästningar fortfarande fungerar.", "level": "normal"}, {"cat": "TMA och last", "q": "Vad gäller för ballast och last i TMA-kombinationen?", "a": ["All extra last förbättrar alltid säkerheten", "Ballast behöver aldrig säkras", "Axelvikter saknar betydelse", "De ska vara säkrade och uppfylla produkt- och fordonsvillkor"], "c": 3, "e": "Rätt totalvikt räcker inte om last, infästning eller axelvikter är fel.", "level": "svar"}, {"cat": "Placering och zoner", "q": "Vilken buffertzon ger v5.0-formeln vid ordinarie 90 km/tim?", "a": ["55 meter", "45 meter", "90 meter", "10 meter"], "c": 0, "e": "90 delat med 2 plus 10 är 55 meter.", "level": "grund"}, {"cat": "Placering och zoner", "q": "Ordinarie hastighet är 110 men tillfälligt skyltad hastighet 70. Vilket tal används i buffertzonsformeln?", "a": ["Medelhastigheten i kön", "110", "70", "Förarens egen hastighet"], "c": 1, "e": "Formeln utgår från ordinarie hastighetsbegränsning: här 65 meter.", "level": "grund"}, {"cat": "Placering och zoner", "q": "Vad får normalt förvaras i buffertzonen?", "a": ["Pallar som är lätta att flytta", "Extra vägmärken", "Inga föremål eller upplag", "Verktyg under kort tid"], "c": 2, "e": "Zonen ska hållas fri från personer, arbete, föremål och upplag.", "level": "normal"}, {"cat": "Placering och zoner", "q": "Vilket maxavstånd till arbetsfordonet anges för intermittent arbete i v5.0?", "a": ["500 meter", "1000 meter", "Obegränsat med radio", "250 meter"], "c": 3, "e": "Avsnitt 13.2.1.1 anger högst 250 meter.", "level": "svar"}, {"cat": "Placering och zoner", "q": "Varifrån mäts 250-metersavståndet vid intermittent arbete enligt v5.0?", "a": ["Fronten på det TMA-fordon som ligger längst fram", "Baksidan på sista varningsskylten", "Första konen i depån", "Mitten av arbetssträckan"], "c": 0, "e": "Mätpunkten är angiven i avsnitt 13.2.1.1.", "level": "grund"}, {"cat": "Placering och zoner", "q": "Arbetet går 0,7 meter över vägmitt. Hur räknas det enligt v5.0?", "a": ["Som enbart transport", "Arbete i båda färdriktningarna", "Alltid bara arbete i höger körfält", "Som arbete utanför vägen"], "c": 1, "e": "Gränsen är mer än 0,5 meter över vägmitt.", "level": "grund"}, {"cat": "Placering och zoner", "q": "Var ska TMA möta trafikanten vid intermittent arbete på skyddsklassad väg?", "a": ["Endast inne på depån", "Var som helst om pilen lyser", "Först i varje körfält och på vägren där arbete pågår", "Alltid efter arbetslaget"], "c": 2, "e": "Placeringen ska uppfylla v5.0 avsnitt 13.2.1.2.", "level": "normal"}, {"cat": "Placering och zoner", "q": "En sopbil rullar mycket långsamt och avviker markant från trafikrytmen. Är arbetet automatiskt rörligt?", "a": ["Ja, hjulen rullar", "Ja, om radion är på", "Ja, under dagsljus", "Nej, det kan vara intermittent arbete"], "c": 3, "e": "Arbetssätt och trafikrytm avgör, inte bara om fordonet rör sig.", "level": "svar"}, {"cat": "Fordonsutmärkning", "q": "Vilken uppgift har A20?", "a": ["Varna för vägarbete", "Ge TMA-föraren företräde", "Ange bärarvikt", "Visa godkänd bromskontroll"], "c": 0, "e": "A20 är varning för vägarbete.", "level": "grund"}, {"cat": "Fordonsutmärkning", "q": "Vad markerar X2?", "a": ["En bensinstation", "Hinder", "Ett körkortskrav", "En verkstadstid"], "c": 1, "e": "X2 är markeringsskärm för hinder.", "level": "grund"}, {"cat": "Fordonsutmärkning", "q": "Vilken normal placering har underkanten på fordonsmonterad X2 enligt v5.0?", "a": ["Exakt 2,5 meter", "Ingen höjdgräns i normalfallet", "Högst 1,2 meter över vägbanan", "Minst 3 meter"], "c": 2, "e": "Avsnitt 10.1.8.1 anger gränsen; särskilt undantag finns för nödvändig takmontering.", "level": "normal"}, {"cat": "Fordonsutmärkning", "q": "Hur mycket smalare än fordonet får X2 normalt vara enligt v5.0?", "a": ["Högst 1 meter", "Hälften av fordonsbredden", "Hur smal som helst", "Högst 0,2 meter"], "c": 3, "e": "X2 ska normalt monteras centrerat och vara högst 0,2 meter smalare.", "level": "svar"}, {"cat": "Fordonsutmärkning", "q": "Får X5 användas på skyddsfordon som står på vägrenen enligt v5.0 tabell 10.1?", "a": ["Nej", "Ja, alltid", "Ja, om det är mörkt", "Ja, om föraren har APV 2.1"], "c": 0, "e": "X5 får inte användas på fordon placerade på vägrenen.", "level": "grund"}, {"cat": "Fordonsutmärkning", "q": "Vilken kombination är förbjuden på samma fordon enligt v5.0?", "a": ["Backkamera och bildskärm", "X5 tillsammans med F25", "X2 och relevant utmärkning", "Registreringsskylt och bromsljus"], "c": 1, "e": "X5 får inte kombineras med E15 eller F25 på samma fordon.", "level": "grund"}, {"cat": "Fordonsutmärkning", "q": "Vilket normalformat anges för X5 i v5.0 tabellerna 10.8–10.9?", "a": ["400 × 400 mm", "5000 × 5000 mm", "1000 × 1100 mm", "200 × 300 mm"], "c": 2, "e": "X5 ska minst vara normalstorlek; stort format är 2200 × 1500 mm.", "level": "normal"}, {"cat": "Fordonsutmärkning", "q": "Vad görs med fordonsmonterade arbetsmärken vid transport till och från arbetet enligt v5.0?", "a": ["De ska alltid visa arbetsbudskap", "De riktas mot mötande trafik", "De ersätter körriktningsvisare", "De täcks, släcks eller demonteras"], "c": 3, "e": "Transportutmärkningen ska inte ge missvisande arbetsanvisningar.", "level": "svar"}, {"cat": "Trafikregler", "q": "Vilket regelverk beskriver främst trafikanternas beteende?", "a": ["Trafikförordningen", "En skyddstillverkares katalog", "En kontrolljournal", "Ett bemanningsschema"], "c": 0, "e": "Trafikförordningen innehåller trafikregler och grundläggande skyldigheter för trafikanter.", "level": "grund"}, {"cat": "Trafikregler", "q": "Vad hjälper Väglagen dig främst att förstå i denna utbildning?", "a": ["Vilken radiokanal som alltid ska användas", "Allmän väg, vägområde och väghållning", "Exakt signaltid för varje arbetsplats", "Hur alla barriärmodeller kopplas ihop"], "c": 1, "e": "Väglagen behandlar allmän väg och väghållning; tekniska detaljer kräver andra underlag.", "level": "grund"}, {"cat": "Trafikregler", "q": "Vad är ett körfält?", "a": ["Endast vägrenen", "Ett dike", "En längsgående del av körbanan avsedd för trafik i en fordonsrad", "Hela vägområdet"], "c": 2, "e": "Körfält är en del av körbanan, inte hela vägen eller vägområdet.", "level": "normal"}, {"cat": "Trafikregler", "q": "Vad är vägren i förhållande till körbanan?", "a": ["Samma sak som ett körfält", "Alltid en mittremsa", "Alltid ett dike", "En del av vägen utanför körbanan"], "c": 3, "e": "Vägrenen ligger utanför körbanan och har andra funktioner än körfälten.", "level": "svar"}, {"cat": "Trafikregler", "q": "Vilket påstående är korrekt om väghållningsarbete och trafikregler?", "a": ["Det finns situationer där vissa trafikregler får frångås när arbetet kräver det", "Alla trafikregler upphör alltid att gälla", "Endast privatfordon får avvika", "Regelundantag gäller bara nattetid"], "c": 0, "e": "Trafikförordningen har särskilda bestämmelser för väghållningsarbete. Undantagen är knutna till arbetets behov.", "level": "grund"}, {"cat": "Trafikregler", "q": "Ett regelundantag för väghållning innebär att...", "a": ["utmärkning aldrig behövs", "arbetet fortfarande måste utföras med säkerhet och försiktighet", "föraren får skapa vilken risk som helst", "arbetsmiljöregler upphör"], "c": 1, "e": "Ett undantag från en trafikregel tar inte bort kraven på säkerhet och riskhantering.", "level": "grund"}, {"cat": "Trafikregler", "q": "Vad är grundprincipen i Trafikförordningens 2 kap. 1 §?", "a": ["Endast yrkestrafik har ansvar för andra trafikanter", "Varsamhet krävs bara vid vägarbete", "Trafikanten ska visa omsorg och varsamhet med hänsyn till omständigheterna", "Trafikanten får alltid hålla skyltad hastighet oavsett situation"], "c": 2, "e": "2 kap. 1 § bygger på ett generellt ansvar att visa omsorg och varsamhet.", "level": "normal"}, {"cat": "Trafikregler", "q": "Vad gäller för en trafikant när polis ger en anvisning?", "a": ["Anvisningen är bara rådgivande", "Endast yrkesförare behöver följa den", "Den gäller bara om ett vägmärke stödjer den", "Trafikanten ska följa anvisningen även om den avviker från annan trafikreglering"], "c": 3, "e": "Polisens anvisning har hög prioritet.", "level": "svar"}, {"cat": "Arbetsmiljö", "q": "Hur ska en riskbedömning enligt AFS 2023:1 dokumenteras?", "a": ["Skriftligt", "Endast om en olycka redan har skett", "Enbart genom att markera kursen klar", "Bara muntligt vid kort arbete"], "c": 0, "e": "Riskbedömningar ska dokumenteras skriftligt och ange riskerna och om de är allvarliga.", "level": "grund"}, {"cat": "Arbetsmiljö", "q": "Vad ska en handlingsplan ange för en åtgärd som inte utförs omedelbart?", "a": ["Endast dagens väder", "Vem som ansvarar och när åtgärden ska vara genomförd", "Endast arbetsplatsens namn", "Enbart antalet anställda"], "c": 1, "e": "Handlingsplanen ska göra ansvar och tidpunkt tydliga; genomförda åtgärder ska kontrolleras.", "level": "grund"}, {"cat": "Arbetsmiljö", "q": "Vad gäller för säkerhetsinstruktioner när arbetet har allvarliga risker?", "a": ["Ett kursintyg ersätter instruktionen", "Instruktionen kan vänta tills arbetet är klart", "Det ska finnas skriftliga instruktioner", "Instruktion behövs bara för nyanställda"], "c": 2, "e": "AFS 2023:1 kräver skriftliga instruktioner vid allvarliga risker.", "level": "normal"}, {"cat": "Arbetsmiljö", "q": "Vem har det grundläggande ansvaret för arbetsmiljön för sina arbetstagare?", "a": ["Varje förbipasserande trafikant", "Enbart utmärkningsansvarig", "Vägmärkestillverkaren", "Arbetsgivaren"], "c": 3, "e": "Arbetsgivaren har det grundläggande arbetsmiljöansvaret och ska bedriva systematiskt arbetsmiljöarbete.", "level": "svar"}, {"cat": "Arbetsmiljö", "q": "Vad är huvudsyftet med en arbetsberedning?", "a": ["Att planera ett arbetsmoment och dess riskhantering innan det utförs", "Att räkna ut lönen", "Att boka certifieringsprov", "Att beställa reservdelar"], "c": 0, "e": "Arbetsberedningen hjälper till att planera arbetsmetod, risker och skyddsåtgärder.", "level": "grund"}, {"cat": "Arbetsmiljö", "q": "Vad kan försämra en varselkläds funktion?", "a": ["Att den hålls ren", "Smuts och slitage som minskar synbarheten", "Att den är korrekt använd", "Att den passar arbetsuppgiften"], "c": 1, "e": "Synbarheten kan försämras av smuts, slitage eller att plagget täcks över.", "level": "grund"}, {"cat": "Arbetsmiljö", "q": "Vilket påstående är mest korrekt om varselklädsel?", "a": ["Den ersätter barriärer", "Den behövs bara nattetid", "Den ska bidra till att personal upptäcks i god tid", "Den gör det säkert att stå var som helst"], "c": 2, "e": "Varselklädsel är till för synbarhet men ersätter inte andra skyddsåtgärder.", "level": "normal"}, {"cat": "Arbetsmiljö", "q": "Vad bör uppföljning av en säkerhetsåtgärd visa?", "a": ["Bara vem som beställde den", "Endast kostnaden", "Bara när den levererades", "Om åtgärden faktiskt fungerar i praktiken"], "c": 3, "e": "En viktig del av systematiskt arbetsmiljöarbete är att följa upp att genomförda åtgärder fungerar.", "level": "svar"}, {"cat": "Scenario", "q": "En skylt vrids av vinden efter morgonkontrollen. Vad är rätt?", "a": ["Hantera risken, återställ säkert och följ upp avvikelsen", "Radera morgonens journal", "Vänta alltid till nästa morgon", "Utgå från att morgonkontrollen fortfarande räcker"], "c": 0, "e": "Förändrade förhållanden kräver att funktionen säkras även mellan dagliga kontroller.", "level": "grund"}, {"cat": "Scenario", "q": "Du kommer till en arbetsplats där A20 står rätt men en lastbil skymmer märket för trafiken. Vad är bäst?", "a": ["Ta bort A20 helt", "Flytta eller åtgärda så att märket åter är tydligt synligt", "Låta det vara eftersom märket står på rätt plats", "Sätta upp ytterligare ett slumpmässigt märke"], "c": 1, "e": "Korrekt placering räcker inte om märket inte kan ses.", "level": "grund"}, {"cat": "Scenario", "q": "Ett arbetsfordon har fungerande varningslyktor men X2 är skymd av utrustning. Vad är mest korrekt?", "a": ["X2 behövs bara nattetid", "Ingen åtgärd behövs", "Fordonets totala utmärkning är bristfällig och X2 måste göras synlig", "Varningslyktorna kompenserar alltid för X2"], "c": 2, "e": "Fordonets säkerhetsutmärkning måste fungera som en helhet.", "level": "normal"}, {"cat": "Scenario", "q": "Efter en mindre påkörning ser en energiupptagande skyddsprodukt nästan oskadad ut. Vad är rätt?", "a": ["Den kan alltid användas direkt", "Det räcker att tvätta den", "Endast föraren behöver kontrollera den visuellt på avstånd", "Den ska ändå kontrolleras enligt gällande rutiner innan fortsatt användning"], "c": 3, "e": "Även mindre eller dolda skador kan påverka skyddets funktion.", "level": "svar"}, {"cat": "Scenario", "q": "Arbetet flyttas från vägren till körfält men arbetsberedningen ändras inte. Vad är mest korrekt?", "a": ["Riskbedömning och arbetsberedning måste ses över eftersom exponeringen mot trafik ändras", "Ingen ändring behövs om samma personal arbetar", "Endast varselkläder behöver kontrolleras", "Endast arbetsledaren informeras"], "c": 0, "e": "Ändrad placering i vägen förändrar riskbilden och behöver hanteras.", "level": "grund"}, {"cat": "Scenario", "q": "Ett vägarbete har korrekt TA-plan men verkligheten på plats gör att planen inte går att följa utan att skapa risk. Vad är bäst?", "a": ["Ta bort all utmärkning", "Hantera avvikelsen genom rätt process och säker lösning innan arbetet fortsätter", "Följ planen bokstavligt trots risken", "Improvisera utan dokumentation"], "c": 1, "e": "Planen ska tillämpas säkert i verkligheten; avvikelser måste hanteras strukturerat.", "level": "grund"}, {"cat": "Scenario", "q": "Rinnande ljus används åt rätt håll men ett X5 bredvid visar motsatt riktning. Vad är problemet?", "a": ["X5 gäller bara dagtid", "Det påverkar endast personalen", "Budskapen motsäger varandra och trafikledningen är otydlig", "Inget eftersom rinnande ljus väger tyngre"], "c": 2, "e": "Trafikanordningar ska ge ett samstämmigt budskap.", "level": "normal"}, {"cat": "Scenario", "q": "Ett arbetsfordon står rätt men dess varningslykta har slutat fungera under pågående arbete. Vad bör ske?", "a": ["Fortsätt eftersom fordonet redan är etablerat", "Ta bort X2", "Endast notera felet efter passet", "Funktionen ska återställas eller en säker alternativ lösning ordnas innan fordonet fortsätter i samma roll"], "c": 3, "e": "Säkerhetsutrustning som krävs för fordonets roll måste fungera.", "level": "svar"}];
+
+document.getElementById("chapterList").innerHTML=chapters.map((c,i)=>`
+<div class="module">
+<span class="badge">${c[2]?"Utbyggt":"Kommer snart"}</span>
+<h3>${c[0]}</h3><p>${c[1]}</p>
+${i===0?'<button class="primary" onclick="openLesson1()">Öppna kapitel</button>':i===1?'<button class="primary" onclick="openLesson2()">Öppna kapitel</button>':i===2?'<button class="primary" onclick="openLesson3()">Öppna kapitel</button>':i===3?'<button class="primary" onclick="openLesson4()">Öppna kapitel</button>':i===4?'<button class="primary" onclick="openLesson5()">Öppna kapitel</button>':i===5?'<button class="primary" onclick="openLesson6()">Öppna kapitel</button>':i===6?'<button class="primary" onclick="openLesson7()">Öppna kapitel</button>':i===7?'<button class="primary" onclick="openLesson8()">Öppna kapitel</button>':''}
+</div>`).join("");
+
+function openLesson1(){document.getElementById("lesson1").classList.remove("hidden");document.getElementById("lesson1").scrollIntoView({behavior:"smooth"})}
+function openLesson2(){document.getElementById("lesson2").classList.remove("hidden");document.getElementById("lesson2").scrollIntoView({behavior:"smooth"})}
+function openLesson3(){document.getElementById("lesson3").classList.remove("hidden");document.getElementById("lesson3").scrollIntoView({behavior:"smooth"})}
+function openLesson4(){document.getElementById("lesson4").classList.remove("hidden");document.getElementById("lesson4").scrollIntoView({behavior:"smooth"})}
+function openLesson5(){document.getElementById("lesson5").classList.remove("hidden");document.getElementById("lesson5").scrollIntoView({behavior:"smooth"})}
+function openLesson6(){document.getElementById("lesson6").classList.remove("hidden");document.getElementById("lesson6").scrollIntoView({behavior:"smooth"})}
+function openLesson7(){document.getElementById("lesson7").classList.remove("hidden");document.getElementById("lesson7").scrollIntoView({behavior:"smooth"})}
+function openLesson8(){document.getElementById("lesson8").classList.remove("hidden");document.getElementById("lesson8").scrollIntoView({behavior:"smooth"})}
+
+
+function goToPage(page){
+  document.querySelectorAll("nav button").forEach(x=>{
+    x.classList.toggle("active", x.dataset.page===page);
+  });
+  document.querySelectorAll(".page").forEach(p=>p.classList.add("hidden"));
+  document.getElementById(page).classList.remove("hidden");
+  if(page==="results") renderResults();
+  if(page==="history") renderHistory();
+  if(page==="weak") renderWeakSummary();
+  window.scrollTo({top:0,behavior:"smooth"});
+}
+
+document.querySelectorAll("nav button").forEach(b=>b.onclick=()=>{
+document.querySelectorAll("nav button").forEach(x=>x.classList.remove("active"));b.classList.add("active");
+document.querySelectorAll(".page").forEach(p=>p.classList.add("hidden"));
+document.getElementById(b.dataset.page).classList.remove("hidden");
+if(b.dataset.page==="results")renderResults();
+if(b.dataset.page==="history")renderHistory();
+if(b.dataset.page==="weak")renderWeakSummary();
+});
+
+const lessonBtn=document.getElementById("markLesson1");
+if(courseStorage.getItem("apv21_lesson1")==="done"){lessonBtn.textContent="Kapitel 1 genomfört ✓";lessonBtn.classList.add("done")}
+lessonBtn.onclick=()=>{
+courseStorage.setItem("apv21_lesson1","done");lessonBtn.textContent="Kapitel 1 genomfört ✓";lessonBtn.classList.add("done");
+};
+const lessonBtn2=document.getElementById("markLesson2");
+if(courseStorage.getItem("apv21_lesson2")==="done"){lessonBtn2.textContent="Kapitel 2 genomfört ✓";lessonBtn2.classList.add("done")}
+lessonBtn2.onclick=()=>{
+courseStorage.setItem("apv21_lesson2","done");lessonBtn2.textContent="Kapitel 2 genomfört ✓";lessonBtn2.classList.add("done");
+};
+const lessonBtn3=document.getElementById("markLesson3");
+if(courseStorage.getItem("apv21_lesson3")==="done"){lessonBtn3.textContent="Kapitel 3 genomfört ✓";lessonBtn3.classList.add("done")}
+lessonBtn3.onclick=()=>{
+courseStorage.setItem("apv21_lesson3","done");lessonBtn3.textContent="Kapitel 3 genomfört ✓";lessonBtn3.classList.add("done");
+};
+const lessonBtn4=document.getElementById("markLesson4");
+if(courseStorage.getItem("apv21_lesson4")==="done"){lessonBtn4.textContent="Kapitel 4 genomfört ✓";lessonBtn4.classList.add("done")}
+lessonBtn4.onclick=()=>{
+courseStorage.setItem("apv21_lesson4","done");lessonBtn4.textContent="Kapitel 4 genomfört ✓";lessonBtn4.classList.add("done");
+};
+const lessonBtn5=document.getElementById("markLesson5");
+if(courseStorage.getItem("apv21_lesson5")==="done"){lessonBtn5.textContent="Kapitel 5 genomfört ✓";lessonBtn5.classList.add("done")}
+lessonBtn5.onclick=()=>{
+courseStorage.setItem("apv21_lesson5","done");lessonBtn5.textContent="Kapitel 5 genomfört ✓";lessonBtn5.classList.add("done");
+};
+const lessonBtn6=document.getElementById("markLesson6");
+if(courseStorage.getItem("apv21_lesson6")==="done"){lessonBtn6.textContent="Kapitel 6 genomfört ✓";lessonBtn6.classList.add("done")}
+lessonBtn6.onclick=()=>{
+courseStorage.setItem("apv21_lesson6","done");lessonBtn6.textContent="Kapitel 6 genomfört ✓";lessonBtn6.classList.add("done");
+};
+const lessonBtn7=document.getElementById("markLesson7");
+if(courseStorage.getItem("apv21_lesson7")==="done"){lessonBtn7.textContent="Kapitel 7 genomfört ✓";lessonBtn7.classList.add("done")}
+lessonBtn7.onclick=()=>{
+courseStorage.setItem("apv21_lesson7","done");lessonBtn7.textContent="Kapitel 7 genomfört ✓";lessonBtn7.classList.add("done");
+};
+const lessonBtn8=document.getElementById("markLesson8");
+if(courseStorage.getItem("apv21_lesson8")==="done"){lessonBtn8.textContent="Kapitel 8 genomfört ✓";lessonBtn8.classList.add("done")}
+lessonBtn8.onclick=()=>{
+courseStorage.setItem("apv21_lesson8","done");lessonBtn8.textContent="Kapitel 8 genomfört ✓";lessonBtn8.classList.add("done");
+};
+
+questions.forEach(q=>{if(!q.level) q.level="grund";});
+let order=[],qi=0,score=0,answered=false,perCat={};
+function startQuiz(){
+order=[...questions].sort(()=>Math.random()-.5);qi=0;score=0;answered=false;perCat={};
+document.getElementById("finish").classList.add("hidden");document.getElementById("quizBody").classList.remove("hidden");showQuestion();
+}
+function showQuestion(){
+answered=false;const x=order[qi];
+document.getElementById("qcat").textContent=x.cat;
+document.getElementById("qcount").textContent=`Fråga ${qi+1} av ${order.length}`;
+document.getElementById("qprogress").style.width=`${(qi/order.length)*100}%`;
+document.getElementById("question").textContent=x.q;
+const ans=document.getElementById("answers");ans.innerHTML="";
+x.a.forEach((t,i)=>{const b=document.createElement("button");b.className="answer";b.textContent=t;b.onclick=()=>choose(i,b);ans.appendChild(b)});
+document.getElementById("feedback").classList.add("hidden");document.getElementById("next").classList.add("hidden");
+}
+function choose(i,btn){
+if(answered)return;answered=true;const x=order[qi];
+perCat[x.cat] ||= {right:0,total:0};perCat[x.cat].total++;
+document.querySelectorAll(".answer").forEach((b,j)=>{b.disabled=true;if(j===x.c)b.classList.add("correct")});
+if(i===x.c){score++;perCat[x.cat].right++;}else btn.classList.add("wrong");
+const f=document.getElementById("feedback");f.textContent=(i===x.c?"Rätt. ":"Fel. ")+x.e;f.classList.remove("hidden");
+document.getElementById("next").classList.remove("hidden");
+}
+document.getElementById("next").onclick=()=>{qi++;if(qi>=order.length)finishQuiz();else showQuestion()};
+document.getElementById("restart").onclick=startQuiz;
+function finishQuiz(){
+document.getElementById("quizBody").classList.add("hidden");document.getElementById("finish").classList.remove("hidden");
+const pct=Math.round(score/order.length*100);document.getElementById("qprogress").style.width="100%";
+document.getElementById("finalScore").textContent=`${score}/${order.length} – ${pct}%`;
+document.getElementById("finalText").textContent=pct>=85?"Stark nivå. Målet är att hålla en hög nivå över flera prov, inte bara ett enda.":"Fortsätt träna på de områden där du tappade poäng.";
+courseStorage.setItem("apv21_last",JSON.stringify({score,total:order.length,pct,perCat,date:new Date().toISOString()}));updateHome();
+}
+function renderResults(){
+const raw=courseStorage.getItem("apv21_last"),s=document.getElementById("resultSummary"),tb=document.getElementById("resultTable");
+if(!raw){s.innerHTML="<p>Du har ännu inget sparat provresultat.</p>";tb.innerHTML="";return}
+const r=JSON.parse(raw);s.innerHTML=`<p>Senaste prov: <b>${r.score}/${r.total}</b> (${r.pct} %)</p>`;
+tb.innerHTML=Object.entries(r.perCat).map(([cat,v])=>{const pct=Math.round(v.right/v.total*100);const lvl=pct>=85?"Stark":pct>=70?"På väg":"Träna mer";return `<tr><td>${cat}</td><td>${v.right}</td><td>${v.total}</td><td>${lvl}</td></tr>`}).join("");
+}
+function updateHome(){const raw=courseStorage.getItem("apv21_last");document.getElementById("homeBest").textContent=raw?JSON.parse(raw).pct+" %":"–"}
+
+// ===== SLUTPROV =====
+let examOrder=[], examIndex=0, examAnswersChosen=[], examStartedAt=null, examTimerHandle=null, examDifficulty="normal";
+
+function selectExamPool(level){
+  const grund=questions.filter(q=>q.level==="grund");
+  const normal=questions.filter(q=>q.level==="normal");
+  const svar=questions.filter(q=>q.level==="svar");
+
+  function pick(arr,n){ return [...arr].sort(()=>Math.random()-.5).slice(0,n); }
+
+  if(level==="balanserat"){
+    const coreCats=["Förarroll och krav", "Fordonskontroll", "TMA och last", "Placering och zoner", "Fordonsutmärkning", "Trafikregler", "Arbetsmiljö", "Scenario"];
+    return coreCats.flatMap(cat=>pick(questions.filter(q=>q.cat===cat),5)).sort(()=>Math.random()-.5);
+  }
+
+  let chosen=[];
+  if(level==="grund"){
+    chosen=[...pick(grund,28),...pick(normal,10),...pick(svar,2)];
+  }else if(level==="svar"){
+    chosen=[...pick(grund,10),...pick(normal,14),...pick(svar,16)];
+  }else{
+    chosen=[...pick(grund,18),...pick(normal,14),...pick(svar,8)];
+  }
+
+  const used=new Set(chosen.map(q=>q.q));
+  const remainder=questions.filter(q=>!used.has(q.q)).sort(()=>Math.random()-.5);
+  while(chosen.length<40 && remainder.length) chosen.push(remainder.shift());
+  return chosen.sort(()=>Math.random()-.5).slice(0,40);
+}
+
+function startExam(level="normal"){
+  examDifficulty=level;
+  examOrder=selectExamPool(level);
+  examIndex=0;
+  examAnswersChosen=[];
+  examStartedAt=Date.now();
+  document.getElementById("examStart").classList.add("hidden");
+  document.getElementById("examFinish").classList.add("hidden");
+  document.getElementById("examReview").classList.add("hidden");
+  document.getElementById("examBody").classList.remove("hidden");
+  if(examTimerHandle) clearInterval(examTimerHandle);
+  examTimerHandle=setInterval(updateExamTimer,1000);
+  updateExamTimer();
+  showExamQuestion();
+}
+
+function updateExamTimer(){
+  if(!examStartedAt) return;
+  const sec=Math.floor((Date.now()-examStartedAt)/1000);
+  const mm=String(Math.floor(sec/60)).padStart(2,"0");
+  const ss=String(sec%60).padStart(2,"0");
+  document.getElementById("examTimer").textContent=`${mm}:${ss}`;
+}
+
+function showExamQuestion(){
+  const x=examOrder[examIndex];
+  const displayLevel=x.level==="svar"?"Svår":x.level==="normal"?"Normal":"Grund";
+  document.getElementById("examCat").textContent=x.cat;
+  document.getElementById("examLevelBadge").textContent=displayLevel;
+  document.getElementById("examCount").textContent=`Fråga ${examIndex+1} av ${examOrder.length}`;
+  document.getElementById("examProgress").style.width=`${(examIndex/examOrder.length)*100}%`;
+  document.getElementById("examQuestion").textContent=x.q;
+  const wrap=document.getElementById("examAnswers");
+  wrap.innerHTML="";
+  document.getElementById("examNext").classList.add("hidden");
+
+  x.a.forEach((t,i)=>{
+    const b=document.createElement("button");
+    b.className="answer";
+    b.textContent=t;
+    b.onclick=()=>{
+      document.querySelectorAll("#examAnswers .answer").forEach(btn=>{
+        btn.style.outline="";
+      });
+      b.style.outline="3px solid #f59e0b";
+      examAnswersChosen[examIndex]=i;
+      document.getElementById("examNext").classList.remove("hidden");
+    };
+    wrap.appendChild(b);
+  });
+}
+
+document.getElementById("examNext").onclick=()=>{
+  if(examAnswersChosen[examIndex]===undefined) return;
+  examIndex++;
+  if(examIndex>=examOrder.length) finishExam();
+  else showExamQuestion();
+};
+
+function finishExam(){
+  if(examTimerHandle) clearInterval(examTimerHandle);
+  const elapsed=Math.floor((Date.now()-examStartedAt)/1000);
+  let right=0;
+  const byCat={};
+  examOrder.forEach((q,i)=>{
+    const ok=examAnswersChosen[i]===q.c;
+    if(ok) right++;
+    byCat[q.cat] ||= {right:0,total:0};
+    byCat[q.cat].total++;
+    if(ok) byCat[q.cat].right++;
+  });
+  const pct=Math.round(right/examOrder.length*100);
+  document.getElementById("examBody").classList.add("hidden");
+  document.getElementById("examFinish").classList.remove("hidden");
+  document.getElementById("examProgress").style.width="100%";
+  document.getElementById("examScore").textContent=`${right}/${examOrder.length} – ${pct}%`;
+  document.getElementById("examStatus").innerHTML = pct>=80
+    ? "<b>Träningsnivå uppnådd ✓</b> Du ligger över vår träningsgräns på 80 %."
+    : "<b>Fortsätt träna.</b> Sikta på minst 80 % stabilt över flera slutprov.";
+  const mm=String(Math.floor(elapsed/60)).padStart(2,"0");
+  const ss=String(elapsed%60).padStart(2,"0");
+  const lvl=examDifficulty==="svar"?"Svår":examDifficulty==="grund"?"Grund":examDifficulty==="balanserat"?"Balanserat":"Normal";
+  document.getElementById("examTimeResult").textContent=`Nivå: ${lvl} • Tid: ${mm}:${ss}`;
+
+  const rows=Object.entries(byCat)
+    .sort((a,b)=>(a[1].right/a[1].total)-(b[1].right/b[1].total))
+    .map(([cat,v])=>{
+      const cp=Math.round(v.right/v.total*100);
+      const bed=cp>=85?"Stark":cp>=70?"På väg":"Prioritera";
+      return `<tr><td>${cat}</td><td>${v.right}/${v.total}</td><td>${cp}%</td><td>${bed}</td></tr>`;
+    }).join("");
+  document.getElementById("examBreakdown").innerHTML=`
+    <h3>Områdesanalys</h3>
+    <table><thead><tr><th>Område</th><th>Rätt</th><th>Andel</th><th>Bedömning</th></tr></thead><tbody>${rows}</tbody></table>`;
+
+  const result={right,total:examOrder.length,pct,elapsed,byCat,date:new Date().toISOString(),difficulty:examDifficulty};
+  courseStorage.setItem("apv21_exam_last",JSON.stringify(result));
+  saveExamHistory(result);
+}
+
+function showExamReview(){
+  const box=document.getElementById("examReview");
+  const wrong=examOrder.map((q,i)=>({q,i,chosen:examAnswersChosen[i]})).filter(x=>x.chosen!==x.q.c);
+  if(!wrong.length){
+    box.innerHTML='<div class="tip"><b>Inga felbesvarade frågor.</b> Full pott på detta prov.</div>';
+  }else{
+    box.innerHTML='<h3>Felbesvarade frågor</h3>'+wrong.map((x,n)=>`
+      <div class="module" style="margin:10px 0">
+        <span class="badge">${x.q.level==="svar"?"Svår":x.q.level==="normal"?"Normal":"Grund"}</span>
+        <b>${n+1}. ${x.q.q}</b>
+        <p class="small">Ditt svar: ${x.q.a[x.chosen] ?? "Inget svar"}</p>
+        <p><b>Rätt svar:</b> ${x.q.a[x.q.c]}</p>
+        <p class="small">${x.q.e}</p>
+      </div>`).join("");
+  }
+  box.classList.remove("hidden");
+  box.scrollIntoView({behavior:"smooth"});
+}
+
+function saveExamHistory(result){
+  const hist=JSON.parse(courseStorage.getItem("apv21_exam_history")||"[]");
+  hist.unshift(result);
+  courseStorage.setItem("apv21_exam_history",JSON.stringify(hist.slice(0,20)));
+}
+
+function renderHistory(){
+  const hist=JSON.parse(courseStorage.getItem("apv21_exam_history")||"[]");
+  const summary=document.getElementById("historySummary");
+  const list=document.getElementById("historyList");
+  if(!hist.length){
+    summary.innerHTML="<p>Ingen provhistorik ännu.</p>";
+    list.innerHTML="";
+    return;
+  }
+  const avg=Math.round(hist.reduce((s,r)=>s+r.pct,0)/hist.length);
+  const best=Math.max(...hist.map(r=>r.pct));
+  const latest=hist[0].pct;
+  summary.innerHTML=`<div class="grid">
+    <div class="module"><div class="stat">${latest}%</div><b>Senaste</b></div>
+    <div class="module"><div class="stat">${avg}%</div><b>Snitt</b></div>
+    <div class="module"><div class="stat">${best}%</div><b>Bästa</b></div>
+  </div>`;
+
+  list.innerHTML="<h3>Senaste prov</h3>"+hist.map((r,i)=>{
+    const d=new Date(r.date);
+    const lvl=r.difficulty==="svar"?"Svår":r.difficulty==="grund"?"Grund":r.difficulty==="balanserat"?"Balanserat":"Normal";
+    const mm=String(Math.floor(r.elapsed/60)).padStart(2,"0");
+    const ss=String(r.elapsed%60).padStart(2,"0");
+    return `<div class="module" style="margin:10px 0">
+      <div class="row" style="justify-content:space-between">
+        <b>${i+1}. ${r.pct}%</b><span class="badge">${lvl}</span>
+      </div>
+      <div class="small">${d.toLocaleString("sv-SE")} • ${r.right}/${r.total} • ${mm}:${ss}</div>
+    </div>`;
+  }).join("");
+}
+
+function clearExamHistory(){
+  if(confirm("Vill du rensa all sparad provhistorik?")){
+    courseStorage.removeItem("apv21_exam_history");
+    renderHistory();
+  }
+}
+
+
+// ===== TRÄNA SVAGHETER =====
+let weakOrder=[], weakIndex=0, weakScore=0, weakAnswered=false, lastWeakLength=10;
+
+function aggregateWeaknesses(){
+  const hist=JSON.parse(courseStorage.getItem("apv21_exam_history")||"[]");
+  const coreCats=["Utmärkningsansvar","Arbetsmiljö","Vägen och risker","Vägarbeten","Trafikdirigering","Fordon","Skyddsanordningar","Trafikanordningar"];
+  const agg={};
+  coreCats.forEach(c=>agg[c]={right:0,total:0});
+
+  hist.forEach(r=>{
+    Object.entries(r.byCat||{}).forEach(([cat,v])=>{
+      if(!agg[cat]) return;
+      agg[cat].right+=v.right||0;
+      agg[cat].total+=v.total||0;
+    });
+  });
+
+  return coreCats.map(cat=>{
+    const v=agg[cat];
+    const pct=v.total?Math.round(v.right/v.total*100):50;
+    return {cat,pct,total:v.total};
+  }).sort((a,b)=>a.pct-b.pct);
+}
+
+function renderWeakSummary(){
+  const data=aggregateWeaknesses();
+  const box=document.getElementById("weakSummary");
+  const hist=JSON.parse(courseStorage.getItem("apv21_exam_history")||"[]");
+  if(!hist.length){
+    box.innerHTML='<div class="module"><b>Ingen provhistorik ännu.</b><p class="small">Systemet använder en neutral viktning tills du gjort minst ett slutprov.</p></div>';
+    return;
+  }
+  const top=data.slice(0,3);
+  box.innerHTML='<h3>Prioriterade områden</h3>'+top.map(x=>`
+    <div class="module" style="margin:8px 0">
+      <b>${x.cat}</b>
+      <div class="small">${x.total?x.pct+" % historisk träffsäkerhet":"Inte testat ännu"}</div>
+    </div>`).join("");
+}
+
+function buildWeakPool(n){
+  const ranked=aggregateWeaknesses();
+  const weights={};
+  ranked.forEach((x,i)=>{weights[x.cat]=ranked.length-i;});
+
+  let expanded=[];
+  questions.forEach(q=>{
+    if(q.cat==="Scenario"){
+      expanded.push(q,q); // scenarier får extra tyngd
+      return;
+    }
+    const w=weights[q.cat]||1;
+    for(let i=0;i<w;i++) expanded.push(q);
+  });
+
+  // weighted draw without duplicate questions
+  const chosen=[];
+  const used=new Set();
+  while(chosen.length<n && expanded.length){
+    const idx=Math.floor(Math.random()*expanded.length);
+    const q=expanded[idx];
+    expanded.splice(idx,1);
+    if(!used.has(q.q)){
+      chosen.push(q);
+      used.add(q.q);
+    }
+  }
+  if(chosen.length<n){
+    const rest=questions.filter(q=>!used.has(q.q)).sort(()=>Math.random()-.5);
+    chosen.push(...rest.slice(0,n-chosen.length));
+  }
+  return chosen;
+}
+
+function startWeakQuiz(n){
+  lastWeakLength=n;
+  weakOrder=buildWeakPool(n);
+  weakIndex=0; weakScore=0; weakAnswered=false;
+  document.getElementById("weakStart").classList.add("hidden");
+  document.getElementById("weakFinish").classList.add("hidden");
+  document.getElementById("weakBody").classList.remove("hidden");
+  showWeakQuestion();
+}
+
+function showWeakQuestion(){
+  weakAnswered=false;
+  const q=weakOrder[weakIndex];
+  document.getElementById("weakCat").textContent=q.cat;
+  document.getElementById("weakCount").textContent=`Fråga ${weakIndex+1} av ${weakOrder.length}`;
+  document.getElementById("weakProgress").style.width=`${(weakIndex/weakOrder.length)*100}%`;
+  document.getElementById("weakQuestion").textContent=q.q;
+  const wrap=document.getElementById("weakAnswers");
+  wrap.innerHTML="";
+  document.getElementById("weakFeedback").classList.add("hidden");
+  document.getElementById("weakNext").classList.add("hidden");
+
+  q.a.forEach((t,i)=>{
+    const b=document.createElement("button");
+    b.className="answer";
+    b.textContent=t;
+    b.onclick=()=>chooseWeak(i,b);
+    wrap.appendChild(b);
+  });
+}
+
+function chooseWeak(i,btn){
+  if(weakAnswered) return;
+  weakAnswered=true;
+  const q=weakOrder[weakIndex];
+  document.querySelectorAll("#weakAnswers .answer").forEach((b,j)=>{
+    b.disabled=true;
+    if(j===q.c) b.classList.add("correct");
+  });
+  if(i===q.c){
+    weakScore++;
+  }else{
+    btn.classList.add("wrong");
+  }
+  const f=document.getElementById("weakFeedback");
+  f.textContent=(i===q.c?"Rätt. ":"Fel. ")+q.e;
+  f.classList.remove("hidden");
+  document.getElementById("weakNext").classList.remove("hidden");
+}
+
+document.getElementById("weakNext").onclick=()=>{
+  weakIndex++;
+  if(weakIndex>=weakOrder.length){
+    const pct=Math.round(weakScore/weakOrder.length*100);
+    document.getElementById("weakBody").classList.add("hidden");
+    document.getElementById("weakFinish").classList.remove("hidden");
+    document.getElementById("weakProgress").style.width="100%";
+    document.getElementById("weakScore").textContent=`${weakScore}/${weakOrder.length} – ${pct}%`;
+    document.getElementById("weakText").textContent=pct>=85
+      ?"Starkt. Dina svagaste områden börjar sitta bättre."
+      :"Fortsätt ett varv till på samma läge.";
+  }else{
+    showWeakQuestion();
+  }
+}
+
+
+// ===== SUPABASE-INTEGRATION =====
+const SUPABASE_URL = "https://xqansuafjxrgkbxzrdim.supabase.co";
+const SUPABASE_PUBLISHABLE_KEY = "sb_publishable_igOzGesJHuzGdfh3u9AUcw_ThkXWGc6";
+const sb = supabase.createClient(SUPABASE_URL, SUPABASE_PUBLISHABLE_KEY);
+
+let currentUser=null, currentProfile=null;
+
+function authMsg(msg, ok=false){
+  const el=document.getElementById("authMessage");
+  el.textContent=msg; el.classList.remove("hidden");
+  el.style.borderColor=ok?"var(--good)":"var(--bad)";
+}
+function showSignup(){
+  document.getElementById("loginPanel").classList.add("hidden");
+  document.getElementById("signupPanel").classList.remove("hidden");
+  document.getElementById("authMessage").classList.add("hidden");
+}
+function showLogin(){
+  document.getElementById("signupPanel").classList.add("hidden");
+  document.getElementById("resetPanel").classList.add("hidden");
+  document.getElementById("loginPanel").classList.remove("hidden");
+  document.getElementById("authMessage").classList.add("hidden");
+}
+
+async function requestPasswordReset(){
+  const typed=document.getElementById("loginEmail").value.trim();
+  const email=typed || prompt("Skriv e-postadressen till ditt APV-konto:");
+  if(!email) return;
+  const redirectTo=window.location.origin + window.location.pathname;
+  const {error}=await sb.auth.resetPasswordForEmail(email,{redirectTo});
+  if(error) return authMsg("Kunde inte skicka återställningsmail: "+error.message);
+  authMsg("Återställningsmail skickat. Öppna länken i mailet och välj sedan ett nytt lösenord här.", true);
+}
+
+function showResetPanel(){
+  document.getElementById("loginPanel").classList.add("hidden");
+  document.getElementById("signupPanel").classList.add("hidden");
+  document.getElementById("resetPanel").classList.remove("hidden");
+  document.getElementById("authGate").style.display="flex";
+  document.getElementById("appMain").classList.add("hidden");
+}
+
+async function setNewPassword(){
+  const p1=document.getElementById("newPassword").value;
+  const p2=document.getElementById("newPassword2").value;
+  if(p1.length<6) return authMsg("Lösenordet måste vara minst 6 tecken.");
+  if(p1!==p2) return authMsg("Lösenorden matchar inte.");
+  const {error}=await sb.auth.updateUser({password:p1});
+  if(error) return authMsg("Lösenordet kunde inte ändras: "+error.message);
+  authMsg("Lösenordet är ändrat. Du kan nu logga in med det nya lösenordet.", true);
+  setTimeout(async()=>{
+    await sb.auth.signOut();
+    showLogin();
+  },1200);
+}
+async function loginUser(){
+  const email=document.getElementById("loginEmail").value.trim();
+  const password=document.getElementById("loginPassword").value;
+  const {data,error}=await sb.auth.signInWithPassword({email,password});
+  if(error) return authMsg("Inloggningen misslyckades: "+error.message);
+  await activateSession(data.user);
+}
+async function signupUser(){
+  const full_name=document.getElementById("signupName").value.trim();
+  const email=document.getElementById("signupEmail").value.trim();
+  const password=document.getElementById("signupPassword").value;
+  if(!full_name || !email || password.length<6) return authMsg("Fyll i namn, e-post och minst 6 tecken i lösenordet.");
+  const {data,error}=await sb.auth.signUp({email,password,options:{data:{full_name}}});
+  if(error) return authMsg("Kontot kunde inte skapas: "+error.message);
+  if(data.session) await activateSession(data.user);
+  else { showLogin(); authMsg("Kontot är skapat. Bekräfta e-post om Supabase kräver det.", true); }
+}
+async function logoutUser(){
+  await sb.auth.signOut();
+  currentUser=null; currentProfile=null; courseUserId=null;
+  document.getElementById("brandHeader").classList.add("hidden");
+  document.getElementById("appHeader").classList.add("hidden");
+  document.getElementById("appMain").classList.add("hidden");
+  document.getElementById("authGate").style.display="flex";
+  document.getElementById("mobileMenuTop").classList.add("hidden");
+  document.getElementById("accountBar").classList.add("hidden");
+  document.getElementById("adminNav").classList.add("hidden");
+}
+document.getElementById("logoutBtn").onclick=logoutUser;
+
+async function activateSession(user){
+  currentUser=user; courseUserId=user.id;
+  for(let i=1;i<=8;i++){
+    const b=document.getElementById(`markLesson${i}`), done=courseStorage.getItem(`apv21_lesson${i}`)==="done";
+    b.textContent=done?`Kapitel ${i} genomfört ✓`:`Markera kapitel ${i} som genomfört`;
+    b.classList.toggle('done',done);
+  }
+  updateHome(); startQuiz();
+  const {data,error}=await sb.from("profiles").select("id,full_name,role").eq("id",user.id).single();
+  if(error) return authMsg("Profilen kunde inte läsas: "+error.message);
+  currentProfile=data;
+  document.getElementById("authGate").style.display="none";
+  document.getElementById("brandHeader").classList.remove("hidden");
+  document.getElementById("appHeader").classList.remove("hidden");
+  document.getElementById("appMain").classList.remove("hidden");
+  document.getElementById("mobileMenuTop").classList.remove("hidden");
+  document.getElementById("accountBar").classList.remove("hidden");
+  document.getElementById("accountName").textContent=(data.full_name||user.email)+(data.role==="admin"?" • Admin":"");
+  if(data.role==="admin") document.getElementById("adminNav").classList.remove("hidden");
+  await loadRemoteProgress();
+  await loadAccountSummary();
+}
+async function initAuth(){
+  const hash=window.location.hash||"";
+  const search=window.location.search||"";
+  const isRecovery=hash.includes("type=recovery") || search.includes("type=recovery");
+  const {data:{session}}=await sb.auth.getSession();
+  if(isRecovery && session?.user){
+    currentUser=session.user;
+    showResetPanel();
+    return;
+  }
+  if(session?.user) await activateSession(session.user);
+}
+sb.auth.onAuthStateChange(async(event,session)=>{
+  if(event==="PASSWORD_RECOVERY"){
+    currentUser=session?.user||null;
+    showResetPanel();
+    return;
+  }
+  if(event==="SIGNED_IN" && session?.user && !currentUser) await activateSession(session.user);
+});
+
+function syncNotice(error){
+ const el=document.getElementById('courseSync');
+ if(error){el.classList.remove('hidden');el.textContent='APV 2.1 kunde inte synkroniseras. Resultatet finns lokalt på den här enheten. Kontrollera anslutningen och försök igen.';}
+}
+async function saveChapterRemote(chapter){
+  if(!currentUser) return;
+  const {error}=await sb.from("apv21_chapter_progress").upsert({
+    user_id:currentUser.id, chapter, completed:true,
+    completed_at:new Date().toISOString(), updated_at:new Date().toISOString()
+  },{onConflict:"user_id,chapter"});
+  syncNotice(error);
+}
+async function loadRemoteProgress(){
+  if(!currentUser) return;
+  const {data,error}=await sb.from("apv21_chapter_progress").select("chapter,completed").eq("user_id",currentUser.id);
+  syncNotice(error);
+  (data||[]).forEach(r=>{
+    if(r.completed){
+      courseStorage.setItem(`apv21_lesson${r.chapter}`,"done");
+      const btn=document.getElementById(`markLesson${r.chapter}`);
+      if(btn){btn.textContent=`Kapitel ${r.chapter} genomfört ✓`;btn.classList.add("done");}
+    }
+  });
+}
+async function saveExamRemote(result){
+  if(!currentUser || !result) return;
+  const {error}=await sb.from("apv21_exam_results").insert({
+    user_id:currentUser.id,
+    exam_type:"slutprov",
+    difficulty:result.difficulty||"normal",
+    score:result.right,
+    total_questions:result.total,
+    percentage:result.pct,
+    elapsed_seconds:result.elapsed,
+    category_results:result.byCat||{}
+  });
+  syncNotice(error);
+  if(!error){
+    const status=document.getElementById("examStatus");
+    if(status) status.innerHTML += '<br><span class="small">Resultatet är sparat på ditt konto ✓</span>';
+    loadAccountSummary();
+  }
+}
+async function loadAdminData(){
+  if(currentProfile?.role!=="admin") return;
+  const [pr,er,cp]=await Promise.all([
+    sb.from("profiles").select("id,full_name,role,created_at").order("created_at"),
+    sb.from("apv21_exam_results").select("user_id,difficulty,score,total_questions,percentage,elapsed_seconds,created_at").order("created_at",{ascending:false}).limit(200),
+    sb.from("apv21_chapter_progress").select("user_id,chapter,completed")
+  ]);
+  if(pr.error||er.error||cp.error){
+    document.getElementById("adminUsers").innerHTML='<div class="warning">Kunde inte läsa admin-data.</div>';
+    return;
+  }
+  const profiles=pr.data||[], results=er.data||[], progress=cp.data||[];
+  const byUserResults={}, byUserProgress={};
+  results.forEach(r=>{(byUserResults[r.user_id] ||= []).push(r);});
+  progress.forEach(r=>{if(r.completed)(byUserProgress[r.user_id] ||= new Set()).add(r.chapter);});
+  document.getElementById("adminUsers").innerHTML=profiles.map(p=>{
+    const rr=byUserResults[p.id]||[];
+    const avg=rr.length?Math.round(rr.reduce((s,r)=>s+r.percentage,0)/rr.length):0;
+    const best=rr.length?Math.max(...rr.map(r=>r.percentage)):0;
+    return `<div class="module" style="margin:10px 0">
+      <div class="row" style="justify-content:space-between"><b>${p.full_name||"Namnlös användare"}</b><span class="badge">${p.role}</span></div>
+      <div class="small">Kapitel: ${byUserProgress[p.id]?.size||0}/8 • Slutprov: ${rr.length} • Snitt: ${rr.length?avg+" %":"–"} • Bäst: ${rr.length?best+" %":"–"}</div>
+    </div>`;
+  }).join("");
+  const names=Object.fromEntries(profiles.map(p=>[p.id,p.full_name||p.id]));
+  document.getElementById("adminResults").innerHTML=results.length?`
+  <table><thead><tr><th>Användare</th><th>Resultat</th><th>Nivå</th><th>Datum</th></tr></thead>
+  <tbody>${results.map(r=>`<tr><td>${names[r.user_id]||"Okänd"}</td><td>${r.score}/${r.total_questions} (${r.percentage}%)</td><td>${r.difficulty||"normal"}</td><td>${new Date(r.created_at).toLocaleDateString("sv-SE")}</td></tr>`).join("")}</tbody></table>`
+  :'<p>Inga slutprov sparade ännu.</p>';
+}
+
+for(let i=1;i<=8;i++){
+  const btn=document.getElementById(`markLesson${i}`);
+  if(btn) btn.addEventListener("click",()=>saveChapterRemote(i));
+}
+
+const _finishExam=finishExam;
+finishExam=function(){
+  _finishExam();
+  try{
+    const r=JSON.parse(courseStorage.getItem("apv21_exam_last")||"null");
+    if(r) saveExamRemote(r);
+  }catch(e){console.error(e);}
+};
+
+document.querySelectorAll("nav button").forEach(b=>{
+  b.addEventListener("click",()=>{if(b.dataset.page==="admin") loadAdminData();});
+});
+
+
+async function loadAccountSummary(){
+  if(!currentUser) return;
+  const [er,cp]=await Promise.all([
+    sb.from("apv21_exam_results").select("percentage,score,total_questions,created_at").eq("user_id",currentUser.id).order("created_at",{ascending:false}),
+    sb.from("apv21_chapter_progress").select("chapter,completed").eq("user_id",currentUser.id)
+  ]);
+  if(er.error||cp.error){syncNotice(er.error||cp.error);document.getElementById("accountSummary").textContent="Kontots statistik kunde inte hämtas. Försök igen med internetanslutning.";return;}
+  const results=er.data||[];
+  const chapters=(cp.data||[]).filter(x=>x.completed).length;
+  const avg=results.length?Math.round(results.reduce((s,r)=>s+r.percentage,0)/results.length):0;
+  const best=results.length?Math.max(...results.map(r=>r.percentage)):0;
+  const latest=results.length?results[0].percentage:null;
+  document.getElementById("accountSummary").innerHTML=`
+    <div class="admin-kpis">
+      <div class="admin-kpi"><b>${chapters}/8</b><span class="small">Kapitel</span></div>
+      <div class="admin-kpi"><b>${results.length}</b><span class="small">Slutprov</span></div>
+      <div class="admin-kpi"><b>${results.length?avg+" %":"–"}</b><span class="small">Snitt</span></div>
+      <div class="admin-kpi"><b>${results.length?best+" %":"–"}</b><span class="small">Bästa</span></div>
+    </div>
+    <p class="small" style="margin-top:12px">Senaste resultat: ${latest===null?"Inget prov ännu":latest+" %"}</p>`;
+}
+
+async function changePasswordFromAccount(){
+  const p1=document.getElementById("accountNewPassword").value;
+  const p2=document.getElementById("accountNewPassword2").value;
+  const msg=document.getElementById("accountPasswordMsg");
+  msg.classList.remove("hidden");
+  if(p1.length<6){msg.textContent="Lösenordet måste vara minst 6 tecken.";return;}
+  if(p1!==p2){msg.textContent="Lösenorden matchar inte.";return;}
+  const {error}=await sb.auth.updateUser({password:p1});
+  msg.textContent=error?("Kunde inte ändra lösenord: "+error.message):"Lösenordet är ändrat.";
+}
+
+function statusForUser(chapters, rr){
+  if(!rr.length) return {cls:"status-bad",txt:"Ej testad"};
+  const avg=Math.round(rr.reduce((s,r)=>s+r.percentage,0)/rr.length);
+  if(chapters===8 && avg>=85) return {cls:"status-good",txt:"Stark"};
+  if(avg>=70 || chapters>=5) return {cls:"status-warn",txt:"På väg"};
+  return {cls:"status-bad",txt:"Behöver träna"};
+}
+
+const _loadAdminData = loadAdminData;
+loadAdminData = async function(){
+  if(currentProfile?.role!=="admin") return;
+  const [pr,er,cp]=await Promise.all([
+    sb.from("profiles").select("id,full_name,role,created_at").order("created_at"),
+    sb.from("apv21_exam_results").select("user_id,difficulty,score,total_questions,percentage,elapsed_seconds,created_at").order("created_at",{ascending:false}).limit(200),
+    sb.from("apv21_chapter_progress").select("user_id,chapter,completed")
+  ]);
+  if(pr.error||er.error||cp.error){
+    document.getElementById("adminUsers").innerHTML='<div class="warning">Kunde inte läsa admin-data.</div>';
+    return;
+  }
+  const profiles=pr.data||[], results=er.data||[], progress=cp.data||[];
+  const byUserResults={}, byUserProgress={};
+  results.forEach(r=>{(byUserResults[r.user_id] ||= []).push(r);});
+  progress.forEach(r=>{if(r.completed)(byUserProgress[r.user_id] ||= new Set()).add(r.chapter);});
+
+  document.getElementById("adminUsers").innerHTML=profiles.map(p=>{
+    const rr=byUserResults[p.id]||[];
+    const chapters=byUserProgress[p.id]?.size||0;
+    const avg=rr.length?Math.round(rr.reduce((s,r)=>s+r.percentage,0)/rr.length):0;
+    const best=rr.length?Math.max(...rr.map(r=>r.percentage)):0;
+    const latest=rr.length?rr[0].percentage:null;
+    const st=statusForUser(chapters,rr);
+    return `<div class="admin-user-card ${st.cls}">
+      <div class="row" style="justify-content:space-between">
+        <div><b>${p.full_name||"Namnlös användare"}</b><div class="small">${st.txt}</div></div>
+        <span class="badge">${p.role}</span>
+      </div>
+      <div class="admin-kpis">
+        <div class="admin-kpi"><b>${chapters}/8</b><span class="small">Kapitel</span></div>
+        <div class="admin-kpi"><b>${rr.length}</b><span class="small">Slutprov</span></div>
+        <div class="admin-kpi"><b>${rr.length?avg+" %":"–"}</b><span class="small">Snitt</span></div>
+        <div class="admin-kpi"><b>${rr.length?best+" %":"–"}</b><span class="small">Bäst</span></div>
+      </div>
+      <div class="small" style="margin-top:10px">Senaste: ${latest===null?"–":latest+" %"}</div>
+    </div>`;
+  }).join("");
+
+  const names=Object.fromEntries(profiles.map(p=>[p.id,p.full_name||p.id]));
+  document.getElementById("adminResults").innerHTML=results.length?`
+  <table><thead><tr><th>Användare</th><th>Resultat</th><th>Nivå</th><th>Datum</th></tr></thead>
+  <tbody>${results.map(r=>`<tr><td>${names[r.user_id]||"Okänd"}</td><td>${r.score}/${r.total_questions} (${r.percentage}%)</td><td>${r.difficulty||"normal"}</td><td>${new Date(r.created_at).toLocaleDateString("sv-SE")}</td></tr>`).join("")}</tbody></table>`
+  :'<p>Inga slutprov sparade ännu.</p>';
+};
+
+document.querySelectorAll("nav button").forEach(b=>{
+  b.addEventListener("click",()=>{
+    if(b.dataset.page==="account") loadAccountSummary();
+  });
+});
+
+
+// ===== KAPITELNAVIGERING =====
+async function completeAndGoNext(current,next){
+  courseStorage.setItem(`apv21_lesson${current}`,"done");
+  const markBtn=document.getElementById(`markLesson${current}`);
+  if(markBtn){
+    markBtn.textContent=`Kapitel ${current} genomfört ✓`;
+    markBtn.classList.add("done");
+  }
+  if(typeof saveChapterRemote==="function"){
+    try{ await saveChapterRemote(current); }catch(e){ console.error(e); }
+  }
+
+  if(next==="quiz"){
+    if(typeof goToPage==="function"){
+      goToPage("quiz");
+    }else{
+      document.querySelectorAll(".page").forEach(p=>p.classList.add("hidden"));
+      document.getElementById("quiz")?.classList.remove("hidden");
+      window.scrollTo({top:0,behavior:"smooth"});
+    }
+    return;
+  }
+
+  const nextNumber=Number(next);
+  if(typeof goToPage==="function"){
+    goToPage("theory");
+  }else{
+    document.querySelectorAll(".page").forEach(p=>p.classList.add("hidden"));
+    document.getElementById("theory")?.classList.remove("hidden");
+  }
+
+  const nextLesson=document.getElementById(`lesson${nextNumber}`);
+  if(nextLesson){
+    nextLesson.classList.remove("hidden");
+    setTimeout(()=>nextLesson.scrollIntoView({behavior:"smooth",block:"start"}),120);
+  }
+}
+
+document.querySelectorAll(".next-chapter-btn").forEach(btn=>{
+  btn.addEventListener("click",()=>{
+    completeAndGoNext(Number(btn.dataset.current),btn.dataset.next);
+  });
+});
+
+
+// ===== HAMBURGERMENY =====
+const menuToggle=document.getElementById("menuToggle");
+const mainNav=document.getElementById("mainNav");
+
+function closeMainMenu(){
+  if(!mainNav || !menuToggle) return;
+  mainNav.classList.add("hidden");
+  menuToggle.setAttribute("aria-expanded","false");
+  menuToggle.textContent="☰ Meny";
+}
+
+function openMainMenu(){
+  if(!mainNav || !menuToggle) return;
+  mainNav.classList.remove("hidden");
+  menuToggle.setAttribute("aria-expanded","true");
+  menuToggle.textContent="✕ Stäng meny";
+}
+
+if(menuToggle && mainNav){
+  menuToggle.addEventListener("click",()=>{
+    const isOpen=!mainNav.classList.contains("hidden");
+    if(isOpen) closeMainMenu();
+    else openMainMenu();
+  });
+
+  mainNav.querySelectorAll("button").forEach(btn=>{
+    btn.addEventListener("click",()=>{
+      closeMainMenu();
+    });
+  });
+}
+
+initAuth();
+
+updateHome();startQuiz();
+</script>
+
+<script>
+if ('serviceWorker' in navigator && location.protocol.startsWith('http')) {
+  window.addEventListener('load', () => {
+    navigator.serviceWorker.register('./service-worker.js').catch(console.error);
+  });
+}
+</script>
+
+<script src="language-en-v25.js"></script>
+<script src="accessibility-v25.js"></script>
+</body>
+</html>

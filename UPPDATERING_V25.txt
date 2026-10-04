@@ -1,0 +1,23 @@
+VERSION 25 – APV 2.1 OCH APV 2.2
+
+Packa upp ZIP-filen. Ladda upp ALLA filer till samma GitHub-mapp som
+nuvarande index.html. Spara med Commit changes och invänta publiceringen.
+Öppna appen med internet och ladda om. Startsidan ska visa två utbildningar
+och Portalversion 25.
+
+Nya sidor: apv21.html och apv22.html. index.html är nu utbildningsvalet.
+Alla nya v25-filer måste följa med. Samma inloggning används.
+APV 2.1: åtta kapitel, 64 frågor, träningsprov med 40 frågor, resultat,
+svaghetsträning och adminvy. APV 2.2: befintliga åtta kapitel och 234 frågor.
+Språk, läshastighet och röstinställningar delas. Endast röster som
+webbläsaren tillhandahåller kan väljas, precis som tidigare.
+
+APV 2.1 har separata databastabeller och lokala nycklar per konto.
+APV 2.2 behåller befintliga databastabeller och lagringsnycklar.
+Inga tidigare resultat flyttas eller raderas.
+Databasen för APV 2.1 är uppdaterad. Ingen SQL behöver köras.
+
+Materialet är ett träningsstöd. Frågorna är inte Trafikverkets provfrågor
+och ett godkänt träningsprov är inget certifikat. Källor finns i kapitel 8
+i APV 2.1. Tekniska exempel hänvisar till TDOK 2012:86 v5.0; kontrollera
+alltid kontraktets version och anvisningarna för aktuell skyddsprodukt.

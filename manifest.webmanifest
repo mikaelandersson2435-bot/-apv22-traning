@@ -1,7 +1,7 @@
 {
-  "name": "APV 2.2 – Träningsportal",
-  "short_name": "APV 2.2",
-  "description": "APV 2.2 träningsportal v17 med hamburgermeny och förbättrad uppdateringscache.",
+  "name": "APV – Träningsportalen",
+  "short_name": "APV",
+  "description": "Träna APV 2.1 och APV 2.2 på svenska och engelska.",
   "start_url": "./",
   "display": "standalone",
   "background_color": "#0b1220",
